@@ -1,0 +1,117 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #0f1117;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  height: 56px;
+  background: #161922;
+  border-bottom: 1px solid #252836;
+  flex-shrink: 0;
+}
+
+.header-logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e6edf3;
+  letter-spacing: -0.3px;
+}
+
+.header-logo span {
+  color: #7c83fd;
+}
+
+.header-subtitle {
+  color: #6e7681;
+  font-size: 12px;
+  border-left: 1px solid #252836;
+  padding-left: 12px;
+  margin-left: 4px;
+}
+
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.model-select {
+  background: #0f1117;
+  border: 1px solid #252836;
+  color: #c9d1d9;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  min-width: 180px;
+}
+
+.model-select:focus {
+  border-color: #7c83fd;
+}
+
+.ollama-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6e7681;
+}
+
+.ollama-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6e7681;
+}
+
+.ollama-dot.ok    { background: #00d97e; }
+.ollama-dot.error { background: #e63757; }
+
+/* ── Main layout ── */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 56px);
+}
+
+.panel-left {
+  width: 340px;
+  flex-shrink: 0;
+  background: #161922;
+  border-right: 1px solid #252836;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.panel-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #0f1117;
+}
+
+/* ── Error banner ── */
+.error-banner {
+  background: #e6375714;
+  border: 1px solid #e63757;
+  color: #e63757;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin: 12px;
+}

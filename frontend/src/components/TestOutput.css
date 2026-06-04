@@ -1,0 +1,137 @@
+.output-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  gap: 12px;
+  color: #6e7681;
+}
+
+.output-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #252836;
+  border-top-color: #7c83fd;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.output-loading-text {
+  font-size: 14px;
+  color: #6e7681;
+}
+
+.output-empty-icon {
+  font-size: 40px;
+}
+
+.output-empty-title {
+  font-size: 16px;
+  color: #8b949e;
+  font-weight: 600;
+}
+
+.output-empty-hint {
+  font-size: 13px;
+  color: #6e7681;
+}
+
+.output-empty-hint code {
+  background: #252836;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: 'Fira Code', Consolas, monospace;
+}
+
+/* ── Result wrapper ── */
+.output-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Compile badge ── */
+.compile-badge {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  border-bottom: 1px solid #252836;
+}
+
+.compile-ok {
+  background: #00d97e14;
+  color: #00d97e;
+  border-bottom-color: #00d97e33;
+}
+
+.compile-error {
+  background: #e6375714;
+  color: #e63757;
+  border-bottom-color: #e6375733;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── Monaco editor container ── */
+.editor-wrapper {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── RAG context ── */
+.rag-section {
+  flex-shrink: 0;
+  border-top: 1px solid #252836;
+  background: #161922;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.rag-summary {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: #6e7681;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.rag-summary:hover {
+  color: #c9d1d9;
+}
+
+.rag-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0 0 8px;
+}
+
+.rag-fragment {
+  font-size: 12px;
+  color: #8b949e;
+  padding: 8px 16px;
+  border-left: 2px solid #7c83fd44;
+  margin: 4px 16px;
+  border-radius: 0 4px 4px 0;
+  background: #0f1117;
+  line-height: 1.5;
+}
+
+.rag-index {
+  color: #7c83fd;
+  font-weight: 700;
+  margin-right: 6px;
+  font-size: 11px;
+}

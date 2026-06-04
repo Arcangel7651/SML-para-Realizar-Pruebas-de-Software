@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(New-Item -ItemType File \"c:\\\\Users\\\\angel\\\\Documents\\\\estafando\\\\SML-para-Realizar-Pruebas-de-Software\\\\backend\\\\api\\\\__init__.py\" -Force)",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType File \"c:\\\\Users\\\\angel\\\\Documents\\\\estafando\\\\SML-para-Realizar-Pruebas-de-Software\\\\backend\\\\services\\\\__init__.py\" -Force)",
+      "Bash(New-Item -ItemType File \"c:\\\\Users\\\\angel\\\\Documents\\\\estafando\\\\SML-para-Realizar-Pruebas-de-Software\\\\backend\\\\infrastructure\\\\__init__.py\" -Force)",
+      "Bash(New-Item -ItemType File \"c:\\\\Users\\\\angel\\\\Documents\\\\estafando\\\\SML-para-Realizar-Pruebas-de-Software\\\\backend\\\\data\\\\__init__.py\" -Force)",
+      "Bash(Write-Output \"done\")",
+      "Bash(npm install *)",
+      "Bash(npm run *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory"
+    ]
+  }
+}

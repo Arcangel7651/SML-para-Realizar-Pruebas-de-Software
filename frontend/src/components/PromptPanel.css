@@ -1,0 +1,82 @@
+.prompt-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prompt-label {
+  font-size: 12px;
+  color: #6e7681;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.prompt-textarea {
+  background: #0f1117;
+  border: 1px solid #252836;
+  border-radius: 8px;
+  color: #c9d1d9;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 10px 12px;
+  resize: vertical;
+  outline: none;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
+
+.prompt-textarea:focus {
+  border-color: #7c83fd;
+}
+
+.generate-btn {
+  background: #7c83fd;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+}
+
+.generate-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.generate-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.generate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+kbd {
+  background: #ffffff22;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff44;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
