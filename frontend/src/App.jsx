@@ -24,7 +24,9 @@ export default function App() {
   const [ollamaStatus, setOllamaStatus] = useState('checking')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
+  const [streamingCode, setStreamingCode] = useState('')
   const [error, setError] = useState('')
+  const [runPytest, setRunPytest] = useState(false)
 
   useEffect(() => {
     axios.get('/api/health')
@@ -41,6 +43,7 @@ export default function App() {
     setFile(f)
     setFileName(f.name)
     setResult(null)
+    setStreamingCode('')
     setError('')
   }
 
@@ -49,17 +52,62 @@ export default function App() {
     setLoading(true)
     setError('')
     setResult(null)
+    setStreamingCode('')
 
     const form = new FormData()
     form.append('file', file)
     form.append('prompt', prompt)
     form.append('model', model)
+    form.append('run_pytest', runPytest)
 
     try {
-      const res = await axios.post('/api/generate-tests', form)
-      setResult(res.data)
+      const response = await fetch('/api/generate-tests-stream', {
+        method: 'POST',
+        body: form,
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        throw new Error(text || `HTTP ${response.status}`)
+      }
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let partialMeta = null
+      let accumulated = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const lines = decoder.decode(value, { stream: true }).split('\n')
+        for (const line of lines) {
+          if (!line.trim()) continue
+          try {
+            const msg = JSON.parse(line)
+            if (msg.type === 'meta') {
+              partialMeta = msg
+            } else if (msg.type === 'token') {
+              accumulated += msg.content
+              setStreamingCode(accumulated)
+            } else if (msg.type === 'done') {
+              setResult({
+                tests: msg.tests,
+                compiles: msg.compiles,
+                compile_error: msg.compile_error,
+                metrics: msg.metrics,
+                functions_found: partialMeta?.functions_found ?? [],
+                context_used: partialMeta?.context_used ?? [],
+              })
+              setStreamingCode('')
+            }
+          } catch {
+            // línea parcial, ignorar
+          }
+        }
+      }
     } catch (err) {
-      setError(err.response?.data?.detail ?? err.message ?? 'Error desconocido')
+      setError(err.message ?? 'Error desconocido')
     } finally {
       setLoading(false)
     }
@@ -105,12 +153,14 @@ export default function App() {
             onGenerate={handleGenerate}
             disabled={!file || loading || !model}
             loading={loading}
+            runPytest={runPytest}
+            onTogglePytest={setRunPytest}
           />
           {error && <div className="error-banner">{error}</div>}
         </div>
 
         <div className="panel-right">
-          <TestOutput result={result} loading={loading} />
+          <TestOutput result={result} loading={loading} streamingCode={streamingCode} />
         </div>
       </main>
     </div>

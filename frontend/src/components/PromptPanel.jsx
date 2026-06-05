@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import './PromptPanel.css'
 
-export default function PromptPanel({ prompt, onChange, onGenerate, disabled, loading }) {
+export default function PromptPanel({ prompt, onChange, onGenerate, disabled, loading, runPytest, onTogglePytest }) {
   const textareaRef = useRef(null)
 
   useEffect(() => {
@@ -25,6 +25,18 @@ export default function PromptPanel({ prompt, onChange, onGenerate, disabled, lo
         placeholder="Ej: Genera tests con casos límite y excepciones..."
         rows={5}
       />
+      <label className="toggle-label">
+        <input
+          type="checkbox"
+          checked={runPytest}
+          onChange={e => onTogglePytest(e.target.checked)}
+          className="toggle-checkbox"
+        />
+        <span className="toggle-text">
+          Evaluar con pytest
+          <span className="toggle-hint">{runPytest ? '(+30-60s)' : '(más rápido)'}</span>
+        </span>
+      </label>
       <button
         className="generate-btn"
         onClick={onGenerate}

@@ -1,4 +1,5 @@
 import os
+from collections.abc import Generator
 import ollama
 
 
@@ -17,3 +18,10 @@ def list_models() -> list[str]:
 def chat(model: str, messages: list[dict]) -> str:
     response = _client.chat(model=model, messages=messages)
     return response.message.content
+
+
+def chat_stream(model: str, messages: list[dict]) -> Generator[str, None, None]:
+    for chunk in _client.chat(model=model, messages=messages, stream=True):
+        content = chunk.message.content
+        if content:
+            yield content

@@ -1,16 +1,56 @@
 import Editor from '@monaco-editor/react'
+import MetricsPanel from './MetricsPanel'
 import './TestOutput.css'
 
-export default function TestOutput({ result, loading }) {
-  if (loading) {
+export default function TestOutput({ result, loading, streamingCode }) {
+  function handleCopy() {
+    if (result?.tests) {
+      navigator.clipboard.writeText(result.tests)
+    }
+  }
+
+  // Streaming: el modelo está escribiendo
+  if (loading && streamingCode) {
     return (
-      <div className="output-center">
-        <div className="output-spinner" />
-        <div className="output-loading-text">Generando tests con el SLM...</div>
+      <div className="output-wrapper">
+        <div className="streaming-header">
+          <span className="streaming-dot" />
+          Generando tests...
+        </div>
+        <div className="editor-wrapper">
+          <Editor
+            height="calc(100vh - 160px)"
+            language="python"
+            value={streamingCode}
+            theme="vs-dark"
+            options={{
+              readOnly: true,
+              fontSize: 13,
+              fontFamily: "'Fira Code', Consolas, monospace",
+              minimap: { enabled: false },
+              scrollBeyondLastLine: true,
+              wordWrap: 'on',
+              lineNumbers: 'on',
+              renderLineHighlight: 'none',
+              padding: { top: 12, bottom: 12 },
+            }}
+          />
+        </div>
       </div>
     )
   }
 
+  // Cargando pero aún sin tokens (preparando RAG, AST, etc.)
+  if (loading) {
+    return (
+      <div className="output-center">
+        <div className="output-spinner" />
+        <div className="output-loading-text">Preparando contexto...</div>
+      </div>
+    )
+  }
+
+  // Sin resultado aún
   if (!result) {
     return (
       <div className="output-center output-empty">
@@ -23,21 +63,14 @@ export default function TestOutput({ result, loading }) {
     )
   }
 
+  // Resultado final
   return (
     <div className="output-wrapper">
-      {result.compiles ? (
-        <div className="compile-badge compile-ok">
-          ✓ Código válido — el test compila correctamente
-        </div>
-      ) : (
-        <div className="compile-badge compile-error">
-          ✗ Error de sintaxis: {result.compile_error}
-        </div>
-      )}
+      <MetricsPanel result={result} onCopy={handleCopy} />
 
       <div className="editor-wrapper">
         <Editor
-          height="100%"
+          height="calc(100vh - 160px)"
           language="python"
           value={result.tests}
           theme="vs-dark"

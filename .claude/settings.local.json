@@ -8,7 +8,8 @@
       "Bash(New-Item -ItemType File \"c:\\\\Users\\\\angel\\\\Documents\\\\estafando\\\\SML-para-Realizar-Pruebas-de-Software\\\\backend\\\\data\\\\__init__.py\" -Force)",
       "Bash(Write-Output \"done\")",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Read(//c/Users/angel/Documents/PRACTICAS/Prototipo/**)"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory"
