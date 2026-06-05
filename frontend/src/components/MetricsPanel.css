@@ -2,13 +2,17 @@
   background: #161922;
   border-bottom: 1px solid #252836;
   flex-shrink: 0;
+  padding-bottom: 10px;
 }
 
+/* ── Header ── */
 .metrics-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px 6px;
+  padding: 10px 16px 8px;
+  border-bottom: 1px solid #252836;
+  margin-bottom: 6px;
 }
 
 .metrics-title {
@@ -29,32 +33,109 @@
   cursor: pointer;
   transition: background 0.15s;
 }
-
 .copy-btn:hover {
   background: #7c83fd22;
   border-color: #7c83fd55;
   color: #7c83fd;
 }
 
-/* ── Rows ── */
-.metrics-row {
+/* ── Report rows ── */
+.report-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 16px;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 3px 16px;
+  min-height: 22px;
 }
 
-.metrics-label {
+.report-row.indent {
+  padding-left: 28px;
+}
+
+.report-row.progress-row {
+  padding-top: 0;
+  padding-bottom: 4px;
+}
+
+.report-row.compile-error-row {
+  padding-top: 0;
+}
+
+.report-label {
+  font-size: 12px;
+  color: #8b949e;
+  min-width: 150px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.report-divider {
+  height: 1px;
+  background: #252836;
+  margin: 6px 16px;
+}
+
+/* ── Stat values ── */
+.stat-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c9d1d9;
+}
+
+.stat-ok   { font-size: 12px; font-weight: 600; color: #00d97e; }
+.stat-bad  { font-size: 12px; font-weight: 600; color: #e63757; }
+.stat-warn { font-size: 12px; font-weight: 600; color: #f6c90e; }
+
+.stat-good { color: #00d97e; }
+.stat-warn { color: #f6c90e; }
+
+.muted { font-size: 12px; color: #6e7681; font-style: italic; }
+
+.mono-error {
+  font-family: 'Fira Code', Consolas, monospace;
   font-size: 11px;
-  color: #6e7681;
+  color: #e63757;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* ── Status dots ── */
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
+.dot-good { background: #00d97e; }
+.dot-bad  { background: #e63757; }
+.dot-warn { background: #f6c90e; }
+
+/* ── Progress bar ── */
+.progress-track {
+  flex: 1;
+  height: 5px;
+  background: #252836;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.progress-good { background: #00d97e; }
+.progress-warn { background: #f6c90e; }
+.progress-bad  { background: #e63757; }
 
 /* ── Function chips ── */
 .chip-list {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   flex-wrap: wrap;
 }
 
@@ -62,107 +143,25 @@
   background: #7c83fd18;
   border: 1px solid #7c83fd44;
   color: #7c83fd;
-  padding: 2px 9px;
+  padding: 1px 8px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-family: 'Fira Code', Consolas, monospace;
 }
 
-/* ── Badges ── */
-.badges-row {
-  padding-bottom: 8px;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-good  { background: #00d97e14; color: #00d97e; border: 1px solid #00d97e44; }
-.badge-warn  { background: #f0c04014; color: #f0c040; border: 1px solid #f0c04044; }
-.badge-bad   { background: #e6375714; color: #e63757; border: 1px solid #e6375744; }
-
-/* ── Details ── */
-.metrics-details {
-  border-top: 1px solid #252836;
-}
-
-.metrics-details-summary {
-  padding: 6px 16px;
-  font-size: 11px;
-  color: #6e7681;
-  cursor: pointer;
-  user-select: none;
-  list-style: none;
-}
-
-.metrics-details-summary:hover { color: #c9d1d9; }
-
-.metrics-details-body {
-  padding: 4px 16px 10px;
+/* ── Quality smells ── */
+.smell-list {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.detail-row {
-  font-size: 12px;
-  padding: 3px 0;
-}
-
-.detail-row.bad  { color: #e63757; }
-.detail-row.warn { color: #f0c040; }
-.detail-row.mono {
-  font-family: 'Fira Code', Consolas, monospace;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-/* ── Quality section ── */
-.quality-section {
-  border-top: 1px solid #252836;
-  padding: 8px 16px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.quality-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: #6e7681;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-
-.quality-row {
-  display: flex;
-  gap: 8px;
   flex-wrap: wrap;
-  align-items: center;
-}
-
-.quality-ok {
-  font-size: 12px;
-  color: #00d97e;
-}
-
-.quality-warn {
-  font-size: 12px;
-  color: #f6c90e;
+  gap: 5px;
 }
 
 .quality-smell {
-  font-size: 12px;
+  font-size: 11px;
   color: #f6c90e;
   background: #f6c90e0f;
   border: 1px solid #f6c90e33;
-  padding: 2px 8px;
+  padding: 1px 7px;
   border-radius: 4px;
   font-family: 'Fira Code', Consolas, monospace;
 }
