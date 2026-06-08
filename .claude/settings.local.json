@@ -23,7 +23,17 @@
       "Bash(python -m py_compile api/routes.py)",
       "Bash(python _tmp_stem_test.py)",
       "Bash(python _tmp_stem_test2.py)",
-      "Bash(python -m py_compile services/quality_analyzer.py)"
+      "Bash(python -m py_compile services/quality_analyzer.py)",
+      "Bash(python _tmp_pytest_parse.py)",
+      "Bash(python _tmp_pytest_parse2.py)",
+      "Bash(python _tmp_pp3.py)",
+      "Bash(curl -s -m 5 http://localhost:8000/api/health)",
+      "Bash(curl -s -m 5 -v http://127.0.0.1:8000/api/health)",
+      "Bash(tasklist /FI \"PID eq 6820\")",
+      "Bash(tasklist /FI \"PID eq 9592\")",
+      "Bash(curl -s -m 5 http://127.0.0.1:8000/api/health)",
+      "Bash(curl -s -m 5 http://127.0.0.1:8000/health)",
+      "Bash(curl -s -m 5 http://127.0.0.1:8000/openapi.json)"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory"

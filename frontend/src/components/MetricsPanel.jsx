@@ -108,6 +108,22 @@ export default function MetricsPanel({ result }) {
             </div>
           )}
 
+          {metrics.tests_errors > 0 && (
+            <div className="report-row indent">
+              <span className="report-label">
+                <span className="dot dot-bad" /> Errores
+              </span>
+              <span className="stat-bad">{metrics.tests_errors}</span>
+            </div>
+          )}
+
+          {metrics.tests_total === 0 && metrics.run_summary && (
+            <div className="report-row compile-error-row">
+              <span className="report-label muted">Pytest no ejecutó tests</span>
+              <span className="mono-error">{metrics.run_summary}</span>
+            </div>
+          )}
+
           <div className="report-divider" />
 
           <div className="report-row">

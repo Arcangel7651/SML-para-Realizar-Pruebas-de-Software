@@ -32,8 +32,10 @@ class Metrics(BaseModel):
     tests_passed: int
     tests_failed: int
     tests_skipped: int
+    tests_errors: int
     line_coverage: float
     pass_rate: float
+    run_summary: str | None
 
 
 class Quality(BaseModel):
@@ -82,7 +84,7 @@ async def generate_tests_stream_endpoint(
     file: UploadFile = File(...),
     prompt: str = Form(""),
     model: str = Form(...),
-    run_pytest: bool = Form(False),
+    run_pytest: bool = Form(True),
 ):
     source_code  = await read_python_file(file)
     module_name  = os.path.splitext(file.filename)[0]

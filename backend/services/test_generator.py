@@ -151,18 +151,22 @@ def _parse_pytest_output(stdout: str) -> dict:
         "tests_passed": 0,
         "tests_failed": 0,
         "tests_skipped": 0,
+        "tests_errors": 0,
         "line_coverage": 0.0,
         "pass_rate": 0.0,
+        "run_summary": None,
     }
 
     passed  = re.search(r"(\d+) passed",  stdout)
     failed  = re.search(r"(\d+) failed",  stdout)
     skipped = re.search(r"(\d+) skipped", stdout)
+    errors  = re.search(r"(\d+) error",   stdout)
     cov     = re.search(r"TOTAL\s+\d+\s+\d+\s+(\d+)%", stdout)
 
     metrics["tests_passed"]  = int(passed.group(1))  if passed  else 0
     metrics["tests_failed"]  = int(failed.group(1))  if failed  else 0
     metrics["tests_skipped"] = int(skipped.group(1)) if skipped else 0
+    metrics["tests_errors"]  = int(errors.group(1))  if errors  else 0
     metrics["tests_total"]   = (
         metrics["tests_passed"] + metrics["tests_failed"] + metrics["tests_skipped"]
     )
@@ -172,6 +176,25 @@ def _parse_pytest_output(stdout: str) -> dict:
         metrics["pass_rate"] = round(
             metrics["tests_passed"] / metrics["tests_total"] * 100, 1
         )
+
+    # Si no se recolectó/ejecutó ningún test, lo más probable es un error de
+    # colección (import roto, fixture inválida, clase con __init__, etc.) en
+    # vez de "0 tests pasaron". Capturamos la línea de resumen final de pytest
+    # para mostrar la causa real en lugar de un 0% silencioso.
+    if metrics["tests_total"] == 0:
+        # La línea de resumen final de pytest siempre incluye una duración
+        # ("1 error in 0.18s", "no tests ran in 0.01s") — eso la distingue de
+        # encabezados de sección como "==== ERRORS ====". No siempre viene
+        # bordeada por "=" (p.ej. tras un "!!! Interrupted: ... !!!" pytest
+        # imprime la línea de duración suelta), así que aceptamos bordes de
+        # "=", "!" o ninguno, y nos quedamos con la última línea que matchee.
+        summary_lines = re.findall(
+            r"^[=!]*\s*(.*?\bin [\d.]+s)\s*[=!]*\s*$", stdout, re.MULTILINE
+        )
+        if summary_lines:
+            last_summary = summary_lines[-1].strip()
+            if re.search(r"error|no tests ran", last_summary, re.IGNORECASE):
+                metrics["run_summary"] = last_summary
 
     return metrics
 

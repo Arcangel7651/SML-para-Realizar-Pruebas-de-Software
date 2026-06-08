@@ -1,7 +1,13 @@
 import { useEffect, useRef } from 'react'
 import './PromptPanel.css'
 
-export default function PromptPanel({ prompt, onChange, onGenerate, disabled, loading, runPytest, onTogglePytest }) {
+function formatElapsed(seconds) {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
+export default function PromptPanel({ prompt, onChange, onGenerate, onStop, disabled, loading, elapsed = 0 }) {
   const textareaRef = useRef(null)
 
   useEffect(() => {
@@ -27,29 +33,25 @@ export default function PromptPanel({ prompt, onChange, onGenerate, disabled, lo
         placeholder="Usa esto si quieres dar alguna instrucción adicional..."
         rows={5}
       />
-      <label className="toggle-label">
-        <input
-          type="checkbox"
-          checked={runPytest}
-          onChange={e => onTogglePytest(e.target.checked)}
-          className="toggle-checkbox"
-        />
-        <span className="toggle-text">
-          Evaluar con pytest
-          <span className="toggle-hint">{runPytest ? '(+30-60s)' : '(más rápido)'}</span>
-        </span>
-      </label>
-      <button
-        className="generate-btn"
-        onClick={onGenerate}
-        disabled={disabled}
-      >
-        {loading ? (
-          <span className="spinner" />
-        ) : (
-          <>Generar tests <kbd>Ctrl+↵</kbd></>
-        )}
-      </button>
+      {loading ? (
+        <div className="generating-controls">
+          <div className="elapsed-timer">
+            <span className="timer-dot" />
+            {formatElapsed(elapsed)}
+          </div>
+          <button className="stop-btn" onClick={onStop}>
+            Detener
+          </button>
+        </div>
+      ) : (
+        <button
+          className="generate-btn"
+          onClick={onGenerate}
+          disabled={disabled}
+        >
+          Generar tests <kbd>Ctrl+↵</kbd>
+        </button>
+      )}
     </div>
   )
 }

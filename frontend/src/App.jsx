@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import './App.css'
 import FileUpload from './components/FileUpload'
@@ -26,7 +26,25 @@ export default function App() {
   const [result, setResult] = useState(null)
   const [streamingCode, setStreamingCode] = useState('')
   const [error, setError] = useState('')
-  const [runPytest, setRunPytest] = useState(false)
+  const [elapsed, setElapsed] = useState(0)
+
+  const abortControllerRef = useRef(null)
+  const timerRef = useRef(null)
+
+  function startTimer() {
+    setElapsed(0)
+    const startedAt = Date.now()
+    timerRef.current = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - startedAt) / 1000))
+    }, 1000)
+  }
+
+  function stopTimer() {
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+  }
 
   useEffect(() => {
     axios.get('/api/health')
@@ -53,17 +71,22 @@ export default function App() {
     setError('')
     setResult(null)
     setStreamingCode('')
+    startTimer()
+
+    const controller = new AbortController()
+    abortControllerRef.current = controller
 
     const form = new FormData()
     form.append('file', file)
     form.append('prompt', prompt)
     form.append('model', model)
-    form.append('run_pytest', runPytest)
+    form.append('run_pytest', true)
 
     try {
       const response = await fetch('/api/generate-tests-stream', {
         method: 'POST',
         body: form,
+        signal: controller.signal,
       })
 
       if (!response.ok) {
@@ -109,10 +132,20 @@ export default function App() {
         }
       }
     } catch (err) {
-      setError(err.message ?? 'Error desconocido')
+      if (err.name === 'AbortError') {
+        setError('Generación detenida por el usuario.')
+      } else {
+        setError(err.message ?? 'Error desconocido')
+      }
     } finally {
       setLoading(false)
+      stopTimer()
+      abortControllerRef.current = null
     }
+  }
+
+  function handleStop() {
+    abortControllerRef.current?.abort()
   }
 
   return (
@@ -153,10 +186,10 @@ export default function App() {
             prompt={prompt}
             onChange={setPrompt}
             onGenerate={handleGenerate}
+            onStop={handleStop}
             disabled={!file || loading || !model}
             loading={loading}
-            runPytest={runPytest}
-            onTogglePytest={setRunPytest}
+            elapsed={elapsed}
           />
           {error && <div className="error-banner">{error}</div>}
         </div>
