@@ -14,6 +14,7 @@ from services.test_generator import (
     _check_compiles,
     _run_pytest,
     _build_functions_block,
+    _build_user_message,
 )
 from services.ast_parser import extract_functions
 from services.quality_analyzer import analyze as analyze_quality
@@ -38,10 +39,12 @@ class Metrics(BaseModel):
 class Quality(BaseModel):
     has_given_when_then: bool
     smells_detected: list[str]
+    tests_per_function: dict[str, int]
 
 
 class GenerateResponse(BaseModel):
     tests: str
+    explanation: str
     context_used: list[str]
     functions_found: list[str]
     compiles: bool
@@ -91,13 +94,8 @@ async def generate_tests_stream_endpoint(
     context_block    = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
     functions_block  = _build_functions_block(functions)
 
-    user_message = (
-        f"NOMBRE DEL MÓDULO: {module_name} → la clase debe llamarse Test{module_pascal}\n\n"
-        f"CONTEXTO RAG:\n{context_block}\n\n"
-        f"FUNCIONES DETECTADAS POR AST PARSER:\n{functions_block}\n\n"
-        f"INSTRUCCIÓN DEL USUARIO: {prompt}\n\n"
-        f"CÓDIGO FUENTE A TESTEAR:\n```python\n{source_code}\n```\n\n"
-        "Genera la clase de test pytest completa siguiendo TODAS las reglas del system prompt."
+    user_message = _build_user_message(
+        module_name, module_pascal, context_block, functions_block, prompt, source_code
     )
 
     messages = [
@@ -118,18 +116,19 @@ async def generate_tests_stream_endpoint(
             yield json.dumps({"type": "token", "content": chunk}) + "\n"
 
         raw_response = "".join(raw_chunks)
-        tests_code   = _extract_code(raw_response)
+        tests_code, explanation = _extract_code(raw_response)
         compiles, compile_error = _check_compiles(tests_code)
 
         metrics = None
         if compiles and run_pytest:
             metrics = _run_pytest(source_code, tests_code, module_name)
 
-        quality = analyze_quality(tests_code)
+        quality = analyze_quality(tests_code, functions_found)
 
         yield json.dumps({
             "type":          "done",
             "tests":         tests_code,
+            "explanation":   explanation,
             "compiles":      compiles,
             "compile_error": compile_error,
             "metrics":       metrics,

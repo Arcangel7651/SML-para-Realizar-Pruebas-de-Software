@@ -56,6 +56,30 @@ OR-7  The output contains no test method whose body is only `pass` or `pytest.sk
 
 
 
+def _build_user_message(
+    module_name: str,
+    module_pascal: str,
+    context_block: str,
+    functions_block: str,
+    prompt: str,
+    source_code: str,
+) -> str:
+    """Las instrucciones adicionales del usuario son opcionales: si vienen
+    vacías, se omite esa sección en vez de enviar una línea en blanco que
+    podría confundir al modelo."""
+    instruction_section = (
+        f"INSTRUCCIÓN ADICIONAL DEL USUARIO: {prompt.strip()}\n\n" if prompt.strip() else ""
+    )
+    return (
+        f"NOMBRE DEL MÓDULO: {module_name} → la clase debe llamarse Test{module_pascal}\n\n"
+        f"CONTEXTO RAG:\n{context_block}\n\n"
+        f"FUNCIONES DETECTADAS POR AST PARSER:\n{functions_block}\n\n"
+        f"{instruction_section}"
+        f"CÓDIGO FUENTE A TESTEAR:\n```python\n{source_code}\n```\n\n"
+        "Genera la clase de test pytest completa siguiendo TODAS las reglas del system prompt."
+    )
+
+
 def _build_functions_block(functions: list[dict]) -> str:
     if not functions:
         return "No se detectaron funciones analizables."
@@ -72,14 +96,39 @@ def _build_functions_block(functions: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def _extract_code(raw: str) -> str:
-    if "```python" in raw:
-        raw = raw.split("```python", 1)[1]
-        raw = raw.split("```", 1)[0]
-    elif "```" in raw:
-        raw = raw.split("```", 1)[1]
-        raw = raw.split("```", 1)[0]
-    return raw.strip()
+_CODE_FENCE_RE = re.compile(
+    r"^[ \t]*```[ \t]*(?:python)?[ \t]*\r?\n(.*?)^[ \t]*```[ \t]*\r?$",
+    re.DOTALL | re.MULTILINE,
+)
+_CODE_MARKERS_RE = re.compile(r"\bimport pytest\b|\bdef test_|\bclass Test\w*\(")
+
+
+def _extract_code(raw: str) -> tuple[str, str]:
+    """Separa el bloque de código real del texto conversacional que el modelo
+    a veces agrega (p.ej. "¡Claro! Aquí tienes..."). El patrón exige que la
+    cerca ``` esté sola en su línea — así una mención incidental dentro de la
+    explicación (p.ej. citando la regla "sin ```python") no rompe el pareo de
+    cercas del bloque de código real. Como respaldo, entre los bloques
+    encontrados se prioriza el que contiene marcadores propios de un test
+    pytest. Devuelve (codigo, explicacion)."""
+    matches = list(_CODE_FENCE_RE.finditer(raw))
+
+    code_match = next(
+        (m for m in matches if _CODE_MARKERS_RE.search(m.group(1))),
+        None,
+    )
+    if code_match is None and matches:
+        code_match = max(matches, key=lambda m: len(m.group(1)))
+
+    if code_match is not None:
+        code = code_match.group(1).strip()
+        explanation = (raw[:code_match.start()] + raw[code_match.end():]).strip()
+        return code, explanation
+
+    stripped = raw.strip()
+    if _CODE_MARKERS_RE.search(stripped) or stripped.startswith(("import ", "from ", "class ", "def ", "#")):
+        return stripped, ""
+    return "", stripped
 
 
 def _check_compiles(code: str) -> tuple[bool, str | None]:
@@ -186,13 +235,8 @@ def generate_tests(
     functions_block = _build_functions_block(functions)
     module_pascal   = "".join(w.capitalize() for w in module_name.split("_"))
 
-    user_message = (
-        f"NOMBRE DEL MÓDULO: {module_name} → la clase debe llamarse Test{module_pascal}\n\n"
-        f"CONTEXTO RAG:\n{context_block}\n\n"
-        f"FUNCIONES DETECTADAS POR AST PARSER:\n{functions_block}\n\n"
-        f"INSTRUCCIÓN DEL USUARIO: {prompt}\n\n"
-        f"CÓDIGO FUENTE A TESTEAR:\n```python\n{source_code}\n```\n\n"
-        "Genera la clase de test pytest completa siguiendo TODAS las reglas del system prompt."
+    user_message = _build_user_message(
+        module_name, module_pascal, context_block, functions_block, prompt, source_code
     )
 
     messages = [
@@ -205,7 +249,7 @@ def generate_tests(
     raw_response = chat(model=model, messages=messages)
     print(f"[LLM] Respuesta en {time.time() - t0:.1f}s (~{len(raw_response.split())} tokens)")
 
-    tests_code = _extract_code(raw_response)
+    tests_code, explanation = _extract_code(raw_response)
 
     print(f"[COMPILE] Verificando sintaxis...")
     compiles, compile_error = _check_compiles(tests_code)
@@ -222,7 +266,7 @@ def generate_tests(
         print(f"[PYTEST] Omitido por configuración")
 
     print(f"[QUALITY] Analizando calidad...")
-    quality = analyze_quality(tests_code)
+    quality = analyze_quality(tests_code, functions_found)
     print(f"[QUALITY] Given/When/Then: {quality['has_given_when_then']} | "
           f"smells: {quality['smells_detected']}")
 
@@ -231,6 +275,7 @@ def generate_tests(
 
     return {
         "tests":          tests_code,
+        "explanation":    explanation,
         "context_used":   context_fragments,
         "functions_found": functions_found,
         "compiles":        compiles,

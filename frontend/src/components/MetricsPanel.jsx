@@ -23,7 +23,7 @@ const SMELL_LABELS = {
   generic_name:       'generic_name',
 }
 
-export default function MetricsPanel({ result, onCopy }) {
+export default function MetricsPanel({ result }) {
   const { compiles, compile_error, functions_found = [], metrics, quality } = result
 
   return (
@@ -32,7 +32,6 @@ export default function MetricsPanel({ result, onCopy }) {
       {/* ── Header ── */}
       <div className="metrics-header">
         <span className="metrics-title">EVALUACIÓN DE RESULTADOS</span>
-        <button className="copy-btn" onClick={onCopy}>Copiar código</button>
       </div>
 
       {/* ── Funciones detectadas ── */}
@@ -40,9 +39,19 @@ export default function MetricsPanel({ result, onCopy }) {
         <div className="report-row">
           <span className="report-label">Funciones analizadas</span>
           <div className="chip-list">
-            {functions_found.map(fn => (
-              <span key={fn} className="chip">{fn}</span>
-            ))}
+            {functions_found.map(fn => {
+              const count = quality?.tests_per_function?.[fn]
+              return (
+                <span key={fn} className="chip">
+                  {fn}
+                  {count !== undefined && (
+                    <span className="chip-count">
+                      {count} {count === 1 ? 'test' : 'tests'}
+                    </span>
+                  )}
+                </span>
+              )
+            })}
           </div>
         </div>
       )}

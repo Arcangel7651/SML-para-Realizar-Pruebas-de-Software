@@ -18,7 +18,7 @@ function pickDefaultModel(models) {
 export default function App() {
   const [file, setFile] = useState(null)
   const [fileName, setFileName] = useState('')
-  const [prompt, setPrompt] = useState('Genera tests unitarios completos con pytest para este código.')
+  const [prompt, setPrompt] = useState('')
   const [model, setModel] = useState('')
   const [models, setModels] = useState([])
   const [ollamaStatus, setOllamaStatus] = useState('checking')
@@ -93,9 +93,11 @@ export default function App() {
             } else if (msg.type === 'done') {
               setResult({
                 tests: msg.tests,
+                explanation: msg.explanation,
                 compiles: msg.compiles,
                 compile_error: msg.compile_error,
                 metrics: msg.metrics,
+                quality: msg.quality,
                 functions_found: partialMeta?.functions_found ?? [],
                 context_used: partialMeta?.context_used ?? [],
               })

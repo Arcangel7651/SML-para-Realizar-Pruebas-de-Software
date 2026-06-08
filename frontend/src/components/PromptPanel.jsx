@@ -16,13 +16,15 @@ export default function PromptPanel({ prompt, onChange, onGenerate, disabled, lo
 
   return (
     <div className="prompt-panel">
-      <label className="prompt-label">Instrucciones adicionales</label>
+      <label className="prompt-label">
+        Instrucciones adicionales <span className="prompt-optional">(opcional)</span>
+      </label>
       <textarea
         ref={textareaRef}
         className="prompt-textarea"
         value={prompt}
         onChange={e => onChange(e.target.value)}
-        placeholder="Ej: Genera tests con casos límite y excepciones..."
+        placeholder="Déjalo en blanco para usar la generación estándar, o agrega indicaciones extra, p.ej.: prioriza casos límite y excepciones..."
         rows={5}
       />
       <label className="toggle-label">

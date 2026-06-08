@@ -9,7 +9,16 @@
       "Bash(Write-Output \"done\")",
       "Bash(npm install *)",
       "Bash(npm run *)",
-      "Read(//c/Users/angel/Documents/PRACTICAS/Prototipo/**)"
+      "Read(//c/Users/angel/Documents/PRACTICAS/Prototipo/**)",
+      "Bash(npx --yes eslint src/components/TestOutput.jsx src/components/MetricsPanel.jsx src/App.jsx)",
+      "Bash(node -e \"require\\('@babel/core'\\)\")",
+      "Bash(npx --yes @babel/cli --version)",
+      "Bash(node -e ' *)",
+      "Bash(python -m py_compile services/test_generator.py api/routes.py)",
+      "Bash(python _tmp_test_extract.py)",
+      "Bash(python -m py_compile services/test_generator.py)",
+      "Bash(docker-compose ps *)",
+      "Bash(python _tmp_test_counts.py)"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory"

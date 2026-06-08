@@ -67,8 +67,38 @@ def detect_smells(code: str) -> list[str]:
     return smells
 
 
-def analyze(code: str) -> dict:
+def count_tests_by_function(code: str, functions: list[str]) -> dict[str, int]:
+    """Cuenta cuántos métodos test_<funcion>_<escenario> apuntan a cada función
+    detectada por el AST parser, según la convención de nombres OR-4 del
+    system prompt (test_<function>_<descriptive_scenario>)."""
+    counts = {fn: 0 for fn in functions}
+    if not functions:
+        return counts
+
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return counts
+
+    # Probar primero los nombres más largos para que p.ej. "es_par" no quede
+    # eclipsado por una coincidencia parcial de "es".
+    candidates = sorted(functions, key=len, reverse=True)
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.FunctionDef) or not node.name.startswith("test_"):
+            continue
+        suffix = node.name[len("test_"):]
+        for fn in candidates:
+            if suffix == fn or suffix.startswith(fn + "_"):
+                counts[fn] += 1
+                break
+
+    return counts
+
+
+def analyze(code: str, functions_found: list[str] | None = None) -> dict:
     return {
         "has_given_when_then": has_given_when_then(code),
         "smells_detected": detect_smells(code),
+        "tests_per_function": count_tests_by_function(code, functions_found or []),
     }

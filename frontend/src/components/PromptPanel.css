@@ -12,6 +12,13 @@
   letter-spacing: 0.5px;
 }
 
+.prompt-optional {
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: normal;
+  color: #4d5560;
+}
+
 .prompt-textarea {
   background: #0f1117;
   border: 1px solid #252836;

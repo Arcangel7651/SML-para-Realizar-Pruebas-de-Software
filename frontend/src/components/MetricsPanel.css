@@ -140,12 +140,24 @@
 }
 
 .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: #7c83fd18;
   border: 1px solid #7c83fd44;
   color: #7c83fd;
   padding: 1px 8px;
   border-radius: 20px;
   font-size: 11px;
+  font-family: 'Fira Code', Consolas, monospace;
+}
+
+.chip-count {
+  background: #7c83fd33;
+  color: #c9d1d9;
+  padding: 0 6px;
+  border-radius: 10px;
+  font-size: 10px;
   font-family: 'Fira Code', Consolas, monospace;
 }
 
