@@ -67,7 +67,7 @@ async def get_models():
 @router.post("/generate-tests", response_model=GenerateResponse)
 async def generate_tests_endpoint(
     file: UploadFile = File(...),
-    prompt: str = Form(...),
+    prompt: str = Form(""),
     model: str = Form(...),
     run_pytest: bool = Form(True),
 ):
@@ -80,7 +80,7 @@ async def generate_tests_endpoint(
 @router.post("/generate-tests-stream")
 async def generate_tests_stream_endpoint(
     file: UploadFile = File(...),
-    prompt: str = Form(...),
+    prompt: str = Form(""),
     model: str = Form(...),
     run_pytest: bool = Form(False),
 ):

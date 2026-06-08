@@ -24,7 +24,7 @@ export default function PromptPanel({ prompt, onChange, onGenerate, disabled, lo
         className="prompt-textarea"
         value={prompt}
         onChange={e => onChange(e.target.value)}
-        placeholder="Déjalo en blanco para usar la generación estándar, o agrega indicaciones extra, p.ej.: prioriza casos límite y excepciones..."
+        placeholder="Usa esto si quieres dar alguna instrucción adicional..."
         rows={5}
       />
       <label className="toggle-label">

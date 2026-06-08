@@ -18,7 +18,9 @@
       "Bash(python _tmp_test_extract.py)",
       "Bash(python -m py_compile services/test_generator.py)",
       "Bash(docker-compose ps *)",
-      "Bash(python _tmp_test_counts.py)"
+      "Bash(python _tmp_test_counts.py)",
+      "Bash(python -)",
+      "Bash(python -m py_compile api/routes.py)"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory"

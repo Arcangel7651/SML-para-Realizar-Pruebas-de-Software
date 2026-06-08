@@ -122,7 +122,7 @@ export default function App() {
           <span>⚗</span> SLM Test Generator
         </div>
         <div className="header-subtitle">
-          Basado en SMS sobre SLMs en pruebas de software
+          
         </div>
         <div className="header-right">
           <select
