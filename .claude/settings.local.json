@@ -20,7 +20,10 @@
       "Bash(docker-compose ps *)",
       "Bash(python _tmp_test_counts.py)",
       "Bash(python -)",
-      "Bash(python -m py_compile api/routes.py)"
+      "Bash(python -m py_compile api/routes.py)",
+      "Bash(python _tmp_stem_test.py)",
+      "Bash(python _tmp_stem_test2.py)",
+      "Bash(python -m py_compile services/quality_analyzer.py)"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory"

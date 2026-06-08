@@ -67,10 +67,31 @@ def detect_smells(code: str) -> list[str]:
     return smells
 
 
+def _shares_stem(function_name: str, word: str) -> bool:
+    """Heurística para tolerar variaciones verbo/sustantivo comunes en español
+    entre el nombre de la función (infinitivo, p.ej. "dividir") y la palabra
+    que el modelo usó para nombrar el test (p.ej. "division", "suma")."""
+    a, b = function_name.lower(), word.lower()
+    if a == b or a.startswith(b) or b.startswith(a):
+        return True
+
+    common = 0
+    for ca, cb in zip(a, b):
+        if ca != cb:
+            break
+        common += 1
+
+    threshold = max(3, min(len(a), len(b)) // 2)
+    return common > threshold
+
+
 def count_tests_by_function(code: str, functions: list[str]) -> dict[str, int]:
-    """Cuenta cuántos métodos test_<funcion>_<escenario> apuntan a cada función
-    detectada por el AST parser, según la convención de nombres OR-4 del
-    system prompt (test_<function>_<descriptive_scenario>)."""
+    """Cuenta cuántos métodos test_* corresponden a cada función detectada por
+    el AST parser. Primero intenta la convención de nombres exacta que pide el
+    system prompt (test_<function>_<scenario>, regla OR-4); si el modelo usó
+    una variante (p.ej. "test_division_entre_cero" para la función "dividir",
+    o "test_suma" para "sumar"), recurre a una comparación de raíz tolerante
+    a esas variaciones verbo/sustantivo."""
     counts = {fn: 0 for fn in functions}
     if not functions:
         return counts
@@ -88,10 +109,17 @@ def count_tests_by_function(code: str, functions: list[str]) -> dict[str, int]:
         if not isinstance(node, ast.FunctionDef) or not node.name.startswith("test_"):
             continue
         suffix = node.name[len("test_"):]
-        for fn in candidates:
-            if suffix == fn or suffix.startswith(fn + "_"):
-                counts[fn] += 1
-                break
+        first_word = suffix.split("_", 1)[0]
+
+        match = next(
+            (fn for fn in candidates if suffix == fn or suffix.startswith(fn + "_")),
+            None,
+        )
+        if match is None:
+            match = next((fn for fn in candidates if _shares_stem(fn, first_word)), None)
+
+        if match is not None:
+            counts[match] += 1
 
     return counts
 
