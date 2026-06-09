@@ -1,5 +1,11 @@
 import './MetricsPanel.css'
 
+function formatDuration(seconds) {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
 function rateColor(rate) {
   if (rate >= 80) return 'good'
   if (rate >= 50) return 'warn'
@@ -24,7 +30,7 @@ const SMELL_LABELS = {
 }
 
 export default function MetricsPanel({ result }) {
-  const { compiles, compile_error, functions_found = [], metrics, quality } = result
+  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time } = result
 
   return (
     <div className="metrics-panel">
@@ -32,6 +38,9 @@ export default function MetricsPanel({ result }) {
       {/* ── Header ── */}
       <div className="metrics-header">
         <span className="metrics-title">EVALUACIÓN DE RESULTADOS</span>
+        {generation_time !== undefined && (
+          <span className="generation-time">⏱ {formatDuration(generation_time)}</span>
+        )}
       </div>
 
       {/* ── Funciones detectadas ── */}
@@ -165,7 +174,39 @@ export default function MetricsPanel({ result }) {
           </div>
 
           <div className="report-row indent">
-            <span className="report-label">Given/When/Then</span>
+            <span className="report-label">
+              Solo código ejecutable <span className="rule-tag">OR-1</span>
+            </span>
+            {quality.is_clean_output
+              ? <span className="stat-ok">✓ Sin texto/markdown mezclado</span>
+              : <span className="stat-warn">⚠ Hay restos de markdown o texto</span>
+            }
+          </div>
+
+          <div className="report-row indent">
+            <span className="report-label">
+              Empieza con <code>import pytest</code> <span className="rule-tag">OR-2</span>
+            </span>
+            {quality.starts_with_import_pytest
+              ? <span className="stat-ok">✓ Cumple</span>
+              : <span className="stat-warn">⚠ No cumple</span>
+            }
+          </div>
+
+          <div className="report-row indent">
+            <span className="report-label">
+              Clase {quality.expected_class_name ? <code>{quality.expected_class_name}</code> : 'Test<Módulo>'} única <span className="rule-tag">OR-3</span>
+            </span>
+            {quality.has_expected_test_class
+              ? <span className="stat-ok">✓ Presente</span>
+              : <span className="stat-warn">⚠ Ausente o incorrecta</span>
+            }
+          </div>
+
+          <div className="report-row indent">
+            <span className="report-label">
+              Given/When/Then <span className="rule-tag">OR-5</span>
+            </span>
             {quality.has_given_when_then
               ? <span className="stat-ok">✓ Presente</span>
               : <span className="stat-warn">⚠ Ausente</span>

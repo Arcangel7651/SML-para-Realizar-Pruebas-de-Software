@@ -30,13 +30,18 @@ export default function App() {
 
   const abortControllerRef = useRef(null)
   const timerRef = useRef(null)
+  const startedAtRef = useRef(null)
 
   function startTimer() {
     setElapsed(0)
-    const startedAt = Date.now()
+    startedAtRef.current = Date.now()
     timerRef.current = setInterval(() => {
-      setElapsed(Math.floor((Date.now() - startedAt) / 1000))
+      setElapsed(Math.floor((Date.now() - startedAtRef.current) / 1000))
     }, 1000)
+  }
+
+  function elapsedNow() {
+    return startedAtRef.current ? Math.floor((Date.now() - startedAtRef.current) / 1000) : 0
   }
 
   function stopTimer() {
@@ -123,6 +128,7 @@ export default function App() {
                 quality: msg.quality,
                 functions_found: partialMeta?.functions_found ?? [],
                 context_used: partialMeta?.context_used ?? [],
+                generation_time: elapsedNow(),
               })
               setStreamingCode('')
             }

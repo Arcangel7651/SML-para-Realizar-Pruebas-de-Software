@@ -10,6 +10,37 @@ def has_given_when_then(code: str) -> bool:
     )
 
 
+def is_clean_code_output(code: str) -> bool:
+    """OR-1: la salida debe ser solo código ejecutable, sin cercas de
+    markdown ni texto conversacional mezclado. Si _extract_code dejó algún
+    ``` dentro del bloque de código, la regla no se cumplió."""
+    return bool(code.strip()) and "```" not in code
+
+
+def starts_with_import_pytest(code: str) -> bool:
+    """OR-2: la salida debe comenzar con `import pytest`."""
+    return code.lstrip().startswith("import pytest")
+
+
+def find_test_classes(code: str) -> list[str]:
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return []
+    return [
+        node.name for node in ast.walk(tree)
+        if isinstance(node, ast.ClassDef) and node.name.startswith("Test")
+    ]
+
+
+def has_expected_test_class(code: str, expected_class_name: str | None) -> bool:
+    """OR-3: la salida debe contener exactamente una clase Test<Módulo>(object)."""
+    classes = find_test_classes(code)
+    if len(classes) != 1:
+        return False
+    return expected_class_name is None or classes[0] == expected_class_name
+
+
 def _is_pytest_skip_call(node: ast.stmt) -> bool:
     if not isinstance(node, ast.Expr):
         return False
@@ -124,9 +155,17 @@ def count_tests_by_function(code: str, functions: list[str]) -> dict[str, int]:
     return counts
 
 
-def analyze(code: str, functions_found: list[str] | None = None) -> dict:
+def analyze(
+    code: str,
+    functions_found: list[str] | None = None,
+    expected_class_name: str | None = None,
+) -> dict:
     return {
         "has_given_when_then": has_given_when_then(code),
         "smells_detected": detect_smells(code),
         "tests_per_function": count_tests_by_function(code, functions_found or []),
+        "is_clean_output": is_clean_code_output(code),
+        "starts_with_import_pytest": starts_with_import_pytest(code),
+        "has_expected_test_class": has_expected_test_class(code, expected_class_name),
+        "expected_class_name": expected_class_name,
     }

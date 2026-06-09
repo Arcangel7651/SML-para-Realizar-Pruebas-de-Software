@@ -289,7 +289,7 @@ def generate_tests(
         print(f"[PYTEST] Omitido por configuración")
 
     print(f"[QUALITY] Analizando calidad...")
-    quality = analyze_quality(tests_code, functions_found)
+    quality = analyze_quality(tests_code, functions_found, f"Test{module_pascal}")
     print(f"[QUALITY] Given/When/Then: {quality['has_given_when_then']} | "
           f"smells: {quality['smells_detected']}")
 

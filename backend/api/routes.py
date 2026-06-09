@@ -42,6 +42,10 @@ class Quality(BaseModel):
     has_given_when_then: bool
     smells_detected: list[str]
     tests_per_function: dict[str, int]
+    is_clean_output: bool
+    starts_with_import_pytest: bool
+    has_expected_test_class: bool
+    expected_class_name: str | None
 
 
 class GenerateResponse(BaseModel):
@@ -125,7 +129,7 @@ async def generate_tests_stream_endpoint(
         if compiles and run_pytest:
             metrics = _run_pytest(source_code, tests_code, module_name)
 
-        quality = analyze_quality(tests_code, functions_found)
+        quality = analyze_quality(tests_code, functions_found, f"Test{module_pascal}")
 
         yield json.dumps({
             "type":          "done",
