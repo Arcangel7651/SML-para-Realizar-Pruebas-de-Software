@@ -146,7 +146,9 @@ export default function MetricsPanel({ result }) {
           </div>
 
           <div className="report-row">
-            <span className="report-label">Cobertura de línea</span>
+            <span className="report-label">
+              Cobertura de línea{metrics.branch_coverage !== null && metrics.branch_coverage !== undefined ? ' + rama' : ''}
+            </span>
             <span className={`stat-value stat-${rateColor(metrics.line_coverage)}`}>
               {metrics.line_coverage}%
             </span>
@@ -154,6 +156,20 @@ export default function MetricsPanel({ result }) {
           <div className="report-row progress-row">
             <ProgressBar value={metrics.line_coverage} color={rateColor(metrics.line_coverage)} />
           </div>
+
+          {metrics.branch_coverage !== null && metrics.branch_coverage !== undefined && (
+            <>
+              <div className="report-row">
+                <span className="report-label">Cobertura de ramas</span>
+                <span className={`stat-value stat-${rateColor(metrics.branch_coverage)}`}>
+                  {metrics.branch_coverage}%
+                </span>
+              </div>
+              <div className="report-row progress-row">
+                <ProgressBar value={metrics.branch_coverage} color={rateColor(metrics.branch_coverage)} />
+              </div>
+            </>
+          )}
         </>
       ) : compiles && (
         <>

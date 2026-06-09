@@ -129,6 +129,7 @@
 .tab-toolbar {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
   padding: 8px 16px;
   background: #161922;
   border-bottom: 1px solid #252836;
@@ -143,6 +144,7 @@
   border-radius: 5px;
   font-size: 12px;
   cursor: pointer;
+  text-decoration: none;
   transition: background 0.15s;
 }
 .copy-btn:hover {

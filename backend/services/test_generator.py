@@ -153,6 +153,7 @@ def _parse_pytest_output(stdout: str) -> dict:
         "tests_skipped": 0,
         "tests_errors": 0,
         "line_coverage": 0.0,
+        "branch_coverage": None,
         "pass_rate": 0.0,
         "run_summary": None,
     }
@@ -161,7 +162,10 @@ def _parse_pytest_output(stdout: str) -> dict:
     failed  = re.search(r"(\d+) failed",  stdout)
     skipped = re.search(r"(\d+) skipped", stdout)
     errors  = re.search(r"(\d+) error",   stdout)
-    cov     = re.search(r"TOTAL\s+\d+\s+\d+\s+(\d+)%", stdout)
+    # Con --cov-branch: TOTAL  stmts  miss  branch  brpart  cover%
+    cov_branch = re.search(r"TOTAL\s+\d+\s+\d+\s+(\d+)\s+(\d+)\s+(\d+)%", stdout)
+    # Sin branch:       TOTAL  stmts  miss  cover%
+    cov = re.search(r"TOTAL\s+\d+\s+\d+\s+(\d+)%", stdout) if not cov_branch else None
 
     metrics["tests_passed"]  = int(passed.group(1))  if passed  else 0
     metrics["tests_failed"]  = int(failed.group(1))  if failed  else 0
@@ -170,7 +174,16 @@ def _parse_pytest_output(stdout: str) -> dict:
     metrics["tests_total"]   = (
         metrics["tests_passed"] + metrics["tests_failed"] + metrics["tests_skipped"]
     )
-    metrics["line_coverage"] = float(cov.group(1)) if cov else 0.0
+    if cov_branch:
+        total_br   = int(cov_branch.group(1))
+        partial_br = int(cov_branch.group(2))
+        metrics["line_coverage"]   = float(cov_branch.group(3))
+        metrics["branch_coverage"] = (
+            round((total_br - partial_br) / total_br * 100, 1)
+            if total_br > 0 else 100.0
+        )
+    elif cov:
+        metrics["line_coverage"] = float(cov.group(1))
 
     if metrics["tests_total"] > 0:
         metrics["pass_rate"] = round(
@@ -212,6 +225,7 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> dict | N
             f"test_{module_name}.py",
             f"--cov={module_name}",
             "--cov-report=term-missing",
+            "--cov-branch",
             "--tb=short",
             "-q",
         ]
@@ -277,6 +291,30 @@ def generate_tests(
     print(f"[COMPILE] Verificando sintaxis...")
     compiles, compile_error = _check_compiles(tests_code)
     print(f"[COMPILE] {'OK' if compiles else 'ERROR — ' + str(compile_error)}")
+
+    if not compiles:
+        print(f"[RETRY] Compilación fallida, reintentando con error en contexto...")
+        retry_messages = messages + [
+            {"role": "assistant", "content": raw_response},
+            {"role": "user", "content": (
+                f"El código generado tiene un error de sintaxis Python:\n{compile_error}\n\n"
+                f"Corrige únicamente ese error y devuelve el código completo corregido. "
+                f"Solo código Python válido, sin explicaciones ni markdown."
+            )},
+        ]
+        t0 = time.time()
+        raw_retry = chat(model=model, messages=retry_messages)
+        print(f"[RETRY] Respuesta en {time.time() - t0:.1f}s")
+        tests_retry, explanation_retry = _extract_code(raw_retry)
+        compiles_retry, compile_error_retry = _check_compiles(tests_retry)
+        if compiles_retry:
+            print(f"[RETRY] Éxito — código corregido compila")
+            tests_code    = tests_retry
+            explanation   = explanation_retry or explanation
+            compiles      = True
+            compile_error = None
+        else:
+            print(f"[RETRY] Fallido de nuevo — manteniendo resultado inicial")
 
     metrics = None
     if compiles and run_pytest:

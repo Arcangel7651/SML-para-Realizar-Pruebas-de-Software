@@ -25,6 +25,7 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [streamingCode, setStreamingCode] = useState('')
+  const [retrying, setRetrying] = useState(false)
   const [error, setError] = useState('')
   const [elapsed, setElapsed] = useState(0)
 
@@ -76,6 +77,7 @@ export default function App() {
     setError('')
     setResult(null)
     setStreamingCode('')
+    setRetrying(false)
     startTimer()
 
     const controller = new AbortController()
@@ -118,7 +120,11 @@ export default function App() {
             } else if (msg.type === 'token') {
               accumulated += msg.content
               setStreamingCode(accumulated)
+            } else if (msg.type === 'retrying') {
+              setStreamingCode('')
+              setRetrying(true)
             } else if (msg.type === 'done') {
+              setRetrying(false)
               setResult({
                 tests: msg.tests,
                 explanation: msg.explanation,
@@ -145,6 +151,7 @@ export default function App() {
       }
     } finally {
       setLoading(false)
+      setRetrying(false)
       stopTimer()
       abortControllerRef.current = null
     }
@@ -201,7 +208,7 @@ export default function App() {
         </div>
 
         <div className="panel-right">
-          <TestOutput result={result} loading={loading} streamingCode={streamingCode} />
+          <TestOutput result={result} loading={loading} streamingCode={streamingCode} fileName={fileName} retrying={retrying} />
         </div>
       </main>
     </div>

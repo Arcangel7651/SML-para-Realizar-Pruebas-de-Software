@@ -4,7 +4,7 @@ from fastapi import APIRouter, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from infrastructure.ollama_client import list_models, chat_stream
+from infrastructure.ollama_client import list_models, chat, chat_stream
 from infrastructure.file_reader import read_python_file
 from services.rag_service import rag_service
 from services.test_generator import (
@@ -34,6 +34,7 @@ class Metrics(BaseModel):
     tests_skipped: int
     tests_errors: int
     line_coverage: float
+    branch_coverage: float | None
     pass_rate: float
     run_summary: str | None
 
@@ -124,6 +125,25 @@ async def generate_tests_stream_endpoint(
         raw_response = "".join(raw_chunks)
         tests_code, explanation = _extract_code(raw_response)
         compiles, compile_error = _check_compiles(tests_code)
+
+        if not compiles:
+            yield json.dumps({"type": "retrying", "reason": compile_error}) + "\n"
+            retry_messages = messages + [
+                {"role": "assistant", "content": raw_response},
+                {"role": "user", "content": (
+                    f"El código generado tiene un error de sintaxis Python:\n{compile_error}\n\n"
+                    f"Corrige únicamente ese error y devuelve el código completo corregido. "
+                    f"Solo código Python válido, sin explicaciones ni markdown."
+                )},
+            ]
+            raw_retry = chat(model=model, messages=retry_messages)
+            tests_retry, explanation_retry = _extract_code(raw_retry)
+            compiles_retry, compile_error_retry = _check_compiles(tests_retry)
+            if compiles_retry:
+                tests_code    = tests_retry
+                explanation   = explanation_retry or explanation
+                compiles      = True
+                compile_error = None
 
         metrics = None
         if compiles and run_pytest:

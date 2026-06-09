@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import MetricsPanel from './MetricsPanel'
 import './TestOutput.css'
@@ -10,13 +10,24 @@ const TABS = [
   { id: 'explanation', label: 'Explicación del modelo' },
 ]
 
-export default function TestOutput({ result, loading, streamingCode }) {
+export default function TestOutput({ result, loading, streamingCode, fileName, retrying }) {
   const [activeTab, setActiveTab] = useState('code')
 
-  // Al llegar un resultado nuevo, siempre arrancar en la pestaña de código
   useEffect(() => {
     if (result) setActiveTab('code')
   }, [result])
+
+  const moduleName = fileName ? fileName.replace(/\.py$/, '') : 'modulo'
+
+  const downloadUrl = useMemo(() => {
+    if (!result?.tests) return ''
+    const blob = new Blob([result.tests], { type: 'text/plain' })
+    return URL.createObjectURL(blob)
+  }, [result?.tests])
+
+  useEffect(() => {
+    return () => { if (downloadUrl) URL.revokeObjectURL(downloadUrl) }
+  }, [downloadUrl])
 
   function handleCopy() {
     if (result?.tests) {
@@ -24,26 +35,30 @@ export default function TestOutput({ result, loading, streamingCode }) {
     }
   }
 
-  // Streaming: el modelo está generando — mostramos progreso, no el texto
-  // crudo (puede contener explicaciones y marcadores ```python mezclados).
-  if (loading && streamingCode) {
-    return (
-      <div className="output-center">
-        <div className="streaming-pulse">
-          <span className="streaming-dot" />
-          <span className="streaming-dot" />
-          <span className="streaming-dot" />
-        </div>
-        <div className="output-loading-text">Generando código de prueba...</div>
-        <div className="output-loading-hint">
-          {streamingCode.length.toLocaleString()} caracteres recibidos hasta ahora
-        </div>
-      </div>
-    )
-  }
-
-  // Cargando pero aún sin tokens (preparando RAG, AST, etc.)
   if (loading) {
+    if (retrying) {
+      return (
+        <div className="output-center">
+          <div className="output-spinner" />
+          <div className="output-loading-text">Compilación fallida — reintentando...</div>
+        </div>
+      )
+    }
+    if (streamingCode) {
+      return (
+        <div className="output-center">
+          <div className="streaming-pulse">
+            <span className="streaming-dot" />
+            <span className="streaming-dot" />
+            <span className="streaming-dot" />
+          </div>
+          <div className="output-loading-text">Generando código de prueba...</div>
+          <div className="output-loading-hint">
+            {streamingCode.length.toLocaleString()} caracteres recibidos hasta ahora
+          </div>
+        </div>
+      )
+    }
     return (
       <div className="output-center">
         <div className="output-spinner" />
@@ -87,6 +102,11 @@ export default function TestOutput({ result, loading, streamingCode }) {
           <div className="editor-wrapper">
             <div className="tab-toolbar">
               <button className="copy-btn" onClick={handleCopy}>Copiar código</button>
+              {downloadUrl && (
+                <a className="copy-btn" href={downloadUrl} download={`test_${moduleName}.py`}>
+                  Descargar .py
+                </a>
+              )}
             </div>
             <Editor
               height="calc(100vh - 200px)"
