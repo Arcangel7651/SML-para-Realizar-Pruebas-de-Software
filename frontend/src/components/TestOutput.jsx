@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import MetricsPanel from './MetricsPanel'
+import Icon from './Icon'
 import './TestOutput.css'
 
 const TABS = [
-  { id: 'code',        label: 'Código generado' },
-  { id: 'metrics',     label: 'Métricas y calidad' },
-  { id: 'rag',         label: 'Contexto RAG' },
-  { id: 'explanation', label: 'Explicación del modelo' },
+  { id: 'code',        label: 'Código generado',     icon: 'code' },
+  { id: 'metrics',     label: 'Métricas y calidad',   icon: 'gauge' },
+  { id: 'rag',         label: 'Contexto RAG',         icon: 'database' },
+  { id: 'explanation', label: 'Explicación del modelo', icon: 'message' },
 ]
 
 export default function TestOutput({ result, loading, streamingCode, fileName, retrying }) {
@@ -38,31 +39,29 @@ export default function TestOutput({ result, loading, streamingCode, fileName, r
   if (loading) {
     if (retrying) {
       return (
-        <div className="output-center">
-          <div className="output-spinner" />
-          <div className="output-loading-text">Compilación fallida — reintentando...</div>
+        <div className="gen-center">
+          <div className="gen-pulse"><i></i><i></i><i></i></div>
+          <div className="gen-load-title">Generando código de prueba...</div>
+          <div className="gen-retry-chip"><Icon name="refresh" size={13} /> Compilación fallida — reintentando...</div>
         </div>
       )
     }
     if (streamingCode) {
       return (
-        <div className="output-center">
-          <div className="streaming-pulse">
-            <span className="streaming-dot" />
-            <span className="streaming-dot" />
-            <span className="streaming-dot" />
-          </div>
-          <div className="output-loading-text">Generando código de prueba...</div>
-          <div className="output-loading-hint">
-            {streamingCode.length.toLocaleString()} caracteres recibidos hasta ahora
+        <div className="gen-center">
+          <div className="gen-pulse"><i></i><i></i><i></i></div>
+          <div className="gen-load-title">Generando código de prueba...</div>
+          <div className="gen-load-bar"></div>
+          <div className="gen-load-sub">
+            <span className="mono">{streamingCode.length.toLocaleString()}</span> caracteres recibidos hasta ahora
           </div>
         </div>
       )
     }
     return (
-      <div className="output-center">
-        <div className="output-spinner" />
-        <div className="output-loading-text">Preparando contexto...</div>
+      <div className="gen-center">
+        <div className="gen-pulse"><i></i><i></i><i></i></div>
+        <div className="gen-load-title">Preparando contexto...</div>
       </div>
     )
   }
@@ -70,92 +69,122 @@ export default function TestOutput({ result, loading, streamingCode, fileName, r
   // Sin resultado aún
   if (!result) {
     return (
-      <div className="output-center output-empty">
-        <div className="output-empty-icon">🧪</div>
-        <div className="output-empty-title">Sin resultados aún</div>
-        <div className="output-empty-hint">
-          Sube un archivo <code>.py</code> y presiona <strong>Generar tests</strong>
+      <div className="gen-center">
+        <div className="gen-empty-icon"><Icon name="flask" size={38} /></div>
+        <div className="gen-empty-title">Sin resultados aún</div>
+        <div className="gen-empty-hint">
+          Sube un archivo <code>.py</code> y presiona <b>Generar tests</b>
         </div>
       </div>
     )
   }
 
   const hasExplanation = !!result.explanation?.trim()
+  const ragCount = result.context_used?.length ?? 0
   const visibleTabs = TABS.filter(t => t.id !== 'explanation' || hasExplanation)
 
   return (
-    <div className="output-wrapper">
-      <div className="output-tabs">
+    <div className="gen-result">
+      <div className="gen-tabs">
         {visibleTabs.map(tab => (
           <button
             key={tab.id}
-            className={`output-tab${activeTab === tab.id ? ' active' : ''}`}
+            className={`gen-tab${activeTab === tab.id ? ' active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
           >
+            <Icon name={tab.icon} size={15} />
             {tab.label}
+            {tab.id === 'rag' && ragCount > 0 && <span className="badge">{ragCount}</span>}
           </button>
         ))}
       </div>
 
-      <div className="output-tab-content">
+      <div className="gen-tab-content">
         {activeTab === 'code' && (
-          <div className="editor-wrapper">
-            <div className="tab-toolbar">
-              <button className="copy-btn" onClick={handleCopy}>Copiar código</button>
+          <div className="gen-code-tab">
+            <div className="gen-toolbar">
+              <span className="file-pill"><Icon name="filecode" size={14} /> test_{moduleName}.py</span>
+              <span className="spacer"></span>
+              <button className="gen-tbtn" onClick={handleCopy}><Icon name="copy" size={14} /> Copiar código</button>
               {downloadUrl && (
-                <a className="copy-btn" href={downloadUrl} download={`test_${moduleName}.py`}>
-                  Descargar .py
+                <a className="gen-tbtn primary" href={downloadUrl} download={`test_${moduleName}.py`}>
+                  <Icon name="download" size={14} /> Descargar .py
                 </a>
               )}
             </div>
-            <Editor
-              height="calc(100vh - 200px)"
-              language="python"
-              value={result.tests}
-              theme="vs-dark"
-              options={{
-                readOnly: true,
-                fontSize: 13,
-                fontFamily: "'Fira Code', Consolas, monospace",
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                wordWrap: 'on',
-                lineNumbers: 'on',
-                renderLineHighlight: 'line',
-                padding: { top: 12, bottom: 12 },
-              }}
-            />
+            <div className="gen-editor">
+              <Editor
+                height="100%"
+                language="python"
+                value={result.tests}
+                theme="vs-dark"
+                options={{
+                  readOnly: true,
+                  fontSize: 13,
+                  fontFamily: "'Geist Mono', 'Fira Code', Consolas, monospace",
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  wordWrap: 'on',
+                  lineNumbers: 'on',
+                  renderLineHighlight: 'line',
+                  padding: { top: 12, bottom: 12 },
+                }}
+              />
+            </div>
           </div>
         )}
 
         {activeTab === 'metrics' && (
-          <div className="metrics-tab">
+          <div className="gen-metrics">
             <MetricsPanel result={result} />
           </div>
         )}
 
         {activeTab === 'rag' && (
-          <div className="rag-panel">
+          <div className="gen-rag">
             {result.context_used?.length > 0 ? (
-              <div className="rag-list">
-                {result.context_used.map((fragment, i) => (
-                  <div key={i} className="rag-fragment">
-                    <span className="rag-index">#{i + 1}</span>
-                    {fragment}
+              <>
+                <div className="gen-rag-head">
+                  <span className="gen-rag-head-ic"><Icon name="database" size={18} /></span>
+                  <div className="gen-rag-head-txt">
+                    <b>Contexto recuperado del índice vectorial</b>
+                    <span>Fragmentos inyectados al prompt</span>
                   </div>
-                ))}
-              </div>
+                  <span className="pill">{ragCount} fragmento{ragCount === 1 ? '' : 's'}</span>
+                </div>
+                <div className="gen-rag-list">
+                  {result.context_used.map((fragment, i) => (
+                    <div key={i} className="gen-rag-frag">
+                      <div className="gen-rag-frag-top">
+                        <span className="gen-rag-index">{i + 1}</span>
+                      </div>
+                      <div className="gen-rag-code">{fragment}</div>
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : (
-              <div className="output-center">
-                <div className="output-empty-hint">No se utilizó contexto RAG para esta generación.</div>
+              <div className="gen-center">
+                <div className="gen-empty-hint">No se utilizó contexto RAG para esta generación.</div>
               </div>
             )}
           </div>
         )}
 
         {activeTab === 'explanation' && (
-          <div className="explanation-panel">
-            <p className="explanation-text">{result.explanation}</p>
+          <div className="gen-expl">
+            <div className="gen-expl-card">
+              <div className="gen-expl-head">
+                <span className="gen-expl-avatar"><Icon name="sparkles" size={19} /></span>
+                <div className="gen-expl-head-txt">
+                  <b>Cómo razonó el modelo</b>
+                  <span>Resumen generado junto con la suite de pruebas</span>
+                </div>
+              </div>
+              <div className="gen-expl-text">
+                <p>{result.explanation}</p>
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -4,6 +4,7 @@ import './App.css'
 import FileUpload from './components/FileUpload'
 import PromptPanel from './components/PromptPanel'
 import TestOutput from './components/TestOutput'
+import Icon from './components/Icon'
 
 const PREFERRED = ['codellama', 'qwen', 'llama']
 
@@ -165,10 +166,11 @@ export default function App() {
     <div className="app">
       <header className="header">
         <div className="header-logo">
-          <span>⚗</span> SLM Test Generator
+          <span className="logo-mark"><Icon name="flask" size={17} /></span>
+          <span><b>SLM</b> <span className="dim">Test Generator</span></span>
         </div>
         <div className="header-subtitle">
-          
+          RAG · pytest
         </div>
         <div className="header-right">
           <select
@@ -194,7 +196,7 @@ export default function App() {
 
       <main className="main">
         <div className="panel-left">
-          <FileUpload onFileSelect={handleFileSelect} fileName={fileName} />
+          <FileUpload onFileSelect={handleFileSelect} fileName={fileName} file={file} />
           <PromptPanel
             prompt={prompt}
             onChange={setPrompt}
@@ -204,7 +206,12 @@ export default function App() {
             loading={loading}
             elapsed={elapsed}
           />
-          {error && <div className="error-banner">{error}</div>}
+          {error && (
+            <div className="error-banner">
+              <Icon name="alert" size={15} />
+              <span>{error}</span>
+            </div>
+          )}
         </div>
 
         <div className="panel-right">

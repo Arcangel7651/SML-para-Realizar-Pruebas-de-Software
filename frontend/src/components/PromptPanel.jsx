@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import Icon from './Icon'
 import './PromptPanel.css'
 
 function formatElapsed(seconds) {
@@ -21,35 +22,38 @@ export default function PromptPanel({ prompt, onChange, onGenerate, onStop, disa
   }, [disabled, onGenerate])
 
   return (
-    <div className="prompt-panel">
-      <label className="prompt-label">
-        Instrucciones adicionales <span className="prompt-optional">(opcional)</span>
+    <div className="gen-prompt">
+      <label className="gen-label">
+        Instrucciones <span className="opt">(opcional)</span>
       </label>
       <textarea
         ref={textareaRef}
-        className="prompt-textarea"
+        className="gen-textarea"
         value={prompt}
         onChange={e => onChange(e.target.value)}
         placeholder="Usa esto si quieres dar alguna instrucción adicional..."
         rows={5}
       />
       {loading ? (
-        <div className="generating-controls">
-          <div className="elapsed-timer">
-            <span className="timer-dot" />
+        <div className="gen-running">
+          <div className="gen-timer">
+            <span className="live" />
+            <Icon name="timer" size={15} />
             {formatElapsed(elapsed)}
           </div>
-          <button className="stop-btn" onClick={onStop}>
-            Detener
+          <button className="gen-stop" onClick={onStop}>
+            <Icon name="stop" size={13} /> Detener
           </button>
         </div>
       ) : (
         <button
-          className="generate-btn"
+          className="gen-btn"
           onClick={onGenerate}
           disabled={disabled}
         >
-          Generar tests <kbd>Ctrl+↵</kbd>
+          <Icon name="sparkles" size={16} />
+          <span>Generar tests</span>
+          <kbd>Ctrl ↵</kbd>
         </button>
       )}
     </div>

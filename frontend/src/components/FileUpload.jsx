@@ -1,7 +1,14 @@
 import { useRef, useState } from 'react'
+import Icon from './Icon'
 import './FileUpload.css'
 
-export default function FileUpload({ onFileSelect, fileName }) {
+function formatSize(bytes) {
+  if (!bytes && bytes !== 0) return ''
+  if (bytes < 1024) return `${bytes} B`
+  return `${(bytes / 1024).toFixed(1)} KB`
+}
+
+export default function FileUpload({ onFileSelect, fileName, file }) {
   const inputRef = useRef(null)
   const [dragging, setDragging] = useState(false)
 
@@ -21,9 +28,10 @@ export default function FileUpload({ onFileSelect, fileName }) {
   }
 
   return (
-    <div className="file-upload">
+    <div className="gen-upload">
+      <div className="gen-eyebrow"><Icon name="filecode" size={13} /> Archivo fuente</div>
       <div
-        className={`drop-zone ${dragging ? 'dragging' : ''} ${fileName ? 'has-file' : ''}`}
+        className={`gen-drop ${dragging ? 'dragging' : ''} ${fileName ? 'loaded' : ''}`}
         onClick={() => inputRef.current.click()}
         onDragOver={e => { e.preventDefault(); setDragging(true) }}
         onDragLeave={() => setDragging(false)}
@@ -37,16 +45,21 @@ export default function FileUpload({ onFileSelect, fileName }) {
           onChange={e => handleFile(e.target.files[0])}
         />
         {fileName ? (
-          <>
-            <div className="file-icon">🐍</div>
-            <div className="file-name">{fileName}</div>
-            <div className="file-hint">Clic para cambiar archivo</div>
-          </>
+          <div className="gen-file">
+            <div className="gen-file-ic"><Icon name="filecode" size={20} /></div>
+            <div className="gen-file-meta">
+              <div className="gen-file-name">{fileName}</div>
+              <div className="gen-file-sub">
+                <span className="dot dot-good" /> {formatSize(file?.size)} · Python
+              </div>
+            </div>
+            <span className="gen-file-change"><Icon name="swap" size={12} /> Cambiar</span>
+          </div>
         ) : (
           <>
-            <div className="upload-icon">📂</div>
-            <div className="upload-label">Arrastra tu archivo <strong>.py</strong> aquí</div>
-            <div className="upload-hint">o haz clic para seleccionar</div>
+            <div className="gen-drop-icon"><Icon name="cloudup" size={24} /></div>
+            <div className="gen-drop-title">Arrastra tu archivo <b>.py</b> aquí</div>
+            <div className="gen-drop-hint">o haz clic para seleccionar</div>
           </>
         )}
       </div>
