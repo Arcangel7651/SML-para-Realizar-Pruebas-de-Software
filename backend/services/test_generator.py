@@ -244,6 +244,50 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> dict | N
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
+def _should_learn(compiles: bool, metrics: dict | None, quality: dict) -> bool:
+    """Solo se aprende de resultados que compilan, pasan pytest sin fallos
+    ni errores, y cumplen todas las reglas OR del prompt (sin test smells).
+    Esto evita contaminar el índice RAG con ejemplos defectuosos."""
+    if not compiles or metrics is None:
+        return False
+    if metrics["tests_total"] == 0 or metrics["tests_failed"] > 0 or metrics["tests_errors"] > 0:
+        return False
+    return (
+        quality["is_clean_output"]
+        and quality["starts_with_import_pytest"]
+        and quality["has_expected_test_class"]
+        and quality["has_given_when_then"]
+        and not quality["smells_detected"]
+    )
+
+
+def _learn_from_result(
+    rag: RAGService,
+    module_name: str,
+    functions_found: list[str],
+    tests_code: str,
+    compiles: bool,
+    metrics: dict | None,
+    quality: dict,
+) -> bool:
+    """Si el resultado es de alta calidad, se guarda como documento RAG
+    propio del usuario (id 'learned_<modulo>'), para que futuras
+    generaciones reciban como contexto ejemplos reales ya verificados."""
+    if not _should_learn(compiles, metrics, quality):
+        return False
+
+    doc_id = f"learned_{module_name}"
+    text = (
+        f"Ejemplo verificado de tests pytest para el módulo '{module_name}' "
+        f"(funciones: {', '.join(functions_found) or 'sin funciones detectadas'}). "
+        f"{metrics['tests_passed']}/{metrics['tests_total']} tests pasaron, "
+        f"{metrics['line_coverage']}% de cobertura de línea. "
+        f"Código de prueba:\n{tests_code}"
+    )
+    rag.add_learned_document(doc_id, text)
+    return True
+
+
 def generate_tests(
     source_code: str,
     prompt: str,
@@ -331,6 +375,10 @@ def generate_tests(
     print(f"[QUALITY] Given/When/Then: {quality['has_given_when_then']} | "
           f"smells: {quality['smells_detected']}")
 
+    learned = _learn_from_result(rag, module_name, functions_found, tests_code, compiles, metrics, quality)
+    if learned:
+        print(f"[RAG] Resultado de alta calidad — agregado al índice como 'learned_{module_name}'")
+
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")
 
@@ -343,4 +391,5 @@ def generate_tests(
         "compile_error":   compile_error,
         "metrics":         metrics,
         "quality":         quality,
+        "learned":         learned,
     }

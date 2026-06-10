@@ -13,6 +13,7 @@ from services.test_generator import (
     _extract_code,
     _check_compiles,
     _run_pytest,
+    _learn_from_result,
     _build_functions_block,
     _build_user_message,
 )
@@ -58,6 +59,7 @@ class GenerateResponse(BaseModel):
     compile_error: str | None
     metrics: Metrics | None
     quality: Quality
+    learned: bool
 
 
 @router.get("/health")
@@ -151,6 +153,10 @@ async def generate_tests_stream_endpoint(
 
         quality = analyze_quality(tests_code, functions_found, f"Test{module_pascal}")
 
+        learned = _learn_from_result(
+            rag_service, module_name, functions_found, tests_code, compiles, metrics, quality
+        )
+
         yield json.dumps({
             "type":          "done",
             "tests":         tests_code,
@@ -159,6 +165,7 @@ async def generate_tests_stream_endpoint(
             "compile_error": compile_error,
             "metrics":       metrics,
             "quality":       quality,
+            "learned":       learned,
         }) + "\n"
 
     return StreamingResponse(event_stream(), media_type="application/x-ndjson")

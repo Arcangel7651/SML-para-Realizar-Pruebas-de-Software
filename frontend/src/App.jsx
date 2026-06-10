@@ -133,6 +133,7 @@ export default function App() {
                 compile_error: msg.compile_error,
                 metrics: msg.metrics,
                 quality: msg.quality,
+                learned: msg.learned,
                 functions_found: partialMeta?.functions_found ?? [],
                 context_used: partialMeta?.context_used ?? [],
                 generation_time: elapsedNow(),

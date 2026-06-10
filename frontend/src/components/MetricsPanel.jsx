@@ -35,7 +35,7 @@ const SMELL_LABELS = {
 }
 
 export default function MetricsPanel({ result }) {
-  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time } = result
+  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time, learned } = result
 
   const stats = []
   if (metrics) {
@@ -50,9 +50,16 @@ export default function MetricsPanel({ result }) {
     <>
       <div className="gen-mhead">
         <span className="gen-mtitle">Evaluación de resultados</span>
-        {generation_time !== undefined && (
-          <span className="gen-mtime"><Icon name="timer" size={13} /> {formatDuration(generation_time)}</span>
-        )}
+        <div className="gen-mhead-right">
+          {learned && (
+            <span className="gen-learned-pill" title="Este resultado se guardó como nuevo ejemplo en el contexto RAG">
+              <Icon name="database" size={13} /> Aprendido y guardado en RAG
+            </span>
+          )}
+          {generation_time !== undefined && (
+            <span className="gen-mtime"><Icon name="timer" size={13} /> {formatDuration(generation_time)}</span>
+          )}
+        </div>
       </div>
 
       <div className="gen-mgrid">
