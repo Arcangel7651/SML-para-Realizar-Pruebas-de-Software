@@ -27,6 +27,7 @@ export default function App() {
   const [result, setResult] = useState(null)
   const [streamingCode, setStreamingCode] = useState('')
   const [retrying, setRetrying] = useState(false)
+  const [retryReason, setRetryReason] = useState('')
   const [error, setError] = useState('')
   const [elapsed, setElapsed] = useState(0)
 
@@ -79,6 +80,7 @@ export default function App() {
     setResult(null)
     setStreamingCode('')
     setRetrying(false)
+    setRetryReason('')
     startTimer()
 
     const controller = new AbortController()
@@ -106,46 +108,67 @@ export default function App() {
       const decoder = new TextDecoder()
       let partialMeta = null
       let accumulated = ''
+      let buffer = ''
+
+      function handleLine(line) {
+        const msg = JSON.parse(line)
+        if (msg.type === 'meta') {
+          partialMeta = msg
+        } else if (msg.type === 'token') {
+          accumulated += msg.content
+          setStreamingCode(accumulated)
+        } else if (msg.type === 'retrying') {
+          setStreamingCode('')
+          setRetrying(true)
+          setRetryReason(msg.reason || '')
+        } else if (msg.type === 'error') {
+          setError(msg.message)
+          setStreamingCode('')
+        } else if (msg.type === 'done') {
+          setRetrying(false)
+          setResult({
+            tests: msg.tests,
+            explanation: msg.explanation,
+            compiles: msg.compiles,
+            compile_error: msg.compile_error,
+            metrics: msg.metrics,
+            quality: msg.quality,
+            learned: msg.learned,
+            degraded: msg.degraded,
+            functions_found: partialMeta?.functions_found ?? [],
+            context_used: partialMeta?.context_used ?? [],
+            generation_time: elapsedNow(),
+          })
+          setStreamingCode('')
+        }
+      }
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
-        const lines = decoder.decode(value, { stream: true }).split('\n')
+        // Las líneas NDJSON pueden quedar partidas entre dos chunks del
+        // stream: se acumula en `buffer` y solo se procesan las líneas
+        // completas, dejando el resto pendiente para la próxima lectura.
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() ?? ''
+
         for (const line of lines) {
           if (!line.trim()) continue
           try {
-            const msg = JSON.parse(line)
-            if (msg.type === 'meta') {
-              partialMeta = msg
-            } else if (msg.type === 'token') {
-              accumulated += msg.content
-              setStreamingCode(accumulated)
-            } else if (msg.type === 'retrying') {
-              setStreamingCode('')
-              setRetrying(true)
-            } else if (msg.type === 'error') {
-              setError(msg.message)
-              setStreamingCode('')
-            } else if (msg.type === 'done') {
-              setRetrying(false)
-              setResult({
-                tests: msg.tests,
-                explanation: msg.explanation,
-                compiles: msg.compiles,
-                compile_error: msg.compile_error,
-                metrics: msg.metrics,
-                quality: msg.quality,
-                learned: msg.learned,
-                functions_found: partialMeta?.functions_found ?? [],
-                context_used: partialMeta?.context_used ?? [],
-                generation_time: elapsedNow(),
-              })
-              setStreamingCode('')
-            }
+            handleLine(line)
           } catch {
-            // línea parcial, ignorar
+            // línea malformada, ignorar
           }
+        }
+      }
+
+      if (buffer.trim()) {
+        try {
+          handleLine(buffer)
+        } catch {
+          // línea malformada al final del stream, ignorar
         }
       }
     } catch (err) {
@@ -157,6 +180,7 @@ export default function App() {
     } finally {
       setLoading(false)
       setRetrying(false)
+      setRetryReason('')
       stopTimer()
       abortControllerRef.current = null
     }
@@ -219,7 +243,7 @@ export default function App() {
         </div>
 
         <div className="panel-right">
-          <TestOutput result={result} loading={loading} streamingCode={streamingCode} fileName={fileName} retrying={retrying} />
+          <TestOutput result={result} loading={loading} streamingCode={streamingCode} fileName={fileName} retrying={retrying} retryReason={retryReason} />
         </div>
       </main>
     </div>

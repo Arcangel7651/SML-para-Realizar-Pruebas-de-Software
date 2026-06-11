@@ -35,7 +35,7 @@ const SMELL_LABELS = {
 }
 
 export default function MetricsPanel({ result }) {
-  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time, learned } = result
+  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time, learned, degraded } = result
 
   const stats = []
   if (metrics) {
@@ -51,6 +51,11 @@ export default function MetricsPanel({ result }) {
       <div className="gen-mhead">
         <span className="gen-mtitle">Evaluación de resultados</span>
         <div className="gen-mhead-right">
+          {degraded && (
+            <span className="gen-degraded-pill" title="El código generado no compiló: se rescataron los tests válidos y se completó con pytest.skip() para las funciones sin test">
+              <Icon name="alert" size={13} /> Suite de respaldo (rescate parcial)
+            </span>
+          )}
           {learned && (
             <span className="gen-learned-pill" title="Este resultado se guardó como nuevo ejemplo en el contexto RAG">
               <Icon name="database" size={13} /> Aprendido y guardado en RAG

@@ -1,6 +1,7 @@
 import ast
 import py_compile
 import tempfile
+import textwrap
 import shutil
 import os
 import re
@@ -11,7 +12,7 @@ import time
 from infrastructure.ollama_client import chat
 from services.rag_service import RAGService
 from services.ast_parser import extract_functions, extract_classes
-from services.quality_analyzer import analyze as analyze_quality
+from services.quality_analyzer import analyze as analyze_quality, count_tests_by_function
 
 
 SYSTEM_PROMPT = SYSTEM_PROMPT = """You are an automated unit test generator for Python modules using pytest.
@@ -34,6 +35,9 @@ OR-4  Every test method name follows: test_<function>_<descriptive_scenario>
 OR-5  Every test method body contains the comments # Given, # When and # Then in that order.
 OR-6  If a test method contains more than one assert, every assert includes a string message.
 OR-7  The output contains no test method whose body is only `pass` or `pytest.skip()`.
+OR-8  Every function/method listed in "FUNCIONES DETECTADAS POR AST PARSER" has at least
+      one corresponding test method (test_<function>_<scenario>). No function from that
+      list is left without a test.
 
 ## Constraints
 - The class name must use the module name provided in PascalCase. No other class name is valid.
@@ -180,6 +184,121 @@ def _check_compiles(code: str) -> tuple[bool, str | None]:
             os.unlink(tmp_path)
 
 
+_TEST_METHOD_RE = re.compile(r"^([ \t]*)def (test_\w+)\s*\(", re.MULTILINE)
+
+
+def _salvage_test_methods(code: str) -> list[str]:
+    """Cuando el archivo completo no compila (ni tras el reintento), rescata
+    los métodos test_* que sí son sintácticamente válidos por sí solos,
+    descartando el resto. Permite conservar parte del trabajo del LLM en
+    vez de tirar todo el archivo a la basura."""
+    lines = code.splitlines()
+    matches = list(_TEST_METHOD_RE.finditer(code))
+
+    salvaged = []
+    for m in matches:
+        indent = len(m.group(1))
+        start_line = code[:m.start()].count("\n")
+        end_line = len(lines)
+        for j in range(start_line + 1, len(lines)):
+            stripped = lines[j].strip()
+            if not stripped:
+                continue
+            cur_indent = len(lines[j]) - len(lines[j].lstrip())
+            if cur_indent <= indent:
+                end_line = j
+                break
+
+        block = lines[start_line:end_line]
+        dedented = "\n".join(
+            l[indent:] if len(l) >= indent else l.lstrip() for l in block
+        )
+        try:
+            ast.parse(dedented)
+        except SyntaxError:
+            continue
+        salvaged.append(dedented.rstrip())
+
+    return salvaged
+
+
+def _build_skip_stub(name: str, reason: str) -> str:
+    safe_reason = reason.replace('"', "'")
+    return (
+        f"    def test_{name}_no_generado(self):\n"
+        f"        # Given: el modelo no generó un test válido para '{name}'\n"
+        f"        # When: se ejecuta la suite generada\n"
+        f"        # Then: se omite hasta regenerar manualmente\n"
+        f'        pytest.skip("Generación de SLM falló: {safe_reason}")'
+    )
+
+
+def _build_degraded_imports(module_name: str, functions_found: list[str], classes: list[str]) -> str:
+    names = classes or functions_found
+    if not names:
+        return f"# {module_name}: no se detectaron símbolos importables"
+    return f"from {module_name} import {', '.join(dict.fromkeys(names))}"
+
+
+def _build_degraded_tests(
+    raw_code: str,
+    module_name: str,
+    module_pascal: str,
+    functions_found: list[str],
+    classes: list[str],
+    compile_error: str | None,
+) -> str:
+    """Última red de seguridad cuando ni la generación inicial ni el
+    reintento compilan. Rescata los métodos test_* que sí compilan de
+    forma aislada y cubre con pytest.skip() cualquier función sin un test
+    sobreviviente, para que la suite siempre se pueda ejecutar y produzca
+    métricas reales (en vez de terminar vacía)."""
+    salvaged = _salvage_test_methods(raw_code)
+    salvaged_code = "\n\n".join(salvaged)
+    covered = count_tests_by_function(salvaged_code, functions_found)
+
+    reason = (compile_error or "error de compilación desconocido").splitlines()[0][:200]
+    stubs = [
+        _build_skip_stub(fn, reason)
+        for fn, count in covered.items()
+        if count == 0
+    ]
+    if not functions_found and not salvaged:
+        stubs = [_build_skip_stub("modulo", reason)]
+
+    salvaged_methods = [textwrap.indent(s, "    ") for s in salvaged]
+    body = "\n\n".join(salvaged_methods + stubs)
+
+    return (
+        "import pytest\n"
+        f"{_build_degraded_imports(module_name, functions_found, classes)}\n\n\n"
+        f"class Test{module_pascal}(object):\n"
+        f"{body}\n"
+    )
+
+
+def _missing_function_coverage(tests_code: str, functions_found: list[str]) -> list[str]:
+    """Funciones detectadas por el AST parser que no tienen ningún
+    test_<funcion>_<escenario> asociado (OR-8). Se usa para decidir si vale
+    la pena un retry pidiéndole al modelo que complete la cobertura."""
+    counts = count_tests_by_function(tests_code, functions_found)
+    return [fn for fn, count in counts.items() if count == 0]
+
+
+def _build_coverage_retry_message(missing_functions: list[str]) -> dict:
+    return {
+        "role": "user",
+        "content": (
+            "El archivo de tests no cubre estas funciones detectadas por el AST parser: "
+            f"{', '.join(missing_functions)}.\n"
+            "Agrega al menos un método test_<función>_<escenario> para cada una de ellas, "
+            "sin eliminar ni modificar los tests ya existentes. Devuelve la clase de test "
+            "completa con los cambios aplicados, solo código Python válido, sin "
+            "explicaciones ni markdown."
+        ),
+    }
+
+
 def _parse_pytest_output(stdout: str) -> dict:
     metrics = {
         "tests_total": 0,
@@ -281,8 +400,9 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> dict | N
 
 def _should_learn(compiles: bool, metrics: dict | None, quality: dict) -> bool:
     """Solo se aprende de resultados que compilan, pasan pytest sin fallos
-    ni errores, y cumplen todas las reglas OR del prompt (sin test smells).
-    Esto evita contaminar el índice RAG con ejemplos defectuosos."""
+    ni errores, cumplen todas las reglas OR del prompt (sin test smells) y
+    cubren con al menos un test cada función detectada (OR-8).
+    Esto evita contaminar el índice RAG con ejemplos defectuosos o incompletos."""
     if not compiles or metrics is None:
         return False
     if metrics["tests_total"] == 0 or metrics["tests_failed"] > 0 or metrics["tests_errors"] > 0:
@@ -293,6 +413,7 @@ def _should_learn(compiles: bool, metrics: dict | None, quality: dict) -> bool:
         and quality["has_expected_test_class"]
         and quality["has_given_when_then"]
         and not quality["smells_detected"]
+        and all(count > 0 for count in quality["tests_per_function"].values())
     )
 
 
@@ -320,7 +441,77 @@ def _learn_from_result(
         f"Código de prueba:\n{tests_code}"
     )
     rag.add_learned_document(doc_id, text)
+
+    # Si existían advertencias previas para este módulo, ya no aplican —
+    # este resultado cubre todas las funciones y no tiene smells.
+    rag.clear_warnings(module_name)
     return True
+
+
+_SMELL_GUIDANCE = {
+    "assertion_roulette": (
+        "no incluyas más de un assert por test sin un mensaje descriptivo en cada "
+        "uno (segundo argumento de assert) — regla OR-6"
+    ),
+    "empty_test": (
+        "no generes métodos test_* cuyo cuerpo sea solo `pass` o `pytest.skip()` — "
+        "cada test debe verificar comportamiento real del código bajo prueba (OR-7)"
+    ),
+    "generic_name": (
+        "los nombres de test deben seguir test_<función>_<escenario_descriptivo>, "
+        "nunca test_<función> a secas sin describir el escenario (OR-4)"
+    ),
+}
+
+
+def _learn_from_failure(
+    rag: RAGService,
+    module_name: str,
+    quality: dict,
+    compiles: bool,
+    metrics: dict | None,
+    degraded: bool = False,
+) -> bool:
+    """Si la generación compiló y corrió, pero quedó incompleta de una forma
+    reconocible (cobertura de funciones faltante pese al retry de OR-8, o
+    test smells), guarda advertencias en RAG para que futuras generaciones
+    de este mismo módulo reciban ese contexto. Son documentos de "lección",
+    no ejemplos de código (a diferencia de _learn_from_result).
+
+    No se aprende de corridas degradadas: en ese caso el código son stubs
+    pytest.skip() generados por el respaldo, no salida real del modelo, así
+    que sus "smells" y huecos de cobertura son artefactos, no lecciones."""
+    if not compiles or metrics is None or degraded:
+        return False
+
+    learned_something = False
+
+    missing = [fn for fn, count in quality["tests_per_function"].items() if count == 0]
+    if missing:
+        doc_id = f"learned_warning_coverage_{module_name}"
+        text = (
+            f"ADVERTENCIA para el módulo '{module_name}': en una generación previa, el "
+            f"modelo no incluyó ningún test para estas funciones detectadas por el AST "
+            f"parser: {', '.join(missing)}. Al generar tests para este módulo, incluye un "
+            f"método test_<función>_<escenario> para CADA función listada en "
+            f"'FUNCIONES DETECTADAS POR AST PARSER', sin omitir ninguna (regla OR-8)."
+        )
+        rag.add_warning(doc_id, text)
+        learned_something = True
+
+    smells = quality.get("smells_detected") or []
+    if smells:
+        guidance = "; ".join(_SMELL_GUIDANCE.get(s, s) for s in smells)
+        doc_id = f"learned_warning_smells_{module_name}"
+        text = (
+            f"ADVERTENCIA para el módulo '{module_name}': en una generación previa, los "
+            f"tests generados tuvieron estos test smells: {', '.join(smells)}. Al generar "
+            f"tests para este módulo, recuerda que {guidance}."
+        )
+        rag.add_warning(doc_id, text)
+        learned_something = True
+
+    return learned_something
 
 
 def generate_tests(
@@ -344,8 +535,12 @@ def generate_tests(
             print(f"[AST]   → {fn['nombre']}() lanza: {', '.join(fn['excepciones'])}")
 
     print(f"[RAG] Buscando fragmentos relevantes...")
-    context_fragments = rag.query(source_code + " " + prompt, n_results=3)
-    print(f"[RAG] {len(context_fragments)} fragmento(s) encontrados")
+    warnings = rag.get_warnings(module_name)
+    patterns = rag.query(source_code + " " + prompt, n_results=3)
+    # Las advertencias del módulo (por clave exacta) van primero y son
+    # aditivas: no le quitan cupo a los patrones recuperados por similitud.
+    context_fragments = warnings + patterns
+    print(f"[RAG] {len(warnings)} advertencia(s) + {len(patterns)} patrón(es)")
 
     context_block  = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
     functions_block = _build_functions_block(functions)
@@ -396,6 +591,43 @@ def generate_tests(
         else:
             print(f"[RETRY] Fallido de nuevo — manteniendo resultado inicial")
 
+    if compiles:
+        missing_functions = _missing_function_coverage(tests_code, functions_found)
+        if missing_functions:
+            print(f"[RETRY] Faltan tests para: {', '.join(missing_functions)} — reintentando...")
+            retry_messages = messages + [
+                {"role": "assistant", "content": tests_code},
+                _build_coverage_retry_message(missing_functions),
+            ]
+            t0 = time.time()
+            raw_retry2 = chat(model=model, messages=retry_messages)
+            print(f"[RETRY] Respuesta en {time.time() - t0:.1f}s")
+            tests_retry2, explanation_retry2 = _extract_code(raw_retry2)
+            compiles_retry2, compile_error_retry2 = _check_compiles(tests_retry2)
+            if compiles_retry2:
+                print(f"[RETRY] Éxito — código corregido compila")
+                tests_code  = tests_retry2
+                explanation = explanation_retry2 or explanation
+            else:
+                print(f"[RETRY] Fallido de nuevo — manteniendo resultado anterior")
+
+    degraded = False
+    if not compiles:
+        print(f"[DEGRADE] Generando suite de respaldo (rescate de métodos + skips)...")
+        classes_detected = extract_classes(source_code)
+        degraded_code = _build_degraded_tests(
+            tests_code, module_name, module_pascal, functions_found, classes_detected, compile_error
+        )
+        degraded_compiles, degraded_compile_error = _check_compiles(degraded_code)
+        if degraded_compiles:
+            tests_code = degraded_code
+            compiles = True
+            compile_error = None
+            degraded = True
+            print(f"[DEGRADE] Suite de respaldo compila — se ejecutará con métricas degradadas")
+        else:
+            print(f"[DEGRADE] Suite de respaldo tampoco compiló: {degraded_compile_error}")
+
     metrics = None
     if compiles and run_pytest:
         print(f"[PYTEST] Ejecutando evaluación...")
@@ -414,6 +646,8 @@ def generate_tests(
     learned = _learn_from_result(rag, module_name, functions_found, tests_code, compiles, metrics, quality)
     if learned:
         print(f"[RAG] Resultado de alta calidad — agregado al índice como 'learned_{module_name}'")
+    elif _learn_from_failure(rag, module_name, quality, compiles, metrics, degraded):
+        print(f"[RAG] Generación con problemas — advertencia(s) guardada(s) para '{module_name}'")
 
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")
@@ -428,4 +662,5 @@ def generate_tests(
         "metrics":         metrics,
         "quality":         quality,
         "learned":         learned,
+        "degraded":        degraded,
     }

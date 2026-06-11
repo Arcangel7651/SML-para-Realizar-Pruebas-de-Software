@@ -11,7 +11,7 @@ const TABS = [
   { id: 'explanation', label: 'Explicación del modelo', icon: 'message' },
 ]
 
-export default function TestOutput({ result, loading, streamingCode, fileName, retrying }) {
+export default function TestOutput({ result, loading, streamingCode, fileName, retrying, retryReason }) {
   const [activeTab, setActiveTab] = useState('code')
 
   useEffect(() => {
@@ -42,7 +42,10 @@ export default function TestOutput({ result, loading, streamingCode, fileName, r
         <div className="gen-center">
           <div className="gen-pulse"><i></i><i></i><i></i></div>
           <div className="gen-load-title">Generando código de prueba...</div>
-          <div className="gen-retry-chip"><Icon name="refresh" size={13} /> Compilación fallida — reintentando...</div>
+          <div className="gen-retry-chip">
+            <Icon name="refresh" size={13} />
+            {retryReason ? `Reintentando: ${retryReason}` : 'Compilación fallida — reintentando...'}
+          </div>
         </div>
       )
     }

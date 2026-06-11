@@ -14,9 +14,13 @@ from services.test_generator import (
     _check_compiles,
     _run_pytest,
     _learn_from_result,
+    _learn_from_failure,
     _build_functions_block,
     _build_classes_block,
     _build_user_message,
+    _build_degraded_tests,
+    _missing_function_coverage,
+    _build_coverage_retry_message,
 )
 from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality
@@ -100,7 +104,10 @@ async def generate_tests_stream_endpoint(
 
     functions        = extract_functions(source_code)
     functions_found  = [fn["nombre"] for fn in functions]
-    context_fragments = rag_service.query(source_code + " " + prompt, n_results=3)
+    # Advertencias del módulo (clave exacta) + patrones por similitud, aditivo.
+    warnings          = rag_service.get_warnings(module_name)
+    patterns          = rag_service.query(source_code + " " + prompt, n_results=3)
+    context_fragments = warnings + patterns
     context_block    = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
     functions_block  = _build_functions_block(functions)
     classes_block    = _build_classes_block(module_name, extract_classes(source_code))
@@ -156,6 +163,37 @@ async def generate_tests_stream_endpoint(
                 compiles      = True
                 compile_error = None
 
+        if compiles:
+            missing_functions = _missing_function_coverage(tests_code, functions_found)
+            if missing_functions:
+                yield json.dumps({
+                    "type": "retrying",
+                    "reason": f"Faltan tests para: {', '.join(missing_functions)}",
+                }) + "\n"
+                retry_messages = messages + [
+                    {"role": "assistant", "content": tests_code},
+                    _build_coverage_retry_message(missing_functions),
+                ]
+                raw_retry2 = chat(model=model, messages=retry_messages)
+                tests_retry2, explanation_retry2 = _extract_code(raw_retry2)
+                compiles_retry2, compile_error_retry2 = _check_compiles(tests_retry2)
+                if compiles_retry2:
+                    tests_code  = tests_retry2
+                    explanation = explanation_retry2 or explanation
+
+        degraded = False
+        if not compiles:
+            classes_detected = extract_classes(source_code)
+            degraded_code = _build_degraded_tests(
+                tests_code, module_name, module_pascal, functions_found, classes_detected, compile_error
+            )
+            degraded_compiles, degraded_compile_error = _check_compiles(degraded_code)
+            if degraded_compiles:
+                tests_code    = degraded_code
+                compiles      = True
+                compile_error = None
+                degraded      = True
+
         metrics = None
         if compiles and run_pytest:
             metrics = _run_pytest(source_code, tests_code, module_name)
@@ -165,6 +203,8 @@ async def generate_tests_stream_endpoint(
         learned = _learn_from_result(
             rag_service, module_name, functions_found, tests_code, compiles, metrics, quality
         )
+        if not learned:
+            _learn_from_failure(rag_service, module_name, quality, compiles, metrics, degraded)
 
         yield json.dumps({
             "type":          "done",
@@ -175,6 +215,7 @@ async def generate_tests_stream_endpoint(
             "metrics":       metrics,
             "quality":       quality,
             "learned":       learned,
+            "degraded":      degraded,
         }) + "\n"
 
     return StreamingResponse(event_stream(), media_type="application/x-ndjson")
