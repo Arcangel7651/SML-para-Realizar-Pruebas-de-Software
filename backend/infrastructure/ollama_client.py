@@ -41,3 +41,26 @@ def chat_stream(model: str, messages: list[dict]) -> Generator[str, None, None]:
         content = chunk.message.content
         if content:
             yield content
+
+
+# Modelo de embeddings para la recuperación semántica del RAG. Más liviano que
+# los de generación; se puede sobreescribir por entorno.
+EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
+
+
+def embed_texts(texts: list[str]) -> list[list[float]] | None:
+    """Devuelve el embedding de cada texto, o None si el servicio de
+    embeddings no está disponible (modelo no descargado, Ollama caído, etc.).
+    El RAG usa None como señal para caer a TF-IDF en vez de romperse."""
+    if not texts:
+        return []
+    try:
+        vectors = []
+        for text in texts:
+            response = _client.embeddings(model=EMBED_MODEL, prompt=text, keep_alive=KEEP_ALIVE)
+            vector = response["embedding"] if isinstance(response, dict) else response.embedding
+            vectors.append(list(vector))
+        return vectors
+    except Exception as e:
+        print(f"[EMBED] No disponible ({e}); se usará TF-IDF.")
+        return None

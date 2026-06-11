@@ -1,4 +1,1 @@
-{
-  "learned_warning_smells_calculadora": "ADVERTENCIA para el módulo 'calculadora': en una generación previa, los tests generados tuvieron estos test smells: empty_test. Al generar tests para este módulo, recuerda que no generes métodos test_* cuyo cuerpo sea solo `pass` o `pytest.skip()` — cada test debe verificar comportamiento real del código bajo prueba (OR-7).",
-  "learned_warning_coverage_calculadora": "ADVERTENCIA para el módulo 'calculadora': en una generación previa, el modelo no incluyó ningún test para estas funciones detectadas por el AST parser: sumar, restar, multiplicar, dividir, potencia, es_par. Al generar tests para este módulo, incluye un método test_<función>_<escenario> para CADA función listada en 'FUNCIONES DETECTADAS POR AST PARSER', sin omitir ninguna (regla OR-8)."
-}
+{}

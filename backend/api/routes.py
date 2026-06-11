@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from fastapi import APIRouter, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -21,9 +22,11 @@ from services.test_generator import (
     _build_degraded_tests,
     _missing_function_coverage,
     _build_coverage_retry_message,
+    _repair_generated_tests,
 )
 from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality
+from services.results_log import log_result
 
 router = APIRouter()
 
@@ -122,6 +125,7 @@ async def generate_tests_stream_endpoint(
     ]
 
     def event_stream():
+        t_start = time.time()
         yield json.dumps({
             "type": "meta",
             "functions_found": functions_found,
@@ -142,6 +146,9 @@ async def generate_tests_stream_endpoint(
 
         raw_response = "".join(raw_chunks)
         tests_code, explanation = _extract_code(raw_response)
+        tests_code = _repair_generated_tests(
+            tests_code, module_name, extract_classes(source_code), functions_found
+        )
         compiles, compile_error = _check_compiles(tests_code)
 
         if not compiles:
@@ -156,6 +163,9 @@ async def generate_tests_stream_endpoint(
             ]
             raw_retry = chat(model=model, messages=retry_messages)
             tests_retry, explanation_retry = _extract_code(raw_retry)
+            tests_retry = _repair_generated_tests(
+                tests_retry, module_name, extract_classes(source_code), functions_found
+            )
             compiles_retry, compile_error_retry = _check_compiles(tests_retry)
             if compiles_retry:
                 tests_code    = tests_retry
@@ -176,6 +186,9 @@ async def generate_tests_stream_endpoint(
                 ]
                 raw_retry2 = chat(model=model, messages=retry_messages)
                 tests_retry2, explanation_retry2 = _extract_code(raw_retry2)
+                tests_retry2 = _repair_generated_tests(
+                    tests_retry2, module_name, extract_classes(source_code), functions_found
+                )
                 compiles_retry2, compile_error_retry2 = _check_compiles(tests_retry2)
                 if compiles_retry2:
                     tests_code  = tests_retry2
@@ -195,16 +208,18 @@ async def generate_tests_stream_endpoint(
                 degraded      = True
 
         metrics = None
+        passing_tests = set()
         if compiles and run_pytest:
-            metrics = _run_pytest(source_code, tests_code, module_name)
+            metrics, passing_tests = _run_pytest(source_code, tests_code, module_name)
 
         quality = analyze_quality(tests_code, functions_found, f"Test{module_pascal}")
 
         learned = _learn_from_result(
-            rag_service, module_name, functions_found, tests_code, compiles, metrics, quality
+            rag_service, module_name, functions_found, tests_code, compiles, metrics, quality, passing_tests
         )
-        if not learned:
-            _learn_from_failure(rag_service, module_name, quality, compiles, metrics, degraded)
+        _learn_from_failure(rag_service, module_name, quality, compiles, metrics, degraded)
+
+        log_result(model, module_name, metrics, compiles, learned, degraded, time.time() - t_start)
 
         yield json.dumps({
             "type":          "done",

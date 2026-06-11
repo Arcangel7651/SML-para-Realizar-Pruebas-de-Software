@@ -13,6 +13,7 @@ from infrastructure.ollama_client import chat
 from services.rag_service import RAGService
 from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality, count_tests_by_function
+from services.results_log import log_result
 
 
 SYSTEM_PROMPT = SYSTEM_PROMPT = """You are an automated unit test generator for Python modules using pytest.
@@ -187,6 +188,89 @@ def _check_compiles(code: str) -> tuple[bool, str | None]:
 _TEST_METHOD_RE = re.compile(r"^([ \t]*)def (test_\w+)\s*\(", re.MULTILINE)
 
 
+def _referenced_names(code: str) -> set[str]:
+    """Nombres (ast.Name) usados en el código de prueba."""
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return set()
+    return {n.id for n in ast.walk(tree) if isinstance(n, ast.Name)}
+
+
+def _already_imports_module(code: str, module_name: str) -> bool:
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == module_name:
+            return True
+        if isinstance(node, ast.Import) and any(a.name == module_name for a in node.names):
+            return True
+    return False
+
+
+def _ensure_module_import(
+    code: str, module_name: str, classes: list[str], functions_found: list[str]
+) -> str:
+    """Fix determinístico del fallo más común: el modelo genera tests que usan
+    `Calculadora()` o `funcion()` del módulo bajo prueba pero olvida importarlos.
+    Eso compila (NameError es error de ejecución), pero hace fallar TODOS los
+    tests con 0% de cobertura. Si detecta símbolos del módulo usados sin
+    importar, inyecta `from <module> import <símbolos>` tras `import pytest`.
+
+    Si el módulo define clases, los símbolos importables son las clases (sus
+    métodos no se importan); si solo hay funciones a nivel de módulo, esas."""
+    if _already_imports_module(code, module_name):
+        return code
+
+    symbols = classes if classes else functions_found
+    used = _referenced_names(code)
+    needed = [s for s in dict.fromkeys(symbols) if s in used]
+    if not needed:
+        return code
+
+    import_line = f"from {module_name} import {', '.join(needed)}"
+    lines = code.splitlines()
+    insert_at = 0
+    for i, line in enumerate(lines):
+        if line.strip().startswith("import pytest"):
+            insert_at = i + 1
+            break
+    lines.insert(insert_at, import_line)
+    return "\n".join(lines)
+
+
+def _fix_self_method_calls(code: str, classes: list[str], functions_found: list[str]) -> str:
+    """Reescribe `self.<metodo>(...)` por `<Clase>().<metodo>(...)` para los
+    métodos de la clase bajo prueba. El modelo a veces invoca los métodos sobre
+    `self` (estilo unittest), pero en pytest `self` es la instancia de
+    Test<Modulo>, no de la clase bajo prueba, así que `self.sumar(...)` lanza
+    AttributeError y ningún test toca el código real (0% de cobertura). Solo se
+    reescriben nombres que son métodos reales de la clase (lista del AST), para
+    no tocar helpers legítimos del test."""
+    if not classes or not functions_found:
+        return code
+    class_name = classes[0]
+    # nombres más largos primero para que p.ej. "es_par" no quede eclipsado
+    methods = sorted(dict.fromkeys(functions_found), key=len, reverse=True)
+    pattern = re.compile(r"\bself\.(" + "|".join(re.escape(m) for m in methods) + r")\b")
+    return pattern.sub(rf"{class_name}().\1", code)
+
+
+def _repair_generated_tests(
+    code: str, module_name: str, classes: list[str], functions_found: list[str]
+) -> str:
+    """Aplica los fixes determinísticos a la salida del modelo, en orden:
+    1) corrige `self.<metodo>()` -> `<Clase>().<metodo>()` (así el código pasa
+       a referenciar la clase), y luego
+    2) inyecta el import de la clase/funciones si falta.
+    El orden importa: el paso 2 detecta que la clase se usa gracias al paso 1."""
+    code = _fix_self_method_calls(code, classes, functions_found)
+    code = _ensure_module_import(code, module_name, classes, functions_found)
+    return code
+
+
 def _salvage_test_methods(code: str) -> list[str]:
     """Cuando el archivo completo no compila (ni tras el reintento), rescata
     los métodos test_* que sí son sintácticamente válidos por sí solos,
@@ -220,6 +304,47 @@ def _salvage_test_methods(code: str) -> list[str]:
         salvaged.append(dedented.rstrip())
 
     return salvaged
+
+
+def _filter_to_passing_tests(code: str, passing: set[str]) -> str:
+    """Devuelve el código conservando el encabezado (imports, clase, fixtures
+    al inicio) y SOLO los métodos test_* cuyo nombre está en `passing`.
+    Se basa en líneas (no en ast.unparse) para preservar los comentarios
+    Given/When/Then. Usado para aprender únicamente del subconjunto de tests
+    verificados que pasaron, sin arrastrar los que fallaron."""
+    lines = code.splitlines()
+    matches = list(_TEST_METHOD_RE.finditer(code))
+    if not matches:
+        return code
+
+    first_start = code[: matches[0].start()].count("\n")
+    header = lines[:first_start]
+
+    kept_blocks = []
+    for m in matches:
+        name = m.group(2)
+        indent = len(m.group(1))
+        start_line = code[: m.start()].count("\n")
+        end_line = len(lines)
+        for j in range(start_line + 1, len(lines)):
+            stripped = lines[j].strip()
+            if not stripped:
+                continue
+            cur_indent = len(lines[j]) - len(lines[j].lstrip())
+            if cur_indent <= indent:
+                end_line = j
+                break
+        if name not in passing:
+            continue
+        block = lines[start_line:end_line]
+        while block and not block[-1].strip():
+            block.pop()
+        kept_blocks.append("\n".join(block))
+
+    if not kept_blocks:
+        return code
+
+    return "\n".join(header).rstrip() + "\n\n" + "\n\n".join(kept_blocks) + "\n"
 
 
 def _build_skip_stub(name: str, reason: str) -> str:
@@ -366,7 +491,21 @@ def _parse_pytest_output(stdout: str) -> dict:
     return metrics
 
 
-def _run_pytest(source_code: str, tests_code: str, module_name: str) -> dict | None:
+_PYTEST_RESULT_RE = re.compile(r"::(test_\w+).*?(PASSED|FAILED|ERROR|SKIPPED)")
+
+
+def _parse_passing_tests(stdout: str) -> set[str]:
+    """Nombres de los métodos test_* que pasaron, según la salida verbose de
+    pytest (líneas tipo `...::TestX::test_y PASSED`). Usado para aprender solo
+    del subconjunto verificado-correcto cuando no pasan todos."""
+    passing = set()
+    for name, status in _PYTEST_RESULT_RE.findall(stdout):
+        if status == "PASSED":
+            passing.add(name)
+    return passing
+
+
+def _run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[dict | None, set[str]]:
     tmp_dir = tempfile.mkdtemp()
     try:
         with open(os.path.join(tmp_dir, f"{module_name}.py"), "w", encoding="utf-8") as f:
@@ -381,7 +520,7 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> dict | N
             "--cov-report=term-missing",
             "--cov-branch",
             "--tb=short",
-            "-q",
+            "-v",
         ]
         result = subprocess.run(
             cmd,
@@ -390,10 +529,11 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> dict | N
             cwd=tmp_dir,
             timeout=None,
         )
-        return _parse_pytest_output(result.stdout + result.stderr)
+        output = result.stdout + result.stderr
+        return _parse_pytest_output(output), _parse_passing_tests(output)
     except Exception as e:
         print(f"[PYTEST] Fallo al ejecutar evaluación: {e}")
-        return None
+        return None, set()
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
@@ -417,6 +557,16 @@ def _should_learn(compiles: bool, metrics: dict | None, quality: dict) -> bool:
     )
 
 
+_LEARNED_COUNT_RE = re.compile(r"(\d+) test\(s\) verificados")
+
+
+def _parse_learned_count(text: str) -> int | None:
+    """Nº de tests verificados que guarda un ejemplo aprendido (para 'quedarse
+    con el mejor' y no regresar a una versión con menos tests)."""
+    m = _LEARNED_COUNT_RE.search(text)
+    return int(m.group(1)) if m else None
+
+
 def _learn_from_result(
     rag: RAGService,
     module_name: str,
@@ -425,26 +575,66 @@ def _learn_from_result(
     compiles: bool,
     metrics: dict | None,
     quality: dict,
+    passing_tests: set[str] | None = None,
 ) -> bool:
-    """Si el resultado es de alta calidad, se guarda como documento RAG
-    propio del usuario (id 'learned_<modulo>'), para que futuras
-    generaciones reciban como contexto ejemplos reales ya verificados."""
-    if not _should_learn(compiles, metrics, quality):
+    """Guarda un ejemplo verificado en el RAG (id 'learned_<modulo>'). Dos modos:
+
+    - Completo: si pasan todos los tests y se cumplen todas las reglas OR, se
+      guarda el archivo entero.
+    - Parcial: si solo algunos pasan pero la estructura es válida, se guarda
+      SOLO el subconjunto de tests que pasaron — código verificado-correcto,
+      sin arrastrar las aserciones equivocadas que fallaron (cero contaminación).
+
+    Se conserva la mejor versión (la que más tests verificados tiene) para no
+    regresar entre corridas, que en SLMs varían."""
+    if not compiles or metrics is None:
+        return False
+    # estructura mínima: salida limpia, empieza con import pytest, clase Test única
+    if not (
+        quality["is_clean_output"]
+        and quality["starts_with_import_pytest"]
+        and quality["has_expected_test_class"]
+    ):
+        return False
+    if metrics["tests_passed"] == 0 or metrics["tests_errors"] > 0:
         return False
 
-    doc_id = f"learned_{module_name}"
-    text = (
-        f"Ejemplo verificado de tests pytest para el módulo '{module_name}' "
-        f"(funciones: {', '.join(functions_found) or 'sin funciones detectadas'}). "
-        f"{metrics['tests_passed']}/{metrics['tests_total']} tests pasaron, "
-        f"{metrics['line_coverage']}% de cobertura de línea. "
-        f"Código de prueba:\n{tests_code}"
-    )
-    rag.add_learned_document(doc_id, text)
+    full = _should_learn(compiles, metrics, quality)
+    if full:
+        code_to_save = tests_code
+        kept = metrics["tests_total"]
+        suffix = ""
+    else:
+        if not passing_tests:
+            return False
+        code_to_save = _filter_to_passing_tests(tests_code, passing_tests)
+        ok, _ = _check_compiles(code_to_save)
+        if not ok:
+            return False
+        kept = len(passing_tests)
+        suffix = " (subconjunto de tests que pasaron)"
+        if kept == 0:
+            return False
 
-    # Si existían advertencias previas para este módulo, ya no aplican —
-    # este resultado cubre todas las funciones y no tiene smells.
-    rag.clear_warnings(module_name)
+    # quedarse con el mejor: no sobreescribir un ejemplo con más tests
+    existing = rag.get_document(f"learned_{module_name}")
+    if existing is not None:
+        prev = _parse_learned_count(existing)
+        if prev is not None and kept < prev:
+            return False
+
+    text = (
+        f"Ejemplo verificado de tests pytest para el módulo '{module_name}'{suffix} "
+        f"(funciones: {', '.join(functions_found) or 'sin funciones detectadas'}). "
+        f"{kept} test(s) verificados que pasan, "
+        f"{metrics['line_coverage']}% de cobertura de línea. "
+        f"Código de prueba:\n{code_to_save}"
+    )
+    rag.add_learned_document(f"learned_{module_name}", text)
+
+    # Solo en el caso completo las advertencias dejan de aplicar.
+    if full:
+        rag.clear_warnings(module_name)
     return True
 
 
@@ -525,6 +715,7 @@ def generate_tests(
     print(f"\n{'='*50}")
     print(f"[SLM] Solicitud recibida | modelo: {model}")
     print(f"[SLM] Líneas de código fuente: {len(source_code.splitlines())}")
+    t_total = time.time()
 
     print(f"[AST] Analizando funciones...")
     functions = extract_functions(source_code)
@@ -562,6 +753,9 @@ def generate_tests(
     print(f"[LLM] Respuesta en {time.time() - t0:.1f}s (~{len(raw_response.split())} tokens)")
 
     tests_code, explanation = _extract_code(raw_response)
+    tests_code = _repair_generated_tests(
+        tests_code, module_name, extract_classes(source_code), functions_found
+    )
 
     print(f"[COMPILE] Verificando sintaxis...")
     compiles, compile_error = _check_compiles(tests_code)
@@ -581,6 +775,9 @@ def generate_tests(
         raw_retry = chat(model=model, messages=retry_messages)
         print(f"[RETRY] Respuesta en {time.time() - t0:.1f}s")
         tests_retry, explanation_retry = _extract_code(raw_retry)
+        tests_retry = _repair_generated_tests(
+            tests_retry, module_name, extract_classes(source_code), functions_found
+        )
         compiles_retry, compile_error_retry = _check_compiles(tests_retry)
         if compiles_retry:
             print(f"[RETRY] Éxito — código corregido compila")
@@ -603,6 +800,9 @@ def generate_tests(
             raw_retry2 = chat(model=model, messages=retry_messages)
             print(f"[RETRY] Respuesta en {time.time() - t0:.1f}s")
             tests_retry2, explanation_retry2 = _extract_code(raw_retry2)
+            tests_retry2 = _repair_generated_tests(
+                tests_retry2, module_name, extract_classes(source_code), functions_found
+            )
             compiles_retry2, compile_error_retry2 = _check_compiles(tests_retry2)
             if compiles_retry2:
                 print(f"[RETRY] Éxito — código corregido compila")
@@ -629,9 +829,10 @@ def generate_tests(
             print(f"[DEGRADE] Suite de respaldo tampoco compiló: {degraded_compile_error}")
 
     metrics = None
+    passing_tests: set[str] = set()
     if compiles and run_pytest:
         print(f"[PYTEST] Ejecutando evaluación...")
-        metrics = _run_pytest(source_code, tests_code, module_name)
+        metrics, passing_tests = _run_pytest(source_code, tests_code, module_name)
         if metrics:
             print(f"[PYTEST] {metrics['tests_passed']}/{metrics['tests_total']} pasan | "
                   f"cobertura: {metrics['line_coverage']}%")
@@ -643,11 +844,17 @@ def generate_tests(
     print(f"[QUALITY] Given/When/Then: {quality['has_given_when_then']} | "
           f"smells: {quality['smells_detected']}")
 
-    learned = _learn_from_result(rag, module_name, functions_found, tests_code, compiles, metrics, quality)
+    learned = _learn_from_result(
+        rag, module_name, functions_found, tests_code, compiles, metrics, quality, passing_tests
+    )
     if learned:
-        print(f"[RAG] Resultado de alta calidad — agregado al índice como 'learned_{module_name}'")
-    elif _learn_from_failure(rag, module_name, quality, compiles, metrics, degraded):
-        print(f"[RAG] Generación con problemas — advertencia(s) guardada(s) para '{module_name}'")
+        print(f"[RAG] Ejemplo verificado (completo o parcial) guardado como 'learned_{module_name}'")
+    # Las advertencias se evalúan aparte: aplican aunque se haya aprendido un
+    # subconjunto parcial (p.ej. cobertura incompleta o smells).
+    if _learn_from_failure(rag, module_name, quality, compiles, metrics, degraded):
+        print(f"[RAG] Advertencia(s) guardada(s) para '{module_name}'")
+
+    log_result(model, module_name, metrics, compiles, learned, degraded, time.time() - t_total)
 
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")

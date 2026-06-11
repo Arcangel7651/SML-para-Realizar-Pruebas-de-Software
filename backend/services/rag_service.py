@@ -6,6 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 from data.seed_data import SEED_DOCUMENTS
+from infrastructure.ollama_client import embed_texts
 
 STORE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "rag_store.json")
 LEARNED_STORE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "learned_store.json")
@@ -48,8 +49,13 @@ class RAGService:
             d["id"]: d["text"] for d in warning_docs + legacy_warnings
         }
 
+        # Recuperación: se intentan embeddings semánticos (Ollama); si no están
+        # disponibles, se cae a TF-IDF (similitud léxica). _use_embeddings se
+        # decide en _fit() según si el servicio de embeddings respondió.
         self._vectorizer = TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True)
         self._matrix = None
+        self._embeddings = None
+        self._use_embeddings = False
         self._fit()
 
         # Si había advertencias dentro de learned_store.json (versión previa),
@@ -73,18 +79,40 @@ class RAGService:
 
     def _fit(self):
         texts = [doc["text"] for doc in self._documents]
-        if texts:
+        self._matrix = None
+        self._embeddings = None
+        if not texts:
+            self._use_embeddings = False
+            return
+
+        # Preferir embeddings semánticos; si Ollama no los da, caer a TF-IDF.
+        vectors = embed_texts(texts)
+        if vectors is not None:
+            self._embeddings = np.array(vectors, dtype=float)
+            self._use_embeddings = True
+        else:
+            self._use_embeddings = False
             self._matrix = self._vectorizer.fit_transform(texts)
 
     # ── Recuperación ─────────────────────────────────────────────────
     def query(self, text: str, n_results: int = 3) -> list[str]:
-        """Patrones/ejemplos relevantes por similitud coseno. No incluye
+        """Patrones/ejemplos relevantes por similitud coseno (embeddings
+        semánticos si están disponibles, TF-IDF si no). No incluye
         advertencias (esas se recuperan con get_warnings, por clave)."""
-        if self._matrix is None or self._matrix.shape[0] == 0:
+        if not self._documents:
             return []
 
-        query_vec = self._vectorizer.transform([text])
-        scores = cosine_similarity(query_vec, self._matrix).flatten()
+        if self._use_embeddings and self._embeddings is not None:
+            query_vec = embed_texts([text])
+            if not query_vec:
+                return []
+            scores = cosine_similarity(np.array(query_vec, dtype=float), self._embeddings).flatten()
+        elif self._matrix is not None:
+            query_vec = self._vectorizer.transform([text])
+            scores = cosine_similarity(query_vec, self._matrix).flatten()
+        else:
+            return []
+
         top_indices = np.argsort(scores)[::-1][:n_results]
         return [self._documents[i]["text"] for i in top_indices if scores[i] > 0]
 
@@ -159,6 +187,13 @@ class RAGService:
 
     def _save_warnings(self):
         self._save_json(WARNINGS_STORE_PATH, dict(self._warnings))
+
+    def get_document(self, doc_id: str) -> str | None:
+        """Texto de un documento del índice por id, o None si no existe."""
+        for d in self._documents:
+            if d["id"] == doc_id:
+                return d["text"]
+        return None
 
     def list_documents(self) -> list[dict]:
         docs = [{"id": d["id"], "text": d["text"][:120] + "..."} for d in self._documents]

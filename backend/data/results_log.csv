@@ -1,0 +1,6 @@
+timestamp,model,module,tests_total,tests_passed,tests_failed,tests_skipped,tests_errors,line_coverage,branch_coverage,pass_rate,time_s,compiles,learned,degraded
+2026-06-11T18:01:02,qwen2.5-coder:3b,calculadora,8,8,0,0,0,100.0,100.0,100.0,177.8,True,True,False
+2026-06-11T18:32:09,qwen2.5-coder:3b,validador_edad,10,6,4,0,0,90.0,87.5,60.0,264.4,True,False,False
+2026-06-11T18:40:10,qwen2.5-coder:3b,validador_edad,8,7,1,0,0,90.0,87.5,87.5,117.4,True,False,False
+2026-06-11T18:44:20,qwen2.5-coder:3b,validador_edad,7,4,3,0,0,80.0,75.0,57.1,221.3,True,False,False
+2026-06-11T19:04:52,qwen2.5-coder:3b,validador_edad,7,5,2,0,0,90.0,87.5,71.4,209.1,True,True,False
