@@ -15,9 +15,10 @@ from services.test_generator import (
     _run_pytest,
     _learn_from_result,
     _build_functions_block,
+    _build_classes_block,
     _build_user_message,
 )
-from services.ast_parser import extract_functions
+from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality
 
 router = APIRouter()
@@ -102,9 +103,10 @@ async def generate_tests_stream_endpoint(
     context_fragments = rag_service.query(source_code + " " + prompt, n_results=3)
     context_block    = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
     functions_block  = _build_functions_block(functions)
+    classes_block    = _build_classes_block(module_name, extract_classes(source_code))
 
     user_message = _build_user_message(
-        module_name, module_pascal, context_block, functions_block, prompt, source_code
+        module_name, module_pascal, context_block, functions_block, classes_block, prompt, source_code
     )
 
     messages = [
@@ -120,9 +122,16 @@ async def generate_tests_stream_endpoint(
         }) + "\n"
 
         raw_chunks = []
-        for chunk in chat_stream(model=model, messages=messages):
-            raw_chunks.append(chunk)
-            yield json.dumps({"type": "token", "content": chunk}) + "\n"
+        try:
+            for chunk in chat_stream(model=model, messages=messages):
+                raw_chunks.append(chunk)
+                yield json.dumps({"type": "token", "content": chunk}) + "\n"
+        except Exception as e:
+            yield json.dumps({
+                "type": "error",
+                "message": f"Ollama no respondió: {e}",
+            }) + "\n"
+            return
 
         raw_response = "".join(raw_chunks)
         tests_code, explanation = _extract_code(raw_response)

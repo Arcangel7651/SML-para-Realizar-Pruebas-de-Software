@@ -10,7 +10,7 @@ import time
 
 from infrastructure.ollama_client import chat
 from services.rag_service import RAGService
-from services.ast_parser import extract_functions
+from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality
 
 
@@ -39,6 +39,21 @@ OR-7  The output contains no test method whose body is only `pass` or `pytest.sk
 - The class name must use the module name provided in PascalCase. No other class name is valid.
 - Test method names must be in Spanish. Python keywords and syntax remain in English.
 - Given/When/Then comments must be in Spanish.
+- Every function or method called on the code under test must exist in the AST-extracted
+  function list or in the provided source code. Never call a function or method that is
+  not present there, even if it appears in a RAG context example — RAG examples are
+  illustrative patterns, not literal code to copy.
+- pytest.raises() may only be used for exceptions that the AST-extracted info or the
+  source code shows the function/method actually raises.
+- If the source code defines a class (see "CLASES DETECTADAS" in the user message), the
+  test file must import it with `from <module_name> import <ClassName>` and call its
+  methods on an instance, e.g. `<ClassName>().metodo(...)`.
+  Inside a test method, `self` always refers to the Test<ModuleName> instance — NEVER
+  call `self.<metodo_de_la_clase_bajo_prueba>(...)`. That method does not exist on the
+  test class and will raise AttributeError.
+- If the source code only defines top-level functions (no class), import them directly
+  with `from <module_name> import <function1>, <function2>, ...` and call them as
+  plain functions, not via `self`.
 
 ## Control Flow
 - If the AST lists a function that raises exceptions → that function's tests include pytest.raises().
@@ -56,11 +71,30 @@ OR-7  The output contains no test method whose body is only `pass` or `pytest.sk
 
 
 
+def _build_classes_block(module_name: str, classes: list[str]) -> str:
+    if not classes:
+        return (
+            "No se detectaron clases en el código fuente: son funciones a nivel de "
+            f"módulo. Importarlas con `from {module_name} import <funcion>, ...` y "
+            "llamarlas directamente, no a través de `self`."
+        )
+
+    lines = []
+    for class_name in classes:
+        lines.append(
+            f"  - {class_name} → `from {module_name} import {class_name}` y "
+            f"`{class_name}().metodo(...)` para llamar sus métodos. "
+            f"`self` en los tests NUNCA es una instancia de {class_name}."
+        )
+    return "\n".join(lines)
+
+
 def _build_user_message(
     module_name: str,
     module_pascal: str,
     context_block: str,
     functions_block: str,
+    classes_block: str,
     prompt: str,
     source_code: str,
 ) -> str:
@@ -74,6 +108,7 @@ def _build_user_message(
         f"NOMBRE DEL MÓDULO: {module_name} → la clase debe llamarse Test{module_pascal}\n\n"
         f"CONTEXTO RAG:\n{context_block}\n\n"
         f"FUNCIONES DETECTADAS POR AST PARSER:\n{functions_block}\n\n"
+        f"CLASES DETECTADAS:\n{classes_block}\n\n"
         f"{instruction_section}"
         f"CÓDIGO FUENTE A TESTEAR:\n```python\n{source_code}\n```\n\n"
         "Genera la clase de test pytest completa siguiendo TODAS las reglas del system prompt."
@@ -314,10 +349,11 @@ def generate_tests(
 
     context_block  = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
     functions_block = _build_functions_block(functions)
+    classes_block   = _build_classes_block(module_name, extract_classes(source_code))
     module_pascal   = "".join(w.capitalize() for w in module_name.split("_"))
 
     user_message = _build_user_message(
-        module_name, module_pascal, context_block, functions_block, prompt, source_code
+        module_name, module_pascal, context_block, functions_block, classes_block, prompt, source_code
     )
 
     messages = [

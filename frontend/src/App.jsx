@@ -124,6 +124,9 @@ export default function App() {
             } else if (msg.type === 'retrying') {
               setStreamingCode('')
               setRetrying(true)
+            } else if (msg.type === 'error') {
+              setError(msg.message)
+              setStreamingCode('')
             } else if (msg.type === 'done') {
               setRetrying(false)
               setResult({
