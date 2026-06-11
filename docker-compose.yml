@@ -6,6 +6,8 @@ services:
     environment:
       - OLLAMA_HOST=http://host.docker.internal:11434
       - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend/data:/app/data
     networks:
       - app-network
     extra_hosts:
