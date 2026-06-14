@@ -4,6 +4,7 @@ import './App.css'
 import FileUpload from './components/FileUpload'
 import PromptPanel from './components/PromptPanel'
 import TestOutput from './components/TestOutput'
+import ResultsModal from './components/ResultsModal'
 import Icon from './components/Icon'
 
 const PREFERRED = ['codellama', 'qwen', 'llama']
@@ -30,6 +31,7 @@ export default function App() {
   const [retryReason, setRetryReason] = useState('')
   const [error, setError] = useState('')
   const [elapsed, setElapsed] = useState(0)
+  const [showResults, setShowResults] = useState(false)
 
   const abortControllerRef = useRef(null)
   const timerRef = useRef(null)
@@ -201,6 +203,13 @@ export default function App() {
           RAG · pytest
         </div>
         <div className="header-right">
+          <button
+            className="results-btn"
+            onClick={() => setShowResults(true)}
+            title="Ver historial de resultados"
+          >
+            <Icon name="barchart" size={15} /> Resultados
+          </button>
           <select
             className="model-select"
             value={model}
@@ -246,6 +255,8 @@ export default function App() {
           <TestOutput result={result} loading={loading} streamingCode={streamingCode} fileName={fileName} retrying={retrying} retryReason={retryReason} />
         </div>
       </main>
+
+      {showResults && <ResultsModal onClose={() => setShowResults(false)} />}
     </div>
   )
 }

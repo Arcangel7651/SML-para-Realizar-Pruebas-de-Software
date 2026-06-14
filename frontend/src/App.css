@@ -79,6 +79,16 @@
 .model-select:hover { border-color: var(--border-3); background: var(--surface-2); }
 .model-select:focus { border-color: var(--violet-line); }
 
+.results-btn {
+  display: flex; align-items: center; gap: 7px; height: 36px; padding: 0 13px;
+  background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--radius-sm);
+  color: var(--text); font-size: 12.5px; font-family: var(--font-ui); cursor: pointer;
+  box-shadow: 0 1px 0 var(--hi) inset;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.results-btn:hover { border-color: var(--border-3); background: var(--surface-2); color: var(--text-strong); }
+.results-btn .ic { color: var(--violet); }
+
 .ollama-badge {
   display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px;
   font-size: 12px; color: var(--text); background: var(--surface);

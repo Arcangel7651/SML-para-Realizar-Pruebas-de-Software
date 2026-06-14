@@ -26,7 +26,7 @@ from services.test_generator import (
 )
 from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality
-from services.results_log import log_result
+from services.results_log import log_result, read_results
 
 router = APIRouter()
 
@@ -209,17 +209,19 @@ async def generate_tests_stream_endpoint(
 
         metrics = None
         passing_tests = set()
+        failures = {}
         if compiles and run_pytest:
-            metrics, passing_tests = _run_pytest(source_code, tests_code, module_name)
+            metrics, passing_tests, failures = _run_pytest(source_code, tests_code, module_name)
 
         quality = analyze_quality(tests_code, functions_found, f"Test{module_pascal}")
 
         learned = _learn_from_result(
-            rag_service, module_name, functions_found, tests_code, compiles, metrics, quality, passing_tests
+            rag_service, module_name, functions_found, tests_code, compiles, metrics, quality,
+            passing_tests, source_code,
         )
-        _learn_from_failure(rag_service, module_name, quality, compiles, metrics, degraded)
+        _learn_from_failure(rag_service, module_name, quality, compiles, metrics, failures, degraded)
 
-        log_result(model, module_name, metrics, compiles, learned, degraded, time.time() - t_start)
+        log_result(model, module_name, metrics, quality, functions_found, compiles, learned, degraded, time.time() - t_start)
 
         yield json.dumps({
             "type":          "done",
@@ -234,6 +236,11 @@ async def generate_tests_stream_endpoint(
         }) + "\n"
 
     return StreamingResponse(event_stream(), media_type="application/x-ndjson")
+
+
+@router.get("/results")
+async def get_results():
+    return {"results": read_results()}
 
 
 @router.get("/rag/documents")

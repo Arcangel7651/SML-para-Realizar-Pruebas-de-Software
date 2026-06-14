@@ -505,7 +505,55 @@ def _parse_passing_tests(stdout: str) -> set[str]:
     return passing
 
 
-def _run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[dict | None, set[str]]:
+_FAIL_HEADER_RE = re.compile(r"^_{3,}\s+(?:\w+\.)?(test_\w+)\b.*?\s+_{3,}\s*$", re.MULTILINE)
+
+
+def _parse_failure_details(stdout: str) -> dict[str, str]:
+    """Extrae, por cada test que FALLÓ, un resumen de la aserción incumplida: la
+    línea `assert ...` del código y la explicación `E   assert X == Y` que pytest
+    imprime con --tb=short. Es la señal semántica más rica que produce la corrida
+    (el modelo fijó un valor esperado incorrecto), y es justo la que el resto del
+    pipeline descartaba. Devuelve {nombre_test: detalle}."""
+    start = re.search(r"^=+ FAILURES =+$", stdout, re.MULTILINE)
+    if not start:
+        return {}
+    section = stdout[start.end():]
+    # Cortar en la siguiente sección con borde de '=' (resumen corto, total, etc.).
+    end = re.search(r"^=+ \w", section, re.MULTILINE)
+    if end:
+        section = section[:end.start()]
+
+    details: dict[str, str] = {}
+    headers = list(_FAIL_HEADER_RE.finditer(section))
+    for i, h in enumerate(headers):
+        name = h.group(1)
+        block_end = headers[i + 1].start() if i + 1 < len(headers) else len(section)
+        block = section[h.end():block_end]
+
+        assert_line = None
+        error_lines = []
+        for raw in block.splitlines():
+            stripped = raw.strip()
+            if assert_line is None and stripped.startswith("assert "):
+                assert_line = stripped
+            elif raw.lstrip().startswith("E ") or raw.lstrip() == "E":
+                err = raw.lstrip()[1:].strip()
+                if err:
+                    error_lines.append(err)
+
+        parts = []
+        if assert_line:
+            parts.append(assert_line)
+        if error_lines:
+            # La primera línea E suele ser "assert 4 == 5"; la siguiente el
+            # "+ where 4 = sumar(2, 2)". Con dos basta para dar contexto.
+            parts.append(" | ".join(error_lines[:2]))
+        if parts:
+            details[name] = " → ".join(parts)[:240]
+    return details
+
+
+def _run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[dict | None, set[str], dict[str, str]]:
     tmp_dir = tempfile.mkdtemp()
     try:
         with open(os.path.join(tmp_dir, f"{module_name}.py"), "w", encoding="utf-8") as f:
@@ -530,10 +578,14 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[di
             timeout=None,
         )
         output = result.stdout + result.stderr
-        return _parse_pytest_output(output), _parse_passing_tests(output)
+        return (
+            _parse_pytest_output(output),
+            _parse_passing_tests(output),
+            _parse_failure_details(output),
+        )
     except Exception as e:
         print(f"[PYTEST] Fallo al ejecutar evaluación: {e}")
-        return None, set()
+        return None, set(), {}
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
@@ -558,13 +610,54 @@ def _should_learn(compiles: bool, metrics: dict | None, quality: dict) -> bool:
 
 
 _LEARNED_COUNT_RE = re.compile(r"(\d+) test\(s\) verificados")
+_SCORE_MARKER_RE = re.compile(r"\[meta score=([\d.]+) kept=(\d+)\]")
+_COVERAGE_RE = re.compile(r"([\d.]+)% de cobertura")
+
+# Cuántos ejemplos verificados se conservan por módulo. Varias versiones buenas
+# (p.ej. una centrada en el camino feliz y otra en excepciones) le dan al RAG
+# más diversidad few-shot que un único ejemplo sobrescrito una y otra vez.
+MAX_EXAMPLES_PER_MODULE = 3
 
 
-def _parse_learned_count(text: str) -> int | None:
-    """Nº de tests verificados que guarda un ejemplo aprendido (para 'quedarse
-    con el mejor' y no regresar a una versión con menos tests)."""
-    m = _LEARNED_COUNT_RE.search(text)
-    return int(m.group(1)) if m else None
+def _example_score(line_coverage: float, kept: int) -> float:
+    """Calidad de un ejemplo verificado, para decidir cuál conservar cuando hay
+    más candidatos que cupos. La cobertura manda (un ejemplo que ejercita más
+    código enseña más); el nº de tests verificados solo desempata. Se combinan
+    en un número monótono: la cobertura como parte entera dominante y los tests
+    como fracción acotada (<1), así más cobertura siempre gana y, a igualdad de
+    cobertura, gana el que tenga más tests.
+
+    La cobertura recibida es la del código que realmente se guarda (en modo
+    parcial, _learn_from_result re-ejecuta pytest sobre el subconjunto antes de
+    llamar aquí), no la de la suite completa: así el score no se infla."""
+    return round(line_coverage + min(kept, 99) / 100.0, 4)
+
+
+def _parse_example_meta(text: str) -> tuple[float, int]:
+    """(score, kept) de un ejemplo ya guardado. Usa el marcador `[meta ...]`; si
+    no está (ejemplos de una versión anterior), lo deduce del texto en prosa."""
+    m = _SCORE_MARKER_RE.search(text)
+    if m:
+        return float(m.group(1)), int(m.group(2))
+    kept_m = _LEARNED_COUNT_RE.search(text)
+    cov_m = _COVERAGE_RE.search(text)
+    kept = int(kept_m.group(1)) if kept_m else 0
+    cov = float(cov_m.group(1)) if cov_m else 0.0
+    return _example_score(cov, kept), kept
+
+
+def _example_code(text: str) -> str:
+    """Código de prueba dentro del texto de un ejemplo guardado (lo que sigue a
+    'Código de prueba:'). Sirve para detectar duplicados exactos entre slots."""
+    return text.split("Código de prueba:\n", 1)[-1].strip()
+
+
+def _next_slot_id(module_name: str, used_ids: set[str]) -> str:
+    base = f"learned_{module_name}"
+    n = 0
+    while f"{base}#{n}" in used_ids:
+        n += 1
+    return f"{base}#{n}"
 
 
 def _learn_from_result(
@@ -576,17 +669,22 @@ def _learn_from_result(
     metrics: dict | None,
     quality: dict,
     passing_tests: set[str] | None = None,
+    source_code: str = "",
 ) -> bool:
-    """Guarda un ejemplo verificado en el RAG (id 'learned_<modulo>'). Dos modos:
+    """Guarda ejemplos verificados en el RAG. Dos modos de contenido:
 
-    - Completo: si pasan todos los tests y se cumplen todas las reglas OR, se
+    - Completo: pasan todos los tests y se cumplen todas las reglas OR -> se
       guarda el archivo entero.
-    - Parcial: si solo algunos pasan pero la estructura es válida, se guarda
-      SOLO el subconjunto de tests que pasaron — código verificado-correcto,
-      sin arrastrar las aserciones equivocadas que fallaron (cero contaminación).
+    - Parcial: solo algunos pasan pero la estructura es válida -> se guarda SOLO
+      el subconjunto que pasó (código verificado-correcto, sin arrastrar las
+      aserciones equivocadas que fallaron — cero contaminación).
 
-    Se conserva la mejor versión (la que más tests verificados tiene) para no
-    regresar entre corridas, que en SLMs varían."""
+    Se conservan hasta MAX_EXAMPLES_PER_MODULE ejemplos por módulo, rankeados por
+    _example_score (cobertura y, en empate, nº de tests). Un ejemplo nuevo:
+    actualiza su slot si su código es idéntico a uno existente, ocupa un cupo
+    libre, o desplaza al peor existente solo si lo supera. Así no se regresa
+    entre corridas (que en SLMs varían) ni se pierde diversidad por sobrescribir
+    siempre el mismo id."""
     if not compiles or metrics is None:
         return False
     # estructura mínima: salida limpia, empieza con import pytest, clase Test única
@@ -616,21 +714,52 @@ def _learn_from_result(
         if kept == 0:
             return False
 
-    # quedarse con el mejor: no sobreescribir un ejemplo con más tests
-    existing = rag.get_document(f"learned_{module_name}")
-    if existing is not None:
-        prev = _parse_learned_count(existing)
-        if prev is not None and kept < prev:
+    coverage = metrics["line_coverage"]
+    if not full and source_code:
+        # Cobertura REAL del subconjunto guardado: la suite completa cubría más
+        # líneas gracias a los tests que luego se descartaron por fallar, así que
+        # usar esa cifra inflaría el score del ejemplo parcial. Se re-ejecuta
+        # pytest solo sobre lo que se conserva; si esa corrida falla, se mantiene
+        # la cobertura de la suite como aproximación.
+        subset_metrics, _, _ = _run_pytest(source_code, code_to_save, module_name)
+        if subset_metrics:
+            coverage = subset_metrics["line_coverage"]
+    score = _example_score(coverage, kept)
+    code_to_save = code_to_save.strip()
+
+    examples = rag.get_learned_examples(module_name)
+    used_ids = {ex["id"] for ex in examples}
+
+    twin = next((ex for ex in examples if _example_code(ex["text"]) == code_to_save), None)
+    if twin is not None:
+        # 1) Mismo código que un slot existente -> actualizar ese slot (sin
+        #    duplicar) y solo si el nuevo no baja su score medido.
+        prev_score, _ = _parse_example_meta(twin["text"])
+        if score < prev_score:
             return False
+        target_id = twin["id"]
+    elif len(examples) < MAX_EXAMPLES_PER_MODULE:
+        # 2) Hay cupo libre.
+        target_id = _next_slot_id(module_name, used_ids)
+    else:
+        # 3) Lleno: desplazar al peor solo si el nuevo lo supera.
+        worst = min(examples, key=lambda ex: _parse_example_meta(ex["text"])[0])
+        worst_score, _ = _parse_example_meta(worst["text"])
+        if score <= worst_score:
+            return False
+        rag.remove_document(worst["id"])
+        used_ids.discard(worst["id"])
+        target_id = _next_slot_id(module_name, used_ids)
 
     text = (
+        f"[meta score={score} kept={kept}] "
         f"Ejemplo verificado de tests pytest para el módulo '{module_name}'{suffix} "
         f"(funciones: {', '.join(functions_found) or 'sin funciones detectadas'}). "
         f"{kept} test(s) verificados que pasan, "
-        f"{metrics['line_coverage']}% de cobertura de línea. "
+        f"{coverage}% de cobertura de línea. "
         f"Código de prueba:\n{code_to_save}"
     )
-    rag.add_learned_document(f"learned_{module_name}", text)
+    rag.add_learned_document(target_id, text)
 
     # Solo en el caso completo las advertencias dejan de aplicar.
     if full:
@@ -660,13 +789,15 @@ def _learn_from_failure(
     quality: dict,
     compiles: bool,
     metrics: dict | None,
+    failures: dict[str, str] | None = None,
     degraded: bool = False,
 ) -> bool:
     """Si la generación compiló y corrió, pero quedó incompleta de una forma
-    reconocible (cobertura de funciones faltante pese al retry de OR-8, o
-    test smells), guarda advertencias en RAG para que futuras generaciones
-    de este mismo módulo reciban ese contexto. Son documentos de "lección",
-    no ejemplos de código (a diferencia de _learn_from_result).
+    reconocible (cobertura de funciones faltante pese al retry de OR-8, test
+    smells, o tests que fallaron por una aserción con el valor esperado
+    incorrecto), guarda advertencias en RAG para que futuras generaciones de
+    este mismo módulo reciban ese contexto. Son documentos de "lección", no
+    ejemplos de código (a diferencia de _learn_from_result).
 
     No se aprende de corridas degradadas: en ese caso el código son stubs
     pytest.skip() generados por el respaldo, no salida real del modelo, así
@@ -697,6 +828,25 @@ def _learn_from_failure(
             f"ADVERTENCIA para el módulo '{module_name}': en una generación previa, los "
             f"tests generados tuvieron estos test smells: {', '.join(smells)}. Al generar "
             f"tests para este módulo, recuerda que {guidance}."
+        )
+        rag.add_warning(doc_id, text)
+        learned_something = True
+
+    # Lección de aserciones: la señal semántica más rica. El modelo fijó el valor
+    # esperado equivocado y pytest lo demostró al ejecutar. Se la devolvemos para
+    # que reconsidere, advirtiéndole de NO copiar el valor obtenido a ciegas (eso
+    # produciría un test tautológico que oculta el bug en vez de detectarlo).
+    if failures:
+        items = list(failures.items())[:4]
+        detalle = "\n".join(f"  - {name}: {detail}" for name, detail in items)
+        doc_id = f"learned_warning_assertions_{module_name}"
+        text = (
+            f"ADVERTENCIA para el módulo '{module_name}': en una generación previa, estos "
+            f"tests fallaron al ejecutarse porque su aserción no se cumplió:\n{detalle}\n"
+            f"Revisa el comportamiento REAL de cada función (su código y su docstring) antes "
+            f"de fijar el valor esperado en el assert. No copies a ciegas el valor que la "
+            f"función devolvió solo para que el test pase: si ese valor no es el correcto "
+            f"según el contrato de la función, el test sería tautológico y ocultaría un bug."
         )
         rag.add_warning(doc_id, text)
         learned_something = True
@@ -830,9 +980,10 @@ def generate_tests(
 
     metrics = None
     passing_tests: set[str] = set()
+    failures: dict[str, str] = {}
     if compiles and run_pytest:
         print(f"[PYTEST] Ejecutando evaluación...")
-        metrics, passing_tests = _run_pytest(source_code, tests_code, module_name)
+        metrics, passing_tests, failures = _run_pytest(source_code, tests_code, module_name)
         if metrics:
             print(f"[PYTEST] {metrics['tests_passed']}/{metrics['tests_total']} pasan | "
                   f"cobertura: {metrics['line_coverage']}%")
@@ -845,16 +996,17 @@ def generate_tests(
           f"smells: {quality['smells_detected']}")
 
     learned = _learn_from_result(
-        rag, module_name, functions_found, tests_code, compiles, metrics, quality, passing_tests
+        rag, module_name, functions_found, tests_code, compiles, metrics, quality,
+        passing_tests, source_code,
     )
     if learned:
         print(f"[RAG] Ejemplo verificado (completo o parcial) guardado como 'learned_{module_name}'")
     # Las advertencias se evalúan aparte: aplican aunque se haya aprendido un
     # subconjunto parcial (p.ej. cobertura incompleta o smells).
-    if _learn_from_failure(rag, module_name, quality, compiles, metrics, degraded):
+    if _learn_from_failure(rag, module_name, quality, compiles, metrics, failures, degraded):
         print(f"[RAG] Advertencia(s) guardada(s) para '{module_name}'")
 
-    log_result(model, module_name, metrics, compiles, learned, degraded, time.time() - t_total)
+    log_result(model, module_name, metrics, quality, functions_found, compiles, learned, degraded, time.time() - t_total)
 
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")

@@ -16,7 +16,7 @@ WARNING_PREFIX = "learned_warning_"
 # Tipos de advertencia que se generan por módulo (ver _learn_from_failure en
 # test_generator). El doc_id de una advertencia es siempre de la forma
 # f"{WARNING_PREFIX}{kind}_{module_name}".
-WARNING_KINDS = ("coverage", "smells")
+WARNING_KINDS = ("coverage", "smells", "assertions")
 
 
 def _is_warning_id(doc_id: str) -> bool:
@@ -126,6 +126,21 @@ class RAGService:
             if key in self._warnings:
                 out.append(self._warnings[key])
         return out
+
+    def get_learned_examples(self, module_name: str) -> list[dict]:
+        """Ejemplos verificados de un módulo. Soporta el id histórico
+        `learned_<modulo>` (un único ejemplo) y el esquema multi-ejemplo
+        `learned_<modulo>#<slot>`. El delimitador '#' no aparece en nombres de
+        módulo (vienen del nombre de un archivo .py), así que un módulo cuyo
+        nombre sea prefijo de otro (p.ej. 'cuenta' vs 'cuenta_bancaria') no
+        captura ejemplos ajenos."""
+        legacy = f"learned_{module_name}"
+        prefix = f"learned_{module_name}#"
+        return [
+            {"id": d["id"], "text": d["text"]}
+            for d in self._documents
+            if d["id"] == legacy or d["id"].startswith(prefix)
+        ]
 
     # ── Escritura: ejemplos y docs de usuario (índice de similitud) ──
     def add_document(self, doc_id: str, text: str):
