@@ -8,7 +8,7 @@
       "first_seen": "2026-06-15T05:12:33",
       "last_seen": "2026-06-15T05:12:33",
       "count": 1,
-      "triage": "bug_real"
+      "triage": "falso_positivo"
     },
     {
       "name": "test_sumar_matrices_diferentes_dimensiones_lanza_error",
@@ -16,7 +16,7 @@
       "first_seen": "2026-06-15T05:22:50",
       "last_seen": "2026-06-15T05:22:50",
       "count": 1,
-      "triage": "bug_real"
+      "triage": "falso_positivo"
     },
     {
       "name": "test_sumar_matrices_nula_y_no_vacia_lanza_error",
@@ -24,14 +24,15 @@
       "first_seen": "2026-06-15T05:22:50",
       "last_seen": "2026-06-15T05:33:56",
       "count": 2,
-      "triage": "bug_real"
+      "triage": "falso_positivo"
     },
     {
       "name": "test_multiplicar_matrices_una_fila_y_una_columna_lanza_error",
       "detail": "Failed: DID NOT RAISE <class 'ValueError'>",
       "first_seen": "2026-06-15T05:47:34",
       "last_seen": "2026-06-15T05:47:34",
-      "count": 1
+      "count": 1,
+      "triage": "falso_positivo"
     }
   ]
 }

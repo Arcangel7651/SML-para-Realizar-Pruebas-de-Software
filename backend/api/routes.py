@@ -243,7 +243,7 @@ async def generate_tests_stream_endpoint(
 
         log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_start)
 
-        potential_bugs = record_and_annotate(module_name, _build_potential_bugs(failures, degraded))
+        potential_bugs = record_and_annotate(module_name, _build_potential_bugs(failures, degraded, tests_code, functions_found))
 
         yield json.dumps({
             "type":          "done",

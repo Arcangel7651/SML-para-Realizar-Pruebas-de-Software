@@ -26,6 +26,7 @@ def _is_warning_id(doc_id: str) -> bool:
 class RAGService:
     def __init__(self):
         seed_ids = {d["id"] for d in SEED_DOCUMENTS}
+        self._seed_ids = seed_ids
         user_docs = self._load_json(STORE_PATH)
         learned_docs = self._load_json(LEARNED_STORE_PATH)
         warning_docs = self._load_json(WARNINGS_STORE_PATH)
@@ -95,10 +96,16 @@ class RAGService:
             self._matrix = self._vectorizer.fit_transform(texts)
 
     # ── Recuperación ─────────────────────────────────────────────────
-    def query(self, text: str, n_results: int = 3) -> list[str]:
+    def query(self, text: str, n_results: int = 3, min_seeds: int = 1) -> list[str]:
         """Patrones/ejemplos relevantes por similitud coseno (embeddings
         semánticos si están disponibles, TF-IDF si no). No incluye
-        advertencias (esas se recuperan con get_warnings, por clave)."""
+        advertencias (esas se recuperan con get_warnings, por clave).
+
+        Reserva `min_seeds` cupos para patrones SEED (curados del SMS): los
+        ejemplos aprendidos suelen ser los más similares (son del mismo módulo)
+        y, a medida que crece el corpus aprendido, tenderían a desplazar del
+        top-k a los patrones diversos. Reservar cupos de seed mantiene esa
+        diversidad y evita el efecto eco (el modelo reproduciéndose a sí mismo)."""
         if not self._documents:
             return []
 
@@ -113,8 +120,27 @@ class RAGService:
         else:
             return []
 
-        top_indices = np.argsort(scores)[::-1][:n_results]
-        return [self._documents[i]["text"] for i in top_indices if scores[i] > 0]
+        order = [int(i) for i in np.argsort(scores)[::-1] if scores[i] > 0]
+        if not order:
+            return []
+
+        # La mayoría de los cupos por relevancia global; el resto reservado a
+        # los seeds más relevantes aún no incluidos.
+        selected = list(order[: max(n_results - min_seeds, 0)])
+        reserved = [
+            i for i in order
+            if self._documents[i]["id"] in self._seed_ids and i not in selected
+        ]
+        selected += reserved[:min_seeds]
+        # Completar por relevancia si quedan cupos (p.ej. no había seeds).
+        for i in order:
+            if len(selected) >= n_results:
+                break
+            if i not in selected:
+                selected.append(i)
+
+        selected = sorted(selected, key=lambda i: scores[i], reverse=True)[:n_results]
+        return [self._documents[i]["text"] for i in selected]
 
     def get_warnings(self, module_name: str) -> list[str]:
         """Advertencias del módulo, por clave exacta. Solo aplican a este

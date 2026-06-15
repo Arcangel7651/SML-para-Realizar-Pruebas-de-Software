@@ -56,8 +56,9 @@ def _is_pytest_skip_call(node: ast.stmt) -> bool:
     )
 
 
-def detect_smells(code: str) -> list[str]:
+def detect_smells(code: str, functions: list[str] | None = None) -> list[str]:
     smells = []
+    func_set = set(functions or [])
 
     try:
         tree = ast.parse(code)
@@ -94,6 +95,13 @@ def detect_smells(code: str) -> list[str]:
         if suffix and "_" not in suffix:
             if "generic_name" not in smells:
                 smells.append("generic_name")
+
+        # ── empty_raises ────────────────────────────────────────
+        # `with pytest.raises(...)` cuyo cuerpo no invoca ninguna función bajo
+        # prueba: nada lanza, el test falla sin probar el código.
+        if _has_empty_raises(node, func_set):
+            if "empty_raises" not in smells:
+                smells.append("empty_raises")
 
     return smells
 
@@ -142,6 +150,61 @@ def count_tests_by_function(code: str, functions: list[str]) -> dict[str, int]:
     return counts
 
 
+def _is_pytest_raises_item(item: ast.withitem) -> bool:
+    """True si el item de un `with` es una llamada a pytest.raises(...) (o
+    raises(...) importado suelto)."""
+    call = item.context_expr
+    if not isinstance(call, ast.Call):
+        return False
+    func = call.func
+    return (
+        (isinstance(func, ast.Attribute) and func.attr == "raises")
+        or (isinstance(func, ast.Name) and func.id == "raises")
+    )
+
+
+def _has_empty_raises(test_node: ast.FunctionDef, func_set: set[str]) -> bool:
+    """True si el test tiene un `with pytest.raises(...)` cuyo cuerpo NO invoca
+    ninguna función bajo prueba. Patrón típico del modelo: asigna las variables
+    dentro del bloque pero olvida la llamada, así que nada lanza y el test falla
+    con 'DID NOT RAISE' sin que el código tenga un bug."""
+    if not func_set:
+        return False
+    for sub in ast.walk(test_node):
+        if not isinstance(sub, ast.With):
+            continue
+        if not any(_is_pytest_raises_item(it) for it in sub.items):
+            continue
+        called = set()
+        for stmt in sub.body:
+            called |= _functions_called_in(stmt)
+        if not (called & func_set):
+            return True
+    return False
+
+
+def find_empty_raises_tests(code: str, functions: list[str] | None) -> set[str]:
+    """Nombres de los tests con un bloque `pytest.raises` 'vacío' (sin invocar
+    ninguna función bajo prueba). Se usa para NO flagear sus fallos 'DID NOT
+    RAISE' como posibles bugs: el roto es el test, no el código."""
+    func_set = set(functions or [])
+    if not func_set:
+        return set()
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return set()
+    bad = set()
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.FunctionDef)
+            and node.name.startswith("test_")
+            and _has_empty_raises(node, func_set)
+        ):
+            bad.add(node.name)
+    return bad
+
+
 def analyze(
     code: str,
     functions_found: list[str] | None = None,
@@ -149,7 +212,7 @@ def analyze(
 ) -> dict:
     return {
         "has_given_when_then": has_given_when_then(code),
-        "smells_detected": detect_smells(code),
+        "smells_detected": detect_smells(code, functions_found),
         "tests_per_function": count_tests_by_function(code, functions_found or []),
         "is_clean_output": is_clean_code_output(code),
         "starts_with_import_pytest": starts_with_import_pytest(code),

@@ -46,7 +46,9 @@
       "Bash(mkdir -p \"/c/Users/angel/Documents/PRACTICAS/resultados\")",
       "Read(//c/Users/angel/Documents/PRACTICAS//**)",
       "Skill(update-config)",
-      "Skill(update-config:*)"
+      "Skill(update-config:*)",
+      "Bash(ls codigos-prueba/test/qwen3B/matriz/)",
+      "Bash(python -c \"import json;d=json.load\\(open\\('backend/data/bugs_store.json',encoding='utf-8'\\)\\);import pprint;pprint.pprint\\(d.get\\('matriz','\\(sin entradas\\)'\\)\\)\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory",

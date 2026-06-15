@@ -12,7 +12,7 @@ import time
 from infrastructure.ollama_client import chat
 from services.rag_service import RAGService
 from services.ast_parser import extract_functions, extract_classes
-from services.quality_analyzer import analyze as analyze_quality, count_tests_by_function
+from services.quality_analyzer import analyze as analyze_quality, count_tests_by_function, find_empty_raises_tests
 from services.results_log import log_result
 from services.bugs_store import record_and_annotate
 
@@ -591,7 +591,9 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[di
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
-def _build_potential_bugs(failures: dict[str, str], degraded: bool) -> list[dict]:
+def _build_potential_bugs(
+    failures: dict[str, str], degraded: bool, tests_code: str, functions_found: list[str]
+) -> list[dict]:
     """Opción A: tests que compilaron y se ejecutaron pero FALLARON, con su
     detalle de aserción (esperado vs obtenido), presentados al humano como
     'posible bug detectado o aserción incorrecta' en vez de descartarlos en
@@ -599,11 +601,19 @@ def _build_potential_bugs(failures: dict[str, str], degraded: bool) -> list[dict
     decidir cuál: (a) el código bajo prueba tiene un bug que el test cazó, o
     (b) el modelo fijó un valor esperado equivocado.
 
-    No se incluyen en corridas degradadas: ahí el código son stubs del respaldo,
-    no salida real del modelo, así que sus fallos serían artefactos."""
+    Se excluyen los fallos de tests MALFORMADOS (un `pytest.raises` que nunca
+    invoca la función → falla con 'DID NOT RAISE' aunque el código sea correcto):
+    el roto es el test, no el código, así que no es un posible bug (reduce falsos
+    positivos). No se incluyen tampoco en corridas degradadas: ahí el código son
+    stubs del respaldo, no salida real del modelo."""
     if degraded or not failures:
         return []
-    return [{"name": name, "detail": detail} for name, detail in failures.items()]
+    malformed = find_empty_raises_tests(tests_code, functions_found)
+    return [
+        {"name": name, "detail": detail}
+        for name, detail in failures.items()
+        if name not in malformed
+    ]
 
 
 def _should_learn(compiles: bool, metrics: dict | None, quality: dict) -> bool:
@@ -795,6 +805,12 @@ _SMELL_GUIDANCE = {
     "generic_name": (
         "los nombres de test deben seguir test_<función>_<escenario_descriptivo>, "
         "nunca test_<función> a secas sin describir el escenario (OR-4)"
+    ),
+    "empty_raises": (
+        "dentro de un bloque `with pytest.raises(...)` SIEMPRE invoca la "
+        "función/método bajo prueba (p.ej. `funcion(args)`); no basta con asignar "
+        "variables: si no se llama a nada, no se lanza la excepción y el test "
+        "falla con 'DID NOT RAISE' sin probar el código"
     ),
 }
 
@@ -1026,7 +1042,7 @@ def generate_tests(
 
     # Opción A + persistencia: registra los fallos de esta corrida en un store
     # aparte del RAG y recupera los acumulados del módulo (incluye runs previos).
-    potential_bugs = record_and_annotate(module_name, _build_potential_bugs(failures, degraded))
+    potential_bugs = record_and_annotate(module_name, _build_potential_bugs(failures, degraded, tests_code, functions_found))
 
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")
