@@ -1,1 +1,4 @@
 timestamp,model,module,compiles,degraded,learned,tests_total,tests_passed,tests_failed,tests_skipped,tests_errors,pass_rate,line_coverage,branch_coverage,funcs_total,funcs_covered,func_coverage_pct,given_when_then,smells_count,smells,time_s
+2026-06-14T23:43:54,qwen2.5-coder:3b,calculadora,True,False,True,17,11,6,0,0,64.7,88.0,50.0,6,6,100.0,True,0,,567.7
+2026-06-14T23:54:24,qwen2.5-coder:3b,calculadora,True,False,True,11,11,0,0,0,100.0,88.0,50.0,6,6,100.0,True,0,,507.1
+2026-06-15T00:04:11,qwen2.5-coder:3b,calculadora,True,False,True,12,12,0,0,0,100.0,100.0,100.0,6,6,100.0,True,0,,443.9

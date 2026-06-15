@@ -40,7 +40,9 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/ --max-time 5)",
       "Bash(docker compose *)",
       "Bash(docker exec *)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(npx eslint *)",
+      "Bash(echo \"--- exit: $? ---\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory"
