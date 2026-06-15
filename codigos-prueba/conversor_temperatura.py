@@ -1,6 +1,5 @@
 """
 conversor_temperatura.py — Conversiones entre escalas de temperatura.
-CÓDIGO BUENO: valida el cero absoluto como límite físico inferior.
 """
 
 CERO_ABSOLUTO_C = -273.15

@@ -11,3 +11,7 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-15T04:31:27,qwen2.5-coder:3b,validador_email,True,False,True,3,0,False,3,3,0,0,0,100.0,79.0,66.7,2,2,100.0,False,0,,219.1
 2026-06-15T04:40:34,qwen2.5-coder:3b,validador_email,True,False,True,3,0,True,3,3,0,0,0,100.0,79.0,66.7,2,2,100.0,False,0,,292.9
 2026-06-15T04:45:17,qwen2.5-coder:3b,validador_email,True,False,True,3,0,True,3,3,0,0,0,100.0,79.0,66.7,2,2,100.0,False,0,,109.0
+2026-06-15T05:12:32,qwen2.5-coder:3b,matriz,True,False,True,3,0,False,6,4,2,0,0,66.7,78.0,71.4,3,3,100.0,True,0,,392.4
+2026-06-15T05:22:50,qwen2.5-coder:3b,matriz,True,False,True,4,1,True,7,5,2,0,0,71.4,84.0,78.6,3,3,100.0,True,0,,442.5
+2026-06-15T05:33:56,qwen2.5-coder:3b,matriz,True,False,True,4,1,True,7,6,1,0,0,85.7,89.0,85.7,3,3,100.0,True,0,,444.6
+2026-06-15T05:47:34,qwen2.5-coder:3b,matriz,True,False,True,4,1,True,9,7,2,0,0,77.8,89.0,85.7,3,3,100.0,True,0,,508.0

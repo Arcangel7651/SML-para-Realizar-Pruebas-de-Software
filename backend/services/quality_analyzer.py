@@ -98,31 +98,31 @@ def detect_smells(code: str) -> list[str]:
     return smells
 
 
-def _shares_stem(function_name: str, word: str) -> bool:
-    """Heurística para tolerar variaciones verbo/sustantivo comunes en español
-    entre el nombre de la función (infinitivo, p.ej. "dividir") y la palabra
-    que el modelo usó para nombrar el test (p.ej. "division", "suma")."""
-    a, b = function_name.lower(), word.lower()
-    if a == b or a.startswith(b) or b.startswith(a):
-        return True
-
-    common = 0
-    for ca, cb in zip(a, b):
-        if ca != cb:
-            break
-        common += 1
-
-    threshold = max(3, min(len(a), len(b)) // 2)
-    return common > threshold
+def _functions_called_in(node: ast.FunctionDef) -> set[str]:
+    """Nombres de funciones/métodos que el cuerpo del test realmente INVOCA:
+    `funcion(...)` (ast.Call con func ast.Name) o `instancia.metodo(...)`
+    (ast.Call con func ast.Attribute). Solo cuentan llamadas reales, no meras
+    menciones, para no confundir una variable llamada como un método (p.ej.
+    `total`) con una invocación de ese método."""
+    called = set()
+    for sub in ast.walk(node):
+        if not isinstance(sub, ast.Call):
+            continue
+        func = sub.func
+        if isinstance(func, ast.Name):
+            called.add(func.id)
+        elif isinstance(func, ast.Attribute):
+            called.add(func.attr)
+    return called
 
 
 def count_tests_by_function(code: str, functions: list[str]) -> dict[str, int]:
-    """Cuenta cuántos métodos test_* corresponden a cada función detectada por
-    el AST parser. Primero intenta la convención de nombres exacta que pide el
-    system prompt (test_<function>_<scenario>, regla OR-4); si el modelo usó
-    una variante (p.ej. "test_division_entre_cero" para la función "dividir",
-    o "test_suma" para "sumar"), recurre a una comparación de raíz tolerante
-    a esas variaciones verbo/sustantivo."""
+    """Cuenta cuántos métodos test_* EJERCEN cada función detectada por el AST,
+    según lo que el cuerpo del test realmente invoca (no según el NOMBRE del
+    test). Un test que solo se *llama* `test_<funcion>_...` pero no invoca a la
+    función no cuenta para ella: así un test bien nombrado pero mal implementado
+    no simula cobertura (regla OR-8). Un test que invoca varias funciones cuenta
+    para todas (útil en tests de interacción estilo AGONETEST)."""
     counts = {fn: 0 for fn in functions}
     if not functions:
         return counts
@@ -132,25 +132,12 @@ def count_tests_by_function(code: str, functions: list[str]) -> dict[str, int]:
     except SyntaxError:
         return counts
 
-    # Probar primero los nombres más largos para que p.ej. "es_par" no quede
-    # eclipsado por una coincidencia parcial de "es".
-    candidates = sorted(functions, key=len, reverse=True)
-
+    func_set = set(functions)
     for node in ast.walk(tree):
         if not isinstance(node, ast.FunctionDef) or not node.name.startswith("test_"):
             continue
-        suffix = node.name[len("test_"):]
-        first_word = suffix.split("_", 1)[0]
-
-        match = next(
-            (fn for fn in candidates if suffix == fn or suffix.startswith(fn + "_")),
-            None,
-        )
-        if match is None:
-            match = next((fn for fn in candidates if _shares_stem(fn, first_word)), None)
-
-        if match is not None:
-            counts[match] += 1
+        for fn in func_set & _functions_called_in(node):
+            counts[fn] += 1
 
     return counts
 
