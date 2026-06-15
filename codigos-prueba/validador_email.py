@@ -1,6 +1,5 @@
 """
 validador_email.py — Validación de formato de correos electrónicos.
-CÓDIGO BUENO: maneja casos borde (None, vacío, sin dominio, etc.)
 """
 
 import re

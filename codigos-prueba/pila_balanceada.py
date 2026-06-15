@@ -1,7 +1,5 @@
 """
 pila_balanceada.py — Verificación de paréntesis/llaves/corchetes balanceados.
-CÓDIGO BUENO: implementación clásica con pila, maneja cadenas vacías y
-caracteres no relacionados.
 """
 
 PARES = {")": "(", "]": "[", "}": "{"}

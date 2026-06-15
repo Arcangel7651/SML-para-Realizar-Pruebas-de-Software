@@ -1,9 +1,5 @@
 """
 cuenta_bancaria.py — Cuenta bancaria simple.
-CÓDIGO MALO (bugs intencionales):
- - retirar() permite dejar la cuenta en saldo negativo (usa > en vez de >=)
- - depositar() no valida montos negativos
- - sin manejo de tipos no numéricos
 """
 
 

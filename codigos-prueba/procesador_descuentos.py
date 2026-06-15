@@ -1,9 +1,5 @@
 """
 procesador_descuentos.py — Cálculo de precios con descuento.
-CÓDIGO MALO (bugs intencionales):
- - no valida porcentajes fuera de rango (negativos o mayores a 100)
- - división entre cero al calcular precio_unitario si cantidad es 0
- - aplicar_descuento_escalonado tiene lógica de comparación invertida
 """
 
 

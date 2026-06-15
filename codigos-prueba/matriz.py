@@ -1,6 +1,5 @@
 """
 matriz.py — Operaciones básicas con matrices representadas como listas de listas.
-CÓDIGO BUENO: valida dimensiones antes de operar.
 """
 
 

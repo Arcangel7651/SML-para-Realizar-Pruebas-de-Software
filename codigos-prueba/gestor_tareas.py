@@ -1,6 +1,5 @@
 """
 gestor_tareas.py — Gestión de una lista de tareas (To-Do).
-CÓDIGO BUENO: validaciones de entrada y manejo de estados consistente.
 """
 
 

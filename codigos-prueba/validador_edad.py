@@ -1,10 +1,5 @@
 """
 validador_edad.py — Clasificación de personas por rango de edad.
-CÓDIGO MALO (bugs intencionales):
- - error de "off-by-one" en los límites de los rangos (18 cae en dos categorías
-   y 65 queda sin categoría)
- - permite edades negativas sin validación
- - es_mayor_de_edad usa '>' en vez de '>='
 """
 
 

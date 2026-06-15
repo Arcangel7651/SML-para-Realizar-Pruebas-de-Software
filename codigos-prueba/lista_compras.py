@@ -1,9 +1,5 @@
 """
 lista_compras.py — Carrito de compras simple.
-CÓDIGO MALO (bugs intencionales):
- - argumento por defecto mutable (items=[]) compartido entre instancias
- - quitar_item() no valida si el ítem existe (lanza ValueError no controlado)
- - total() no maneja precios negativos ni cantidades cero
 """
 
 
