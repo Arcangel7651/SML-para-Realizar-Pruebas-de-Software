@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Icon from './Icon'
 import './MetricsPanel.css'
 
@@ -34,8 +35,28 @@ const SMELL_LABELS = {
   generic_name:       'generic_name',
 }
 
-export default function MetricsPanel({ result }) {
+export default function MetricsPanel({ result, moduleName }) {
   const { compiles, compile_error, functions_found = [], metrics, quality, generation_time, learned, degraded, potential_bugs = [] } = result
+
+  // Estado local de los bugs para reflejar la clasificación (triaje) sin
+  // re-generar. Se resincroniza cuando llega un nuevo resultado.
+  const [bugs, setBugs] = useState(potential_bugs)
+  useEffect(() => { setBugs(potential_bugs) }, [result]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Triaje: anotación PRIVADA solo para análisis (precisión/recall). Se persiste
+  // en bugs_store.json; no influye en el modelo ni en el RAG.
+  async function classifyBug(bug, triage) {
+    try {
+      await fetch('/api/bugs/triage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ module: moduleName, name: bug.name, detail: bug.detail, triage }),
+      })
+    } catch { /* el triaje es solo para análisis: si falla, se ignora */ }
+    setBugs(prev => prev.map(b =>
+      b.name === bug.name && b.detail === bug.detail ? { ...b, triage } : b
+    ))
+  }
 
   const stats = []
   if (metrics) {
@@ -67,20 +88,37 @@ export default function MetricsPanel({ result }) {
         </div>
       </div>
 
-      {potential_bugs.length > 0 && (
+      {bugs.length > 0 && (
         <div className="gen-bugs">
           <div className="gen-bugs-head">
             <span className="gen-bugs-ic"><Icon name="bug" size={16} /></span>
             <div className="gen-bugs-head-txt">
-              <b>{potential_bugs.length} posible{potential_bugs.length === 1 ? '' : 's'} bug{potential_bugs.length === 1 ? '' : 's'} detectado{potential_bugs.length === 1 ? '' : 's'}</b>
-              <span>Estos tests se ejecutaron pero fallaron: o el código bajo prueba tiene un bug, o la aserción del modelo es incorrecta. Revísalos.</span>
+              <b>{bugs.length} posible{bugs.length === 1 ? '' : 's'} bug{bugs.length === 1 ? '' : 's'} detectado{bugs.length === 1 ? '' : 's'}</b>
+              <span>Tests que fallaron en esta o en anteriores generaciones de este módulo: o el código tiene un bug, o la aserción del modelo es incorrecta. Clasifícalos para tu análisis.</span>
             </div>
           </div>
           <div className="gen-bugs-list">
-            {potential_bugs.map(bug => (
-              <div key={bug.name} className="gen-bug">
-                <span className="gen-bug-name">{bug.name}</span>
+            {bugs.map((bug, i) => (
+              <div key={`${bug.name}-${i}`} className="gen-bug">
+                <span className="gen-bug-name">
+                  {bug.name}
+                  {bug.seen_now === false && <span className="gen-bug-tag">run anterior</span>}
+                </span>
                 <span className="gen-bug-detail">{bug.detail}</span>
+                <div className="gen-bug-triage">
+                  <button
+                    className={`gen-triage-btn real${bug.triage === 'bug_real' ? ' active' : ''}`}
+                    onClick={() => classifyBug(bug, bug.triage === 'bug_real' ? null : 'bug_real')}
+                  >
+                    <Icon name="bug" size={12} /> Bug real
+                  </button>
+                  <button
+                    className={`gen-triage-btn falso${bug.triage === 'falso_positivo' ? ' active' : ''}`}
+                    onClick={() => classifyBug(bug, bug.triage === 'falso_positivo' ? null : 'falso_positivo')}
+                  >
+                    <Icon name="check" size={12} /> Falso positivo
+                  </button>
+                </div>
               </div>
             ))}
           </div>

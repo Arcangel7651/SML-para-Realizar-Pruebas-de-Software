@@ -14,6 +14,7 @@ from services.rag_service import RAGService
 from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality, count_tests_by_function
 from services.results_log import log_result
+from services.bugs_store import record_and_annotate
 
 
 SYSTEM_PROMPT = SYSTEM_PROMPT = """You are an automated unit test generator for Python modules using pytest.
@@ -1023,6 +1024,10 @@ def generate_tests(
 
     log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_total)
 
+    # Opción A + persistencia: registra los fallos de esta corrida en un store
+    # aparte del RAG y recupera los acumulados del módulo (incluye runs previos).
+    potential_bugs = record_and_annotate(module_name, _build_potential_bugs(failures, degraded))
+
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")
 
@@ -1037,5 +1042,5 @@ def generate_tests(
         "quality":         quality,
         "learned":         learned,
         "degraded":        degraded,
-        "potential_bugs":  _build_potential_bugs(failures, degraded),
+        "potential_bugs":  potential_bugs,
     }

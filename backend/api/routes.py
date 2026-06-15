@@ -28,6 +28,7 @@ from services.test_generator import (
 from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality
 from services.results_log import log_result, read_results
+from services.bugs_store import record_and_annotate, set_triage, all_bugs
 
 router = APIRouter()
 
@@ -62,6 +63,18 @@ class Quality(BaseModel):
 class PotentialBug(BaseModel):
     name: str
     detail: str
+    seen_now: bool = True
+    count: int = 1
+    first_seen: str | None = None
+    last_seen: str | None = None
+    triage: str | None = None
+
+
+class TriageRequest(BaseModel):
+    module: str
+    name: str
+    detail: str
+    triage: str | None = None
 
 
 class GenerateResponse(BaseModel):
@@ -230,6 +243,8 @@ async def generate_tests_stream_endpoint(
 
         log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_start)
 
+        potential_bugs = record_and_annotate(module_name, _build_potential_bugs(failures, degraded))
+
         yield json.dumps({
             "type":          "done",
             "tests":         tests_code,
@@ -240,7 +255,7 @@ async def generate_tests_stream_endpoint(
             "quality":       quality,
             "learned":       learned,
             "degraded":      degraded,
-            "potential_bugs": _build_potential_bugs(failures, degraded),
+            "potential_bugs": potential_bugs,
         }) + "\n"
 
     return StreamingResponse(event_stream(), media_type="application/x-ndjson")
@@ -249,6 +264,21 @@ async def generate_tests_stream_endpoint(
 @router.get("/results")
 async def get_results():
     return {"results": read_results()}
+
+
+@router.get("/bugs")
+async def get_bugs_endpoint():
+    """Todos los posibles bugs registrados por módulo (para análisis de datos).
+    No interviene en la generación."""
+    return {"bugs": all_bugs()}
+
+
+@router.post("/bugs/triage")
+async def triage_bug(body: TriageRequest):
+    """Clasifica un posible bug (bug_real / falso_positivo / None). Anotación
+    privada para análisis; no influye en el modelo."""
+    ok = set_triage(body.module, body.name, body.detail, body.triage)
+    return {"status": "ok" if ok else "not_found"}
 
 
 @router.get("/rag/documents")

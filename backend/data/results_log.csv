@@ -5,3 +5,5 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-15T00:37:21,qwen2.5-coder:3b,validador_edad,True,False,True,,,,8,7,1,0,0,87.5,90.0,87.5,2,2,100.0,True,0,,404.3
 2026-06-15T00:45:00,qwen2.5-coder:3b,validador_edad,True,False,True,,,,7,7,0,0,0,100.0,90.0,87.5,2,2,100.0,True,0,,330.2
 2026-06-15T00:51:30,qwen2.5-coder:3b,validador_edad,True,False,True,,,,7,7,0,0,0,100.0,90.0,87.5,2,2,100.0,True,0,,333.9
+2026-06-15T01:49:11,qwen2.5-coder:3b,validador_edad,True,False,True,3,0,False,10,8,2,0,0,80.0,90.0,87.5,2,2,100.0,True,0,,391.1
+2026-06-15T02:00:49,qwen2.5-coder:3b,validador_edad,True,False,True,4,1,True,8,8,0,0,0,100.0,90.0,87.5,2,2,100.0,True,0,,491.0

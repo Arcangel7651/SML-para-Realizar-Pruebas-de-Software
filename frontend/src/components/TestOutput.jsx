@@ -166,7 +166,7 @@ export default function TestOutput({ result, loading, streamingCode, fileName, r
 
         {activeTab === 'metrics' && (
           <div className="gen-metrics">
-            <MetricsPanel result={result} />
+            <MetricsPanel result={result} moduleName={moduleName} />
           </div>
         )}
 
