@@ -9,6 +9,10 @@ FIELDNAMES = [
     "timestamp", "model", "module",
     # ── Resultado de la generación ───────────────────────────────────
     "compiles", "degraded", "learned",
+    # ── Contexto RAG inyectado al prompt (la variable que explica la
+    #    convergencia: nº de fragmentos, advertencias del módulo y si se
+    #    recuperó el ejemplo aprendido propio del módulo) ──────────────
+    "rag_fragments", "rag_warnings", "rag_used_learned",
     # ── Ejecución de los tests (pytest) ──────────────────────────────
     "tests_total", "tests_passed", "tests_failed", "tests_skipped", "tests_errors", "pass_rate",
     # ── Cobertura del código bajo prueba ─────────────────────────────
@@ -28,12 +32,27 @@ def _cell(value):
     return "" if value is None else value
 
 
+def _rag_signals(module: str, context_fragments: list[str] | None, warnings: list[str] | None):
+    """Señales compactas del contexto RAG usado en la generación: nº de
+    fragmentos, nº de advertencias del módulo y si entre los fragmentos venía
+    el ejemplo aprendido propio del módulo (texto 'Ejemplo verificado ... para
+    el módulo <module>'). Detecta por contenido, no por id, así que es robusto
+    al esquema de ids (legacy o por slots)."""
+    frags = context_fragments or []
+    warns = warnings or []
+    marker = f"para el módulo '{module}'"
+    used_learned = any("Ejemplo verificado" in f and marker in f for f in frags)
+    return len(frags), len(warns), used_learned
+
+
 def log_result(
     model: str,
     module: str,
     metrics: dict | None,
     quality: dict | None,
     functions_found: list[str] | None,
+    context_fragments: list[str] | None,
+    warnings: list[str] | None,
     compiles: bool,
     learned: bool,
     degraded: bool,
@@ -57,6 +76,7 @@ def log_result(
         round(funcs_covered / funcs_total * 100, 1) if funcs_total else ""
     )
     smells = q.get("smells_detected") or []
+    rag_fragments, rag_warnings, rag_used_learned = _rag_signals(module, context_fragments, warnings)
 
     row = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
@@ -65,6 +85,9 @@ def log_result(
         "compiles": compiles,
         "degraded": degraded,
         "learned": learned,
+        "rag_fragments": rag_fragments,
+        "rag_warnings": rag_warnings,
+        "rag_used_learned": rag_used_learned,
         "tests_total": _cell(m.get("tests_total", 0)),
         "tests_passed": _cell(m.get("tests_passed", 0)),
         "tests_failed": _cell(m.get("tests_failed", 0)),
@@ -94,10 +117,11 @@ def log_result(
 
 
 # ── Lectura para la UI ───────────────────────────────────────────────
-_BOOL_COLS = {"compiles", "degraded", "learned", "given_when_then"}
+_BOOL_COLS = {"compiles", "degraded", "learned", "given_when_then", "rag_used_learned"}
 _INT_COLS = {
     "tests_total", "tests_passed", "tests_failed", "tests_skipped",
     "tests_errors", "funcs_total", "funcs_covered", "smells_count",
+    "rag_fragments", "rag_warnings",
 }
 _FLOAT_COLS = {"pass_rate", "line_coverage", "branch_coverage", "func_coverage_pct", "time_s"}
 

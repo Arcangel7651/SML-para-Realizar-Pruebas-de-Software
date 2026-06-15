@@ -1006,7 +1006,7 @@ def generate_tests(
     if _learn_from_failure(rag, module_name, quality, compiles, metrics, failures, degraded):
         print(f"[RAG] Advertencia(s) guardada(s) para '{module_name}'")
 
-    log_result(model, module_name, metrics, quality, functions_found, compiles, learned, degraded, time.time() - t_total)
+    log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_total)
 
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")

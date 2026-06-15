@@ -221,7 +221,7 @@ async def generate_tests_stream_endpoint(
         )
         _learn_from_failure(rag_service, module_name, quality, compiles, metrics, failures, degraded)
 
-        log_result(model, module_name, metrics, quality, functions_found, compiles, learned, degraded, time.time() - t_start)
+        log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_start)
 
         yield json.dumps({
             "type":          "done",

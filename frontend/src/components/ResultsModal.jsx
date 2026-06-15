@@ -79,10 +79,16 @@ export default function ResultsModal({ onClose }) {
     const learned = filtered.filter(r => r.learned).length
     const degraded = filtered.filter(r => r.degraded).length
     const withTests = filtered.filter(r => (r.tests_total ?? 0) > 0)
+    // Solo las corridas que registraron la señal RAG (las previas a esta
+    // columna la tienen vacía y no deben contar en el %).
+    const withRag = filtered.filter(r => r.rag_used_learned === true || r.rag_used_learned === false)
     return {
       n,
       compiledPct: Math.round((compiled / n) * 100),
       learnedPct: Math.round((learned / n) * 100),
+      usedLearnedPct: withRag.length
+        ? Math.round((withRag.filter(r => r.rag_used_learned).length / withRag.length) * 100)
+        : null,
       degraded,
       passRate: avg(withTests.map(r => r.pass_rate)),
       lineCov: avg(filtered.map(r => r.line_coverage)),
@@ -148,6 +154,7 @@ export default function ResultsModal({ onClose }) {
               <div className="rm-summary">
                 <Stat label="Compila" value={`${summary.compiledPct}%`} cls={rateClass(summary.compiledPct)} />
                 <Stat label="Aprendidos" value={`${summary.learnedPct}%`} />
+                <Stat label="Usó ej. aprend." value={summary.usedLearnedPct !== null ? `${summary.usedLearnedPct}%` : '—'} />
                 <Stat label="Pass rate prom." value={pct(summary.passRate)} cls={rateClass(summary.passRate)} />
                 <Stat label="Cob. línea prom." value={pct(summary.lineCov)} cls={rateClass(summary.lineCov)} />
                 <Stat label="Cob. func. prom." value={pct(summary.funcCov)} cls={rateClass(summary.funcCov)} />
@@ -164,7 +171,10 @@ export default function ResultsModal({ onClose }) {
                     <th>Modelo</th>
                     <th>Módulo</th>
                     <th>Estado</th>
-                    <th>Aprend.</th>
+                    <th title="¿Guardó un ejemplo verificado en el RAG?">Aprend.</th>
+                    <th title="Nº de fragmentos de contexto RAG inyectados al prompt">RAG</th>
+                    <th title="Nº de advertencias del módulo inyectadas (cobertura/smells/aserción)">Adv.</th>
+                    <th title="¿El contexto incluyó el ejemplo aprendido propio del módulo?">Usó ej.</th>
                     <th>Tests</th>
                     <th>Pass</th>
                     <th>Cob. línea</th>
@@ -191,6 +201,17 @@ export default function ResultsModal({ onClose }) {
                         {r.learned
                           ? <span className="rm-badge accent">sí</span>
                           : <span className="rm-dim">—</span>}
+                      </td>
+                      <td className="rm-mono rm-dim">{r.rag_fragments ?? '—'}</td>
+                      <td className={`rm-mono ${r.rag_warnings > 0 ? 'warn' : 'rm-dim'}`}>
+                        {r.rag_warnings ?? '—'}
+                      </td>
+                      <td>
+                        {r.rag_used_learned === true
+                          ? <span className="rm-badge accent">sí</span>
+                          : r.rag_used_learned === false
+                            ? <span className="rm-dim">no</span>
+                            : <span className="rm-dim">—</span>}
                       </td>
                       <td className="rm-mono">
                         {r.tests_passed ?? 0}/{r.tests_total ?? 0}
