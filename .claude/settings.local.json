@@ -42,10 +42,15 @@
       "Bash(docker exec *)",
       "Bash(python -c ' *)",
       "Bash(npx eslint *)",
-      "Bash(echo \"--- exit: $? ---\")"
+      "Bash(echo \"--- exit: $? ---\")",
+      "Bash(mkdir -p \"/c/Users/angel/Documents/PRACTICAS/resultados\")",
+      "Read(//c/Users/angel/Documents/PRACTICAS//**)",
+      "Skill(update-config)",
+      "Skill(update-config:*)"
     ],
     "additionalDirectories": [
-      "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory"
+      "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory",
+      "C:\\Users\\angel\\Documents\\PRACTICAS\\resultados"
     ]
   }
 }

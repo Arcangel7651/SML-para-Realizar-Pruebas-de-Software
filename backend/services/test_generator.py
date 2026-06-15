@@ -590,6 +590,21 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[di
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
+def _build_potential_bugs(failures: dict[str, str], degraded: bool) -> list[dict]:
+    """Opción A: tests que compilaron y se ejecutaron pero FALLARON, con su
+    detalle de aserción (esperado vs obtenido), presentados al humano como
+    'posible bug detectado o aserción incorrecta' en vez de descartarlos en
+    silencio. Un fallo aquí significa una de dos cosas, y solo un humano puede
+    decidir cuál: (a) el código bajo prueba tiene un bug que el test cazó, o
+    (b) el modelo fijó un valor esperado equivocado.
+
+    No se incluyen en corridas degradadas: ahí el código son stubs del respaldo,
+    no salida real del modelo, así que sus fallos serían artefactos."""
+    if degraded or not failures:
+        return []
+    return [{"name": name, "detail": detail} for name, detail in failures.items()]
+
+
 def _should_learn(compiles: bool, metrics: dict | None, quality: dict) -> bool:
     """Solo se aprende de resultados que compilan, pasan pytest sin fallos
     ni errores, cumplen todas las reglas OR del prompt (sin test smells) y
@@ -1022,4 +1037,5 @@ def generate_tests(
         "quality":         quality,
         "learned":         learned,
         "degraded":        degraded,
+        "potential_bugs":  _build_potential_bugs(failures, degraded),
     }

@@ -23,6 +23,7 @@ from services.test_generator import (
     _missing_function_coverage,
     _build_coverage_retry_message,
     _repair_generated_tests,
+    _build_potential_bugs,
 )
 from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality
@@ -58,6 +59,11 @@ class Quality(BaseModel):
     expected_class_name: str | None
 
 
+class PotentialBug(BaseModel):
+    name: str
+    detail: str
+
+
 class GenerateResponse(BaseModel):
     tests: str
     explanation: str
@@ -68,6 +74,7 @@ class GenerateResponse(BaseModel):
     metrics: Metrics | None
     quality: Quality
     learned: bool
+    potential_bugs: list[PotentialBug] = []
 
 
 @router.get("/health")
@@ -233,6 +240,7 @@ async def generate_tests_stream_endpoint(
             "quality":       quality,
             "learned":       learned,
             "degraded":      degraded,
+            "potential_bugs": _build_potential_bugs(failures, degraded),
         }) + "\n"
 
     return StreamingResponse(event_stream(), media_type="application/x-ndjson")

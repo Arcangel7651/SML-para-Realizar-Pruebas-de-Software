@@ -35,7 +35,7 @@ const SMELL_LABELS = {
 }
 
 export default function MetricsPanel({ result }) {
-  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time, learned, degraded } = result
+  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time, learned, degraded, potential_bugs = [] } = result
 
   const stats = []
   if (metrics) {
@@ -66,6 +66,26 @@ export default function MetricsPanel({ result }) {
           )}
         </div>
       </div>
+
+      {potential_bugs.length > 0 && (
+        <div className="gen-bugs">
+          <div className="gen-bugs-head">
+            <span className="gen-bugs-ic"><Icon name="bug" size={16} /></span>
+            <div className="gen-bugs-head-txt">
+              <b>{potential_bugs.length} posible{potential_bugs.length === 1 ? '' : 's'} bug{potential_bugs.length === 1 ? '' : 's'} detectado{potential_bugs.length === 1 ? '' : 's'}</b>
+              <span>Estos tests se ejecutaron pero fallaron: o el código bajo prueba tiene un bug, o la aserción del modelo es incorrecta. Revísalos.</span>
+            </div>
+          </div>
+          <div className="gen-bugs-list">
+            {potential_bugs.map(bug => (
+              <div key={bug.name} className="gen-bug">
+                <span className="gen-bug-name">{bug.name}</span>
+                <span className="gen-bug-detail">{bug.detail}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="gen-mgrid">
         {/* Compilación */}

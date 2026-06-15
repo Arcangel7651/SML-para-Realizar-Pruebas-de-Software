@@ -137,6 +137,7 @@ export default function App() {
             quality: msg.quality,
             learned: msg.learned,
             degraded: msg.degraded,
+            potential_bugs: msg.potential_bugs ?? [],
             functions_found: partialMeta?.functions_found ?? [],
             context_used: partialMeta?.context_used ?? [],
             generation_time: elapsedNow(),
