@@ -30,6 +30,33 @@ export default function TestOutput({ result, loading, streamingCode, fileName, r
     return () => { if (downloadUrl) URL.revokeObjectURL(downloadUrl) }
   }, [downloadUrl])
 
+  // Volcado legible del contexto RAG inyectado al prompt: cada fragmento
+  // etiquetado (advertencia / ejemplo aprendido / patrón) en su sección, con
+  // formato estable para leerlo a ojo y parsearlo después al analizar corridas.
+  const ragDownloadUrl = useMemo(() => {
+    const fragments = result?.context_used
+    if (!fragments?.length) return ''
+    const labelOf = (f) => {
+      if (f.includes('ADVERTENCIA para el módulo')) return 'Advertencia del módulo'
+      if (f.includes('Ejemplo verificado') && f.includes(`para el módulo '${moduleName}'`))
+        return 'Ejemplo aprendido del módulo'
+      return 'Patrón recuperado por similitud'
+    }
+    const body = fragments
+      .map((f, i) => `## Fragmento ${i + 1} — ${labelOf(f)}\n\n\`\`\`text\n${f.trim()}\n\`\`\``)
+      .join('\n\n')
+    const header =
+      `# Contexto RAG — ${moduleName}\n\n` +
+      `- Generado: ${new Date().toISOString()}\n` +
+      `- Total de fragmentos: ${fragments.length}\n\n`
+    const blob = new Blob([header + body + '\n'], { type: 'text/markdown' })
+    return URL.createObjectURL(blob)
+  }, [result?.context_used, moduleName])
+
+  useEffect(() => {
+    return () => { if (ragDownloadUrl) URL.revokeObjectURL(ragDownloadUrl) }
+  }, [ragDownloadUrl])
+
   function handleCopy() {
     if (result?.tests) {
       navigator.clipboard.writeText(result.tests)
@@ -154,6 +181,15 @@ export default function TestOutput({ result, loading, streamingCode, fileName, r
                     <span>Fragmentos inyectados al prompt</span>
                   </div>
                   <span className="pill">{ragCount} fragmento{ragCount === 1 ? '' : 's'}</span>
+                  {ragDownloadUrl && (
+                    <a
+                      className="gen-tbtn primary"
+                      href={ragDownloadUrl}
+                      download={`contexto_rag_${moduleName}.md`}
+                    >
+                      <Icon name="download" size={14} /> Descargar
+                    </a>
+                  )}
                 </div>
                 <div className="gen-rag-list">
                   {result.context_used.map((fragment, i) => (
