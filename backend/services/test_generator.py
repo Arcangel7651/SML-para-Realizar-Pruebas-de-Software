@@ -12,7 +12,7 @@ import time
 from infrastructure.ollama_client import chat
 from services.rag_service import RAGService
 from services.ast_parser import extract_functions, extract_classes
-from services.quality_analyzer import analyze as analyze_quality, count_tests_by_function, find_empty_raises_tests
+from services.quality_analyzer import analyze as analyze_quality, count_tests_by_function, find_empty_raises_tests, find_vacuous_except_tests
 from services.results_log import log_result
 from services.bugs_store import record_and_annotate
 
@@ -731,11 +731,16 @@ def _learn_from_result(
     else:
         if not passing_tests:
             return False
-        code_to_save = _filter_to_passing_tests(tests_code, passing_tests)
+        # No aprender tests con assert dentro de except: 'pasan' de forma vacua
+        # (la excepción no se lanzó) y perpetuarían el smell (problema 07).
+        clean_passing = passing_tests - find_vacuous_except_tests(tests_code)
+        if not clean_passing:
+            return False
+        code_to_save = _filter_to_passing_tests(tests_code, clean_passing)
         ok, _ = _check_compiles(code_to_save)
         if not ok:
             return False
-        kept = len(passing_tests)
+        kept = len(clean_passing)
         suffix = " (subconjunto de tests que pasaron)"
         if kept == 0:
             return False
@@ -811,6 +816,11 @@ _SMELL_GUIDANCE = {
         "función/método bajo prueba (p.ej. `funcion(args)`); no basta con asignar "
         "variables: si no se llama a nada, no se lanza la excepción y el test "
         "falla con 'DID NOT RAISE' sin probar el código"
+    ),
+    "assert_in_except": (
+        "no verifiques excepciones con try/except poniendo el assert dentro del "
+        "except: si la excepción no se lanza, el assert nunca corre y el test pasa "
+        "sin probar nada. Usa siempre `with pytest.raises(TipoError): funcion(...)`"
     ),
 }
 
@@ -909,11 +919,15 @@ def generate_tests(
 
     print(f"[RAG] Buscando fragmentos relevantes...")
     warnings = rag.get_warnings(module_name)
-    patterns = rag.query(source_code + " " + prompt, n_results=3)
-    # Las advertencias del módulo (por clave exacta) van primero y son
-    # aditivas: no le quitan cupo a los patrones recuperados por similitud.
-    context_fragments = warnings + patterns
-    print(f"[RAG] {len(warnings)} advertencia(s) + {len(patterns)} patrón(es)")
+    # Anclaje al MISMO módulo: el único ejemplo aprendido que se inyecta es el
+    # del propio módulo. Los patrones por similitud excluyen los aprendidos
+    # (include_learned=False) para no recibir el ejemplo de otro módulo casi
+    # idéntico (contaminación cruzada buggy↔corregido, problema 07).
+    own_examples = [e["text"] for e in rag.get_learned_examples(module_name)][:1]
+    patterns = rag.query(source_code + " " + prompt, n_results=3 - len(own_examples), include_learned=False)
+    # Advertencias y ejemplo propio van primero (por clave exacta), aditivos.
+    context_fragments = warnings + own_examples + patterns
+    print(f"[RAG] {len(warnings)} advertencia(s) + {len(own_examples)} ejemplo(s) propio(s) + {len(patterns)} patrón(es)")
 
     context_block  = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
     functions_block = _build_functions_block(functions)

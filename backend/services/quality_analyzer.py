@@ -103,6 +103,13 @@ def detect_smells(code: str, functions: list[str] | None = None) -> list[str]:
             if "empty_raises" not in smells:
                 smells.append("empty_raises")
 
+        # ── assert_in_except ────────────────────────────────────
+        # try/except con el assert dentro del except: si la excepción no se
+        # lanza, el assert nunca corre y el test pasa de forma vacua.
+        if _has_assert_in_except(node):
+            if "assert_in_except" not in smells:
+                smells.append("assert_in_except")
+
     return smells
 
 
@@ -181,6 +188,36 @@ def _has_empty_raises(test_node: ast.FunctionDef, func_set: set[str]) -> bool:
         if not (called & func_set):
             return True
     return False
+
+
+def _has_assert_in_except(test_node: ast.FunctionDef) -> bool:
+    """True si el test verifica una excepción con try/except y la(s) aserción(es)
+    viven DENTRO del except: si la excepción no se lanza, el except no entra y el
+    assert nunca corre → el test 'pasa' de forma vacua sin probar nada. La forma
+    correcta es `with pytest.raises(TipoError): funcion(...)`."""
+    for sub in ast.walk(test_node):
+        if isinstance(sub, ast.Try):
+            for handler in sub.handlers:
+                if any(isinstance(n, ast.Assert) for n in ast.walk(handler)):
+                    return True
+    return False
+
+
+def find_vacuous_except_tests(code: str) -> set[str]:
+    """Nombres de los tests con el patrón assert-dentro-de-except (pasan de
+    forma vacua si la excepción no se lanza). Se usa para no aprenderlos como
+    ejemplos verificados (romper la auto-perpetuación del smell)."""
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return set()
+    return {
+        node.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef)
+        and node.name.startswith("test_")
+        and _has_assert_in_except(node)
+    }
 
 
 def find_empty_raises_tests(code: str, functions: list[str] | None) -> set[str]:

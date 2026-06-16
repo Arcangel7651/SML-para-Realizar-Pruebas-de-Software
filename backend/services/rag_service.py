@@ -96,7 +96,8 @@ class RAGService:
             self._matrix = self._vectorizer.fit_transform(texts)
 
     # ── Recuperación ─────────────────────────────────────────────────
-    def query(self, text: str, n_results: int = 3, min_seeds: int = 1) -> list[str]:
+    def query(self, text: str, n_results: int = 3, min_seeds: int = 1,
+              include_learned: bool = True) -> list[str]:
         """Patrones/ejemplos relevantes por similitud coseno (embeddings
         semánticos si están disponibles, TF-IDF si no). No incluye
         advertencias (esas se recuperan con get_warnings, por clave).
@@ -105,7 +106,13 @@ class RAGService:
         ejemplos aprendidos suelen ser los más similares (son del mismo módulo)
         y, a medida que crece el corpus aprendido, tenderían a desplazar del
         top-k a los patrones diversos. Reservar cupos de seed mantiene esa
-        diversidad y evita el efecto eco (el modelo reproduciéndose a sí mismo)."""
+        diversidad y evita el efecto eco (el modelo reproduciéndose a sí mismo).
+
+        Con `include_learned=False` se excluyen TODOS los ejemplos aprendidos
+        (`learned_*`): así un módulo no recibe por similitud el ejemplo aprendido
+        de OTRO módulo casi idéntico (evita contaminación cruzada buggy↔corregido,
+        problema 07). El ejemplo del propio módulo se inyecta aparte por el caller
+        con get_learned_examples()."""
         if not self._documents:
             return []
 
@@ -121,6 +128,8 @@ class RAGService:
             return []
 
         order = [int(i) for i in np.argsort(scores)[::-1] if scores[i] > 0]
+        if not include_learned:
+            order = [i for i in order if not self._documents[i]["id"].startswith("learned_")]
         if not order:
             return []
 

@@ -298,5 +298,6 @@
       "count": 1,
       "triage": "falso_positivo"
     }
-  ]
+  ],
+  "conversor_temperatura": []
 }

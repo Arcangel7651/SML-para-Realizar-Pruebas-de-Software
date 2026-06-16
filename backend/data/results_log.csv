@@ -28,3 +28,6 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-16T05:55:00,qwen2.5-coder:3b,lista_compras,True,False,True,5,2,True,9,4,5,0,0,44.4,100.0,100.0,3,3,100.0,True,1,assertion_roulette,605.2
 2026-06-16T06:37:47,qwen2.5-coder:3b,lista_compras_corregido,True,False,True,3,0,False,10,5,5,0,0,50.0,76.0,87.5,3,3,100.0,True,1,assertion_roulette,747.3
 2026-06-16T06:56:11,qwen2.5-coder:3b,lista_compras_corregido,True,False,True,5,2,True,19,16,3,0,0,84.2,96.0,87.5,3,3,100.0,True,1,assertion_roulette,1001.4
+2026-06-16T07:38:32,qwen2.5-coder:3b,conversor_temperatura,True,False,True,3,0,False,16,15,1,0,0,93.8,92.0,87.5,4,4,100.0,True,0,,682.3
+2026-06-16T07:47:55,qwen2.5-coder:3b,conversor_temperatura,True,False,False,3,0,True,6,6,0,0,3,100.0,62.0,75.0,4,4,100.0,True,0,,434.1
+2026-06-16T07:54:40,qwen2.5-coder:3b,conversor_temperatura,True,False,False,3,0,True,6,6,0,0,3,100.0,62.0,75.0,4,4,100.0,True,0,,279.3
