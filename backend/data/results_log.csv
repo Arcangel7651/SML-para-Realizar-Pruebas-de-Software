@@ -24,3 +24,5 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-16T04:40:53,qwen2.5-coder:3b,estructuras,True,False,True,3,0,True,9,9,0,0,0,100.0,100.0,100.0,6,6,100.0,True,0,,405.6
 2026-06-16T04:57:07,qwen2.5-coder:3b,estructuras,True,False,True,3,0,True,13,9,4,0,0,69.2,100.0,100.0,6,6,100.0,True,0,,654.0
 2026-06-16T05:25:21,qwen2.5-coder:3b,lista_compras,True,False,True,3,0,False,7,3,4,0,0,42.9,86.0,83.3,3,3,100.0,True,1,assertion_roulette,636.1
+2026-06-16T05:42:27,qwen2.5-coder:3b,lista_compras,True,False,True,5,2,True,13,3,10,0,0,23.1,100.0,100.0,3,3,100.0,True,1,assertion_roulette,859.6
+2026-06-16T05:55:00,qwen2.5-coder:3b,lista_compras,True,False,True,5,2,True,9,4,5,0,0,44.4,100.0,100.0,3,3,100.0,True,1,assertion_roulette,605.2

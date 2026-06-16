@@ -111,6 +111,126 @@
       "last_seen": "2026-06-16T05:25:21",
       "count": 1,
       "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_vacio",
+      "detail": "assert total == 0.0, f\"El total debería ser cero pero fue {total}\" → AssertionError: El total debería ser cero pero fue 4.5 | assert 4.5 == 0.0",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_con_un_item",
+      "detail": "assert total == 1.5, f\"El total debería ser 1.5 pero fue {total}\" → AssertionError: El total debería ser 1.5 pero fue 6.0 | assert 6.0 == 1.5",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_con_dos_items",
+      "detail": "assert total == 3.6, f\"El total debería ser 3.6 pero fue {total}\" → AssertionError: El total debería ser 3.6 pero fue 8.9 | assert 8.9 == 3.6",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_agregar_dos_items_diferentes_a_carrito_vacio",
+      "detail": "assert len(self.carrito.items) == 2 → AssertionError: assert 8 == 2 | +  where 8 = len([{'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio':",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_quitar_item_de_carrito_con_muchos_items",
+      "detail": "assert len(self.carrito.items) == 1 → AssertionError: assert 9 == 1 | +  where 9 = len([{'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio':",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_agregar_y_quitar_item",
+      "detail": "assert len(self.carrito.items) == 1 → AssertionError: assert 9 == 1 | +  where 9 = len([{'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio':",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_agregar_muchos_items_y_quitar_uno",
+      "detail": "assert len(self.carrito.items) == 1 → AssertionError: assert 10 == 1 | +  where 10 = len([{'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 2, 'nombre': 'pera', 'precio': ",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_agregar_item_y_quitar_muchos",
+      "detail": "assert len(self.carrito.items) == 0 → AssertionError: assert 9 == 0 | +  where 9 = len([{'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 2, 'nombre': 'pera', 'precio': 0.",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_con_muchos_items",
+      "detail": "assert total == 3.6, f\"El total debería ser 3.6 pero fue {total}\" → AssertionError: El total debería ser 3.6 pero fue 16.5 | assert 16.5 == 3.6",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_con_muchos_items_diferentes",
+      "detail": "assert total == 7.0, f\"El total debería ser 7.0 pero fue {total}\" → AssertionError: El total debería ser 7.0 pero fue 24.2 | assert 24.2 == 7.0",
+      "first_seen": "2026-06-16T05:42:27",
+      "last_seen": "2026-06-16T05:42:27",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_agregar_dos_items_diferentes_a_carrito_vacio",
+      "detail": "assert len(self.carrito.items) == 2 → AssertionError: assert 5 == 2 | +  where 5 = len([{'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio':",
+      "first_seen": "2026-06-16T05:55:00",
+      "last_seen": "2026-06-16T05:55:00",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_quitar_item_de_carrito_con_muchos_items",
+      "detail": "assert len(self.carrito.items) == cantidad1 + cantidad2 - 1 → AssertionError: assert 11 == ((3 + 4) - 1) | +  where 11 = len([{'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantid",
+      "first_seen": "2026-06-16T05:55:00",
+      "last_seen": "2026-06-16T05:55:00",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_con_un_item",
+      "detail": "assert total == precio * cantidad → assert 12.7 == (0.5 * 3)",
+      "first_seen": "2026-06-16T05:55:00",
+      "last_seen": "2026-06-16T05:55:00",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_con_dos_items",
+      "detail": "assert total == (precio1 * cantidad1) + (precio2 * cantidad2) → assert 17.4 == ((0.5 * 3) + (0.8 * 4))",
+      "first_seen": "2026-06-16T05:55:00",
+      "last_seen": "2026-06-16T05:55:00",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_quitar_todo_el_carrito",
+      "detail": "AttributeError: 'CarritoCompras' object has no attribute 'quitar_todo'",
+      "first_seen": "2026-06-16T05:55:00",
+      "last_seen": "2026-06-16T05:55:00",
+      "count": 1,
+      "triage": "bug_real"
     }
   ]
 }
