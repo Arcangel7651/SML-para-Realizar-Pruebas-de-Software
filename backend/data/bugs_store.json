@@ -42,6 +42,74 @@
       "first_seen": "2026-06-16T03:35:04",
       "last_seen": "2026-06-16T03:35:04",
       "count": 1,
+      "triage": "falso_positivo"
+    }
+  ],
+  "estructuras": [
+    {
+      "name": "test_pila_push_agrega_numeros_al_topo",
+      "detail": "assert pila == list(range(5)) → AssertionError: assert [5, 4, 3, 2, 1] == [0, 1, 2, 3, 4] | At index 0 diff: 5 != 0",
+      "first_seen": "2026-06-16T04:57:07",
+      "last_seen": "2026-06-16T04:57:07",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_pila_pop_elimina_numeros_del_topo",
+      "detail": "assert len(pila) == 4 if i != 0 else 0 → assert False",
+      "first_seen": "2026-06-16T04:57:07",
+      "last_seen": "2026-06-16T04:57:07",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_cola_enqueue_agrega_numeros_al_final",
+      "detail": "assert cola == list(range(1, 6)) → AssertionError: assert [5, 4, 3, 2, 1] == [1, 2, 3, 4, 5] | At index 0 diff: 5 != 1",
+      "first_seen": "2026-06-16T04:57:07",
+      "last_seen": "2026-06-16T04:57:07",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_cola_dequeue_elimina_numeros_del_principio",
+      "detail": "assert resultado == i → assert 1 == 5",
+      "first_seen": "2026-06-16T04:57:07",
+      "last_seen": "2026-06-16T04:57:07",
+      "count": 1,
+      "triage": "falso_positivo"
+    }
+  ],
+  "lista_compras": [
+    {
+      "name": "test_agregar_dos_items_diferentes_a_carrito_vacio",
+      "detail": "assert len(self.carrito.items) == 2 → AssertionError: assert 3 == 2 | +  where 3 = len([{'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 3, 'nombre': 'manzana', 'precio': 0.5}, {'cantidad': 2, 'nombre': 'pera', 'precio': 0.",
+      "first_seen": "2026-06-16T05:25:21",
+      "last_seen": "2026-06-16T05:25:21",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_vacio",
+      "detail": "assert total == expected_total → assert 6.8 == 0",
+      "first_seen": "2026-06-16T05:25:21",
+      "last_seen": "2026-06-16T05:25:21",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_con_un_item",
+      "detail": "assert total == expected_total → assert 8.3 == 1.5",
+      "first_seen": "2026-06-16T05:25:21",
+      "last_seen": "2026-06-16T05:25:21",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_total_carrito_con_dos_items",
+      "detail": "assert total == expected_total → assert 10.600000000000001 == 2.3",
+      "first_seen": "2026-06-16T05:25:21",
+      "last_seen": "2026-06-16T05:25:21",
+      "count": 1,
       "triage": "bug_real"
     }
   ]
