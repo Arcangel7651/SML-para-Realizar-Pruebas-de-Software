@@ -232,5 +232,71 @@
       "count": 1,
       "triage": "bug_real"
     }
+  ],
+  "lista_compras_corregido": [
+    {
+      "name": "test_agregar_item_con_nombre_existente",
+      "detail": "Failed: DID NOT RAISE <class 'ValueError'>",
+      "first_seen": "2026-06-16T06:37:48",
+      "last_seen": "2026-06-16T06:37:48",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_quitar_item_que_no_existe",
+      "detail": "Failed: DID NOT RAISE <class 'ValueError'>",
+      "first_seen": "2026-06-16T06:37:48",
+      "last_seen": "2026-06-16T06:37:48",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_total_carrito_con_items_diferentes",
+      "detail": "assert total == 6.5 → assert 3.5 == 6.5",
+      "first_seen": "2026-06-16T06:37:48",
+      "last_seen": "2026-06-16T06:37:48",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_total_carrito_con_item_negativo_precio",
+      "detail": "Failed: DID NOT RAISE <class 'ValueError'>",
+      "first_seen": "2026-06-16T06:37:48",
+      "last_seen": "2026-06-16T06:37:48",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_total_carrito_con_item_negativa_cantidad",
+      "detail": "Failed: DID NOT RAISE <class 'ValueError'>",
+      "first_seen": "2026-06-16T06:37:48",
+      "last_seen": "2026-06-16T06:37:48",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_total_carrito_con_items_diferentes",
+      "detail": "assert total == 4.7 → assert 3.9 == 4.7",
+      "first_seen": "2026-06-16T06:56:11",
+      "last_seen": "2026-06-16T06:56:11",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_agregar_item_con_nombre_diferente",
+      "detail": "assert len(self.carrito.items) == 2 → AssertionError: assert 1 == 2 | +  where 1 = len([{'cantidad': 4, 'nombre': 'banana', 'precio': 0.3}])",
+      "first_seen": "2026-06-16T06:56:11",
+      "last_seen": "2026-06-16T06:56:11",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_quitar_item_que_existe_y_cantidad_mayor",
+      "detail": "assert len(self.carrito.items) == 1 → assert 0 == 1 | +  where 0 = len([])",
+      "first_seen": "2026-06-16T06:56:11",
+      "last_seen": "2026-06-16T06:56:11",
+      "count": 1,
+      "triage": "falso_positivo"
+    }
   ]
 }

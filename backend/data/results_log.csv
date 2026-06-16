@@ -26,3 +26,5 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-16T05:25:21,qwen2.5-coder:3b,lista_compras,True,False,True,3,0,False,7,3,4,0,0,42.9,86.0,83.3,3,3,100.0,True,1,assertion_roulette,636.1
 2026-06-16T05:42:27,qwen2.5-coder:3b,lista_compras,True,False,True,5,2,True,13,3,10,0,0,23.1,100.0,100.0,3,3,100.0,True,1,assertion_roulette,859.6
 2026-06-16T05:55:00,qwen2.5-coder:3b,lista_compras,True,False,True,5,2,True,9,4,5,0,0,44.4,100.0,100.0,3,3,100.0,True,1,assertion_roulette,605.2
+2026-06-16T06:37:47,qwen2.5-coder:3b,lista_compras_corregido,True,False,True,3,0,False,10,5,5,0,0,50.0,76.0,87.5,3,3,100.0,True,1,assertion_roulette,747.3
+2026-06-16T06:56:11,qwen2.5-coder:3b,lista_compras_corregido,True,False,True,5,2,True,19,16,3,0,0,84.2,96.0,87.5,3,3,100.0,True,1,assertion_roulette,1001.4
