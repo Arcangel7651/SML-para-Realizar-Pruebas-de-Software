@@ -306,20 +306,38 @@
       "detail": "assert resultado == precio → assert 105.0 == 100",
       "first_seen": "2026-06-16T19:02:19",
       "last_seen": "2026-06-16T19:02:19",
-      "count": 1
+      "count": 1,
+      "triage": "falso_positivo"
     },
     {
       "name": "test_precio_unitario_negativo_cantidad",
       "detail": "Failed: DID NOT RAISE <class 'ZeroDivisionError'>",
       "first_seen": "2026-06-16T19:02:19",
       "last_seen": "2026-06-16T19:02:19",
-      "count": 1
+      "count": 1,
+      "triage": "falso_positivo"
     },
     {
       "name": "test_aplicar_descuento_escalonado_cero_cantidad",
       "detail": "assert resultado == 95 → Failed: DID NOT RAISE <class 'ZeroDivisionError'> | assert 100.0 == 95",
       "first_seen": "2026-06-16T19:02:19",
       "last_seen": "2026-06-16T19:02:19",
+      "count": 1,
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_aplicar_descuento_escalonado_cero_cantidad",
+      "detail": "assert resultado == 80 → Failed: DID NOT RAISE <class 'ZeroDivisionError'> | assert 95.0 == 80",
+      "first_seen": "2026-06-16T19:13:00",
+      "last_seen": "2026-06-16T19:13:00",
+      "count": 1,
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_descuento_escalonado_cero_cantidad",
+      "detail": "assert resultado == precio - (precio * (5 / 100)) → Failed: DID NOT RAISE <class 'ZeroDivisionError'> | assert 100.0 == (100 - (100 * (5 / 100)))",
+      "first_seen": "2026-06-16T19:25:36",
+      "last_seen": "2026-06-16T19:25:36",
       "count": 1
     }
   ]
