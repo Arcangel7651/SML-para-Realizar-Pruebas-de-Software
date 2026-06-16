@@ -35,17 +35,27 @@ def record_bugs(module: str, bugs: list[dict]) -> list[dict]:
         now = datetime.now().isoformat(timespec="seconds")
         for bug in bugs:
             key = (bug["name"], bug["detail"])
+            # Veredicto automático del oráculo (bug_real / falso_positivo /
+            # sin_oraculo). Es SEPARADO del triaje manual del humano (`triage`):
+            # no lo pisa, y permite comparar oráculo vs humano para medir qué tan
+            # bueno es el oráculo. Se refresca con el último veredicto.
+            oracle_triage = bug.get("oracle_triage")
             if key in index:
                 index[key]["last_seen"] = now
                 index[key]["count"] = index[key].get("count", 1) + 1
+                if oracle_triage is not None:
+                    index[key]["oracle_triage"] = oracle_triage
             else:
-                index[key] = {
+                entry = {
                     "name": bug["name"],
                     "detail": bug["detail"],
                     "first_seen": now,
                     "last_seen": now,
                     "count": 1,
                 }
+                if oracle_triage is not None:
+                    entry["oracle_triage"] = oracle_triage
+                index[key] = entry
         merged = list(index.values())
         data[module] = merged
         _save(data)

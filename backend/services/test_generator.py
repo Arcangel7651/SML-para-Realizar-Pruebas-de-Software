@@ -15,6 +15,7 @@ from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality, count_tests_by_function, find_empty_raises_tests, find_vacuous_except_tests
 from services.results_log import log_result
 from services.bugs_store import record_and_annotate
+from services.oracle import triage_failures, BUG as ORACLE_BUG
 
 
 SYSTEM_PROMPT = SYSTEM_PROMPT = """You are an automated unit test generator for Python modules using pytest.
@@ -40,6 +41,13 @@ OR-7  The output contains no test method whose body is only `pass` or `pytest.sk
 OR-8  Every function/method listed in "FUNCIONES DETECTADAS POR AST PARSER" has at least
       one corresponding test method (test_<function>_<scenario>). No function from that
       list is left without a test.
+OR-9  When a function provides "COMPORTAMIENTO ESPERADO" (derived from its docstring),
+      the expected value in each assert for that function MUST be derived from that
+      specification, NOT from mentally executing the code. If the code and the
+      specification disagree, follow the specification: the test is meant to fail and
+      reveal the discrepancy, not to certify the current (possibly buggy) behavior.
+      Functions with no "COMPORTAMIENTO ESPERADO" have no oracle: test their actual
+      behavior as usual.
 
 ## Constraints
 - The class name must use the module name provided in PascalCase. No other class name is valid.
@@ -133,6 +141,13 @@ def _build_functions_block(functions: list[dict]) -> str:
             exc_info = " — NO lanza excepciones"
         args_str = ", ".join(fn["args"])
         lines.append(f"  - {fn['nombre']}({args_str}){exc_info}")
+        # El docstring actúa como ORÁCULO: el valor esperado de los asserts debe
+        # salir de aquí, no de lo que el código hace (regla OR-9). Sin docstring,
+        # no hay oráculo y el test caracteriza el comportamiento actual.
+        spec = (fn.get("docstring") or "").strip()
+        if spec:
+            spec_oneline = " ".join(spec.split())[:300]
+            lines.append(f"      COMPORTAMIENTO ESPERADO (según docstring): {spec_oneline}")
 
     return "\n".join(lines)
 
@@ -592,14 +607,16 @@ def _run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[di
 
 
 def _build_potential_bugs(
-    failures: dict[str, str], degraded: bool, tests_code: str, functions_found: list[str]
+    failures: dict[str, str], degraded: bool, tests_code: str, functions_found: list[str],
+    oracle_triage: dict[str, str] | None = None,
 ) -> list[dict]:
-    """Opción A: tests que compilaron y se ejecutaron pero FALLARON, con su
-    detalle de aserción (esperado vs obtenido), presentados al humano como
-    'posible bug detectado o aserción incorrecta' en vez de descartarlos en
-    silencio. Un fallo aquí significa una de dos cosas, y solo un humano puede
-    decidir cuál: (a) el código bajo prueba tiene un bug que el test cazó, o
-    (b) el modelo fijó un valor esperado equivocado.
+    """Opción A + oráculo: tests que compilaron y se ejecutaron pero FALLARON, con
+    su detalle de aserción (esperado vs obtenido), presentados al humano como
+    'posible bug detectado o aserción incorrecta'. Un fallo significa una de dos
+    cosas: (a) el código tiene un bug que el test cazó, o (b) el modelo fijó un
+    valor esperado equivocado. El ORÁCULO (docstring) intenta decidir cuál de
+    forma automática y se adjunta como `oracle_triage` (bug_real / falso_positivo
+    / sin_oraculo); es una señal revisable, no sustituye el triaje humano.
 
     Se excluyen los fallos de tests MALFORMADOS (un `pytest.raises` que nunca
     invoca la función → falla con 'DID NOT RAISE' aunque el código sea correcto):
@@ -609,8 +626,9 @@ def _build_potential_bugs(
     if degraded or not failures:
         return []
     malformed = find_empty_raises_tests(tests_code, functions_found)
+    oracle_triage = oracle_triage or {}
     return [
-        {"name": name, "detail": detail}
+        {"name": name, "detail": detail, "oracle_triage": oracle_triage.get(name)}
         for name, detail in failures.items()
         if name not in malformed
     ]
@@ -833,6 +851,7 @@ def _learn_from_failure(
     metrics: dict | None,
     failures: dict[str, str] | None = None,
     degraded: bool = False,
+    oracle_triage: dict[str, str] | None = None,
 ) -> bool:
     """Si la generación compiló y corrió, pero quedó incompleta de una forma
     reconocible (cobertura de funciones faltante pese al retry de OR-8, test
@@ -878,8 +897,19 @@ def _learn_from_failure(
     # esperado equivocado y pytest lo demostró al ejecutar. Se la devolvemos para
     # que reconsidere, advirtiéndole de NO copiar el valor obtenido a ciegas (eso
     # produciría un test tautológico que oculta el bug en vez de detectarlo).
-    if failures:
-        items = list(failures.items())[:4]
+    #
+    # ORÁCULO: los fallos que el oráculo clasificó como 'bug_real' NO entran a esta
+    # advertencia. Pedirle al modelo que "reconsidere su aserción" en un test que
+    # cazó un bug real es justo la presión que confirmaba el defecto (problema 01):
+    # el test tenía razón, el roto es el código. Solo se advierte de los fallos que
+    # NO son bug_real (falsos positivos o sin oráculo claro).
+    oracle_triage = oracle_triage or {}
+    correctable = {
+        name: detail for name, detail in (failures or {}).items()
+        if oracle_triage.get(name) != ORACLE_BUG
+    }
+    if correctable:
+        items = list(correctable.items())[:4]
         detalle = "\n".join(f"  - {name}: {detail}" for name, detail in items)
         doc_id = f"learned_warning_assertions_{module_name}"
         text = (
@@ -1041,6 +1071,17 @@ def generate_tests(
     print(f"[QUALITY] Given/When/Then: {quality['has_given_when_then']} | "
           f"smells: {quality['smells_detected']}")
 
+    # ORÁCULO: clasifica cada test que falló contra el docstring de su función
+    # (bug_real / falso_positivo / sin_oraculo). Solo corre si hubo fallos reales
+    # (no en degradado: ahí el código son stubs del respaldo). Cada veredicto es
+    # otra llamada al SLM, así que solo se invoca cuando hay algo que juzgar.
+    oracle_triage: dict[str, str] = {}
+    if failures and not degraded:
+        print(f"[ORACLE] Clasificando {len(failures)} fallo(s) contra el docstring...")
+        oracle_triage = triage_failures(failures, functions, model)
+        for name, verdict in oracle_triage.items():
+            print(f"[ORACLE]   {name}: {verdict}")
+
     learned = _learn_from_result(
         rag, module_name, functions_found, tests_code, compiles, metrics, quality,
         passing_tests, source_code,
@@ -1049,14 +1090,18 @@ def generate_tests(
         print(f"[RAG] Ejemplo verificado (completo o parcial) guardado como 'learned_{module_name}'")
     # Las advertencias se evalúan aparte: aplican aunque se haya aprendido un
     # subconjunto parcial (p.ej. cobertura incompleta o smells).
-    if _learn_from_failure(rag, module_name, quality, compiles, metrics, failures, degraded):
+    if _learn_from_failure(rag, module_name, quality, compiles, metrics, failures, degraded, oracle_triage):
         print(f"[RAG] Advertencia(s) guardada(s) para '{module_name}'")
 
     log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_total)
 
-    # Opción A + persistencia: registra los fallos de esta corrida en un store
-    # aparte del RAG y recupera los acumulados del módulo (incluye runs previos).
-    potential_bugs = record_and_annotate(module_name, _build_potential_bugs(failures, degraded, tests_code, functions_found))
+    # Opción A + oráculo + persistencia: registra los fallos de esta corrida (con
+    # el veredicto del oráculo) en un store aparte del RAG y recupera los
+    # acumulados del módulo (incluye runs previos).
+    potential_bugs = record_and_annotate(
+        module_name,
+        _build_potential_bugs(failures, degraded, tests_code, functions_found, oracle_triage),
+    )
 
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")

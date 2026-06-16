@@ -26,6 +26,7 @@ from services.test_generator import (
     _build_potential_bugs,
 )
 from services.ast_parser import extract_functions, extract_classes
+from services.oracle import triage_failures
 from services.quality_analyzer import analyze as analyze_quality
 from services.results_log import log_result, read_results
 from services.bugs_store import record_and_annotate, set_triage, all_bugs
@@ -67,7 +68,8 @@ class PotentialBug(BaseModel):
     count: int = 1
     first_seen: str | None = None
     last_seen: str | None = None
-    triage: str | None = None
+    triage: str | None = None          # triaje manual del humano (ground truth)
+    oracle_triage: str | None = None   # veredicto automático del oráculo (docstring)
 
 
 class TriageRequest(BaseModel):
@@ -237,15 +239,22 @@ async def generate_tests_stream_endpoint(
 
         quality = analyze_quality(tests_code, functions_found, f"Test{module_pascal}")
 
+        oracle_triage = {}
+        if failures and not degraded:
+            oracle_triage = triage_failures(failures, functions, model)
+
         learned = _learn_from_result(
             rag_service, module_name, functions_found, tests_code, compiles, metrics, quality,
             passing_tests, source_code,
         )
-        _learn_from_failure(rag_service, module_name, quality, compiles, metrics, failures, degraded)
+        _learn_from_failure(rag_service, module_name, quality, compiles, metrics, failures, degraded, oracle_triage)
 
         log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_start)
 
-        potential_bugs = record_and_annotate(module_name, _build_potential_bugs(failures, degraded, tests_code, functions_found))
+        potential_bugs = record_and_annotate(
+            module_name,
+            _build_potential_bugs(failures, degraded, tests_code, functions_found, oracle_triage),
+        )
 
         yield json.dumps({
             "type":          "done",
