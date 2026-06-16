@@ -299,5 +299,28 @@
       "triage": "falso_positivo"
     }
   ],
-  "conversor_temperatura": []
+  "conversor_temperatura": [],
+  "procesador_descuentos": [
+    {
+      "name": "test_aplicar_descuento_negativo_porcentaje",
+      "detail": "assert resultado == precio → assert 105.0 == 100",
+      "first_seen": "2026-06-16T19:02:19",
+      "last_seen": "2026-06-16T19:02:19",
+      "count": 1
+    },
+    {
+      "name": "test_precio_unitario_negativo_cantidad",
+      "detail": "Failed: DID NOT RAISE <class 'ZeroDivisionError'>",
+      "first_seen": "2026-06-16T19:02:19",
+      "last_seen": "2026-06-16T19:02:19",
+      "count": 1
+    },
+    {
+      "name": "test_aplicar_descuento_escalonado_cero_cantidad",
+      "detail": "assert resultado == 95 → Failed: DID NOT RAISE <class 'ZeroDivisionError'> | assert 100.0 == 95",
+      "first_seen": "2026-06-16T19:02:19",
+      "last_seen": "2026-06-16T19:02:19",
+      "count": 1
+    }
+  ]
 }

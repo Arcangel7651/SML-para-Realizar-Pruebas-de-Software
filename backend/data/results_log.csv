@@ -31,3 +31,4 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-16T07:38:32,qwen2.5-coder:3b,conversor_temperatura,True,False,True,3,0,False,16,15,1,0,0,93.8,92.0,87.5,4,4,100.0,True,0,,682.3
 2026-06-16T07:47:55,qwen2.5-coder:3b,conversor_temperatura,True,False,False,3,0,True,6,6,0,0,3,100.0,62.0,75.0,4,4,100.0,True,0,,434.1
 2026-06-16T07:54:40,qwen2.5-coder:3b,conversor_temperatura,True,False,False,3,0,True,6,6,0,0,3,100.0,62.0,75.0,4,4,100.0,True,0,,279.3
+2026-06-16T19:02:19,qwen2.5-coder:3b,procesador_descuentos,True,False,True,3,0,False,13,7,6,0,0,53.8,80.0,66.7,3,3,100.0,True,0,,498.4

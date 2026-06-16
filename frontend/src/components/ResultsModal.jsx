@@ -1,6 +1,33 @@
 import { useEffect, useMemo, useState } from 'react'
+import * as XLSX from 'xlsx'
 import Icon from './Icon'
 import './ResultsModal.css'
+
+// Columnas exportadas a Excel (encabezado legible -> valor por fila).
+const EXPORT_COLUMNS = [
+  ['Fecha', r => fmtDate(r.timestamp)],
+  ['Modelo', r => r.model ?? ''],
+  ['Módulo', r => r.module ?? ''],
+  ['Compila', r => (r.compiles ? 'sí' : 'no')],
+  ['Respaldo (degradada)', r => (r.degraded ? 'sí' : 'no')],
+  ['Aprendido', r => (r.learned ? 'sí' : 'no')],
+  ['Fragmentos RAG', r => r.rag_fragments ?? ''],
+  ['Advertencias RAG', r => r.rag_warnings ?? ''],
+  ['Usó ej. aprendido', r => (r.rag_used_learned === true ? 'sí' : r.rag_used_learned === false ? 'no' : '')],
+  ['Tests aprobados', r => r.tests_passed ?? 0],
+  ['Tests totales', r => r.tests_total ?? 0],
+  ['Tests fallidos', r => r.tests_failed ?? 0],
+  ['Pass rate (%)', r => r.pass_rate ?? ''],
+  ['Cob. línea (%)', r => r.line_coverage ?? ''],
+  ['Cob. rama (%)', r => r.branch_coverage ?? ''],
+  ['Funciones cubiertas', r => r.funcs_covered ?? 0],
+  ['Funciones totales', r => r.funcs_total ?? 0],
+  ['Cob. func. (%)', r => r.func_coverage_pct ?? ''],
+  ['Given-When-Then', r => (r.given_when_then ? 'sí' : 'no')],
+  ['Smells', r => r.smells_count ?? 0],
+  ['Detalle smells', r => r.smells ?? ''],
+  ['Tiempo (s)', r => r.time_s ?? ''],
+]
 
 function fmtDate(iso) {
   if (!iso) return '—'
@@ -71,6 +98,21 @@ export default function ResultsModal({ onClose }) {
     const f = modelFilter === 'all' ? list : list.filter(r => r.model === modelFilter)
     return [...f].reverse() // más reciente primero
   }, [rows, modelFilter])
+
+  function exportExcel() {
+    if (!filtered.length) return
+    const header = EXPORT_COLUMNS.map(([label]) => label)
+    const data = filtered.map(r => EXPORT_COLUMNS.map(([, get]) => get(r)))
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data])
+    ws['!cols'] = header.map((_, i) => ({
+      wch: Math.max(header[i].length, ...data.map(row => String(row[i] ?? '').length)) + 2,
+    }))
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Resultados')
+    const stamp = new Date().toISOString().slice(0, 10)
+    const tag = modelFilter === 'all' ? 'todos' : modelFilter
+    XLSX.writeFile(wb, `resultados-${tag}-${stamp}.xlsx`)
+  }
 
   const summary = useMemo(() => {
     if (!filtered.length) return null
@@ -148,6 +190,15 @@ export default function ResultsModal({ onClose }) {
                   {summary.n} corrida{summary.n === 1 ? '' : 's'}
                 </span>
               )}
+              <button
+                className="rm-export-btn"
+                onClick={exportExcel}
+                disabled={!filtered.length}
+                title="Descargar resultados en Excel (.xlsx)"
+              >
+                <Icon name="download" size={15} />
+                <span>Descargar Excel</span>
+              </button>
             </div>
 
             {summary && (
