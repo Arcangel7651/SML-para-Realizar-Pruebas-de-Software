@@ -34,5 +34,15 @@
       "count": 1,
       "triage": "falso_positivo"
     }
+  ],
+  "algoritmos": [
+    {
+      "name": "test_busqueda_lineal_encontrar_elemento_inexistente",
+      "detail": "assert indice == 4 → Failed: DID NOT RAISE <class 'ValueError'> | assert 1 == 4",
+      "first_seen": "2026-06-16T03:35:04",
+      "last_seen": "2026-06-16T03:35:04",
+      "count": 1,
+      "triage": "bug_real"
+    }
   ]
 }
