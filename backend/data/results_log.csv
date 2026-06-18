@@ -35,3 +35,6 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-16T19:13:00,qwen2.5-coder:3b,procesador_descuentos,True,False,True,4,1,True,10,8,2,0,0,80.0,80.0,66.7,3,3,100.0,True,0,,472.0
 2026-06-16T19:25:36,qwen2.5-coder:3b,procesador_descuentos,True,False,True,4,1,True,17,9,8,0,0,52.9,70.0,50.0,3,3,100.0,True,0,,636.0
 2026-06-16T21:06:26,qwen2.5-coder:3b,procesador_descuentos_corregido,True,False,True,3,0,False,16,13,3,0,0,81.2,100.0,100.0,3,3,100.0,True,0,,722.4
+2026-06-18T18:44:25,qwen2.5-coder:3b,cuenta_bancaria,True,False,True,3,0,False,8,2,6,0,0,25.0,100.0,100.0,3,3,100.0,True,0,,691.2
+2026-06-18T19:13:03,qwen2.5-coder:3b,cuenta_bancaria_correguida,True,False,False,3,0,False,0,0,0,0,15,0.0,15.0,100.0,3,3,100.0,True,0,,625.3
+2026-06-18T20:12:07,qwen2.5-coder:3b,calculadora,True,False,True,3,0,True,11,11,0,0,0,100.0,88.0,50.0,6,6,100.0,True,0,,558.9

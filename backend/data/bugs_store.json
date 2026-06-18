@@ -341,5 +341,144 @@
       "count": 1
     }
   ],
-  "procesador_descuentos_corregido": []
+  "procesador_descuentos_corregido": [],
+  "cuenta_bancaria": [
+    {
+      "name": "test_depositar_monto_negativo",
+      "detail": "Failed: DID NOT RAISE <class 'ValueError'>",
+      "first_seen": "2026-06-18T18:44:25",
+      "last_seen": "2026-06-18T18:44:25",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_retirar_monto_suficiente",
+      "detail": "assert nuevo_saldo == 50, \"Retiro de saldo suficiente debería reducir el saldo\" → AssertionError: Retiro de saldo suficiente debería reducir el saldo | assert 100 == 50",
+      "first_seen": "2026-06-18T18:44:25",
+      "last_seen": "2026-06-18T18:44:25",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_retirar_monto_inferior",
+      "detail": "assert nuevo_saldo == 0, \"Retiro superior a saldo debería dejar el saldo en cero\" → AssertionError: Retiro superior a saldo debería dejar el saldo en cero | assert 100 == 0",
+      "first_seen": "2026-06-18T18:44:25",
+      "last_seen": "2026-06-18T18:44:25",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_retirar_monto_superior",
+      "detail": "Failed: DID NOT RAISE <class 'ValueError'>",
+      "first_seen": "2026-06-18T18:44:25",
+      "last_seen": "2026-06-18T18:44:25",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_transferir_monto_valido",
+      "detail": "assert nuevo_saldo_origen == 50, \"Transferencia de saldo válido debería reducir el saldo del origen\" → AssertionError: Transferencia de saldo válido debería reducir el saldo del origen | assert None == 50",
+      "first_seen": "2026-06-18T18:44:25",
+      "last_seen": "2026-06-18T18:44:25",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_transferir_monto_insuficiente",
+      "detail": "Failed: DID NOT RAISE <class 'ValueError'>",
+      "first_seen": "2026-06-18T18:44:25",
+      "last_seen": "2026-06-18T18:44:25",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    }
+  ],
+  "cuenta_bancaria_correguida": [
+    {
+      "name": "test_depositar_monto_positivo",
+      "detail": "assert nuevo_saldo == 150, \"El saldo no se ha actualizado correctamente\" → AssertionError: El saldo no se ha actualizado correctamente | assert 50 == 150",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_retirar_monto_suficiente",
+      "detail": "assert nuevo_saldo == 150, \"El saldo no se ha actualizado correctamente\" → AssertionError: El saldo no se ha actualizado correctamente | assert -50 == 150",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_retirar_monto_no_suficiente",
+      "detail": "assert nuevo_saldo == 100, \"El saldo debería permanecer igual\" → AssertionError: El saldo debería permanecer igual | assert -200 == 100",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_transferir_monto_positivo",
+      "detail": "assert nuevo_saldo_origen == 150, \"El saldo de la cuenta origen no se ha actualizado correctamente\" → AssertionError: El saldo de la cuenta origen no se ha actualizado correctamente | assert None == 150",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_retirar_cero",
+      "detail": "assert nuevo_saldo == 100, \"El saldo debería permanecer igual\" → AssertionError: El saldo debería permanecer igual | assert 0 == 100",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_transferir_monto_cero",
+      "detail": "assert nuevo_saldo_origen == 50, \"El saldo de la cuenta origen no se ha actualizado correctamente\" → AssertionError: El saldo de la cuenta origen no se ha actualizado correctamente | assert None == 50",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_depositar_negativo",
+      "detail": "Failed: DID NOT RAISE <class 'Exception'>",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_retirar_negativo",
+      "detail": "Failed: DID NOT RAISE <class 'Exception'>",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    },
+    {
+      "name": "test_transferir_monto_negativo",
+      "detail": "Failed: DID NOT RAISE <class 'Exception'>",
+      "first_seen": "2026-06-18T19:49:33",
+      "last_seen": "2026-06-18T19:49:33",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "falso_positivo"
+    }
+  ]
 }
