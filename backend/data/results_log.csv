@@ -34,3 +34,4 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-16T19:02:19,qwen2.5-coder:3b,procesador_descuentos,True,False,True,3,0,False,13,7,6,0,0,53.8,80.0,66.7,3,3,100.0,True,0,,498.4
 2026-06-16T19:13:00,qwen2.5-coder:3b,procesador_descuentos,True,False,True,4,1,True,10,8,2,0,0,80.0,80.0,66.7,3,3,100.0,True,0,,472.0
 2026-06-16T19:25:36,qwen2.5-coder:3b,procesador_descuentos,True,False,True,4,1,True,17,9,8,0,0,52.9,70.0,50.0,3,3,100.0,True,0,,636.0
+2026-06-16T21:06:26,qwen2.5-coder:3b,procesador_descuentos_corregido,True,False,True,3,0,False,16,13,3,0,0,81.2,100.0,100.0,3,3,100.0,True,0,,722.4
