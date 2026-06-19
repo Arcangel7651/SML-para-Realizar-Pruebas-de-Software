@@ -480,5 +480,233 @@
       "oracle_triage": "bug_real",
       "triage": "falso_positivo"
     }
+  ],
+  "tienidta": [
+    {
+      "name": "test_aplicar_descuento_precio_negativo_lanza_error",
+      "detail": "AttributeError: 'TestTienda' object has no attribute 'tienda'",
+      "first_seen": "2026-06-18T23:02:42",
+      "last_seen": "2026-06-18T23:02:42",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_descuento_porcentaje_negativo_lanza_error",
+      "detail": "AttributeError: 'TestTienda' object has no attribute 'tienda'",
+      "first_seen": "2026-06-18T23:02:42",
+      "last_seen": "2026-06-18T23:02:42",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_descuento_porcentaje_mayor_a_cien_lanza_error",
+      "detail": "AttributeError: 'TestTienda' object has no attribute 'tienda' | AttributeError: 'TestTienda' object has no attribute 'tienda'",
+      "first_seen": "2026-06-18T23:02:42",
+      "last_seen": "2026-06-18T23:02:42",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_iva_con_precio_negativo_lanza_error",
+      "detail": "AttributeError: 'TestTienda' object has no attribute 'tienda'",
+      "first_seen": "2026-06-18T23:02:42",
+      "last_seen": "2026-06-18T23:02:42",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_calcula_total_sin_precios_en_lista_lanza_error",
+      "detail": "assert not self.tienda.es_envio_gratis(499), \"El envío no está gratuito\" → AttributeError: 'TestTienda' object has no attribute 'tienda' | AttributeError: 'TestTienda' object has no attribute 'tienda'",
+      "first_seen": "2026-06-18T23:02:42",
+      "last_seen": "2026-06-18T23:02:42",
+      "count": 1,
+      "oracle_triage": "sin_oraculo",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_dividir_pago_con_personas_cero_lanza_error",
+      "detail": "AttributeError: 'TestTienda' object has no attribute 'tienda'",
+      "first_seen": "2026-06-18T23:02:42",
+      "last_seen": "2026-06-18T23:02:42",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_dividir_pago_con_personas_negativo_lanza_error",
+      "detail": "AttributeError: 'TestTienda' object has no attribute 'tienda' | AttributeError: 'TestTienda' object has no attribute 'tienda'",
+      "first_seen": "2026-06-18T23:02:42",
+      "last_seen": "2026-06-18T23:02:42",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    },
+    {
+      "name": "test_clasificar_cliente_con_compras_negativas_lanza_error",
+      "detail": "assert self.tienda.clasificar_cliente(0) == \"nuevo\", \"El clasificado no es correcto\" → AttributeError: 'TestTienda' object has no attribute 'tienda' | AttributeError: 'TestTienda' object has no attribute 'tienda'",
+      "first_seen": "2026-06-18T23:02:42",
+      "last_seen": "2026-06-18T23:02:42",
+      "count": 1,
+      "oracle_triage": "bug_real",
+      "triage": "bug_real"
+    }
+  ],
+  "tienda": [
+    {
+      "name": "test_no_functions_detected",
+      "detail": "TypeError: TestTienda.test_no_functions_detected() takes 0 positional arguments but 1 was given",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_aplicar_descuento_descuento_negativo_lanza_error",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_descuento_porcentaje_fuera_de_rango_lanza_error",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_descuento_correcto_porciento_50",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_iva_sin_iva_por_defecto_correcto",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_iva_con_iva_mayor_a_defecto_correcto",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_aplicar_iva_con_iva_negativo_lanza_error",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_calcular_total_con_lista_vacia_lanza_error",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_calcular_total_con_precios_negativos_lanza_error",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_calcular_total_correcto_con_precios_positivos",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_es_envio_gratis_total_menor_que_500_falso",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_es_envio_gratis_total_mayor_o_igual_a_500_verdadero",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_dividir_pago_personas_negativas_lanza_error",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_dividir_pago_personas_cero_lanza_error",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_dividir_pago_correcto_personas_mayor_que_cero",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_clasificar_cliente_compras_negativas_lanza_error",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_clasificar_cliente_compras_cero_nuevo",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_clasificar_cliente_compras_9_frecuente",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_clasificar_cliente_compras_mayor_que_10_premium",
+      "detail": "NameError: name 'tienda' is not defined",
+      "first_seen": "2026-06-18T23:18:54",
+      "last_seen": "2026-06-18T23:18:54",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
   ]
 }
