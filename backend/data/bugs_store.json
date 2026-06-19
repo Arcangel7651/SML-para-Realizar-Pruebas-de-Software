@@ -1,5 +1,22 @@
 {
-  "calculadora": [],
+  "calculadora": [
+    {
+      "name": "test_factorial_de_cero_retorna_uno",
+      "detail": "assert factorial(0) == 1 → NameError: name 'factorial' is not defined",
+      "first_seen": "2026-06-19T04:49:22",
+      "last_seen": "2026-06-19T04:49:22",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_buscar_en_lista_vacia_retorna_None",
+      "detail": "assert buscar([], 'x') is None → NameError: name 'buscar' is not defined",
+      "first_seen": "2026-06-19T04:49:22",
+      "last_seen": "2026-06-19T04:49:22",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
   "validador_email": [],
   "matriz": [
     {
@@ -708,5 +725,6 @@
       "count": 1,
       "oracle_triage": "falso_positivo"
     }
-  ]
+  ],
+  "validador_edad": []
 }

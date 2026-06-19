@@ -42,3 +42,5 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-18T23:18:54,qwen2.5-coder:3b,tienda,True,False,False,3,0,False,19,0,19,0,0,0.0,0.0,,6,6,100.0,True,1,empty_test,710.9
 2026-06-18T23:40:29,qwen2.5-coder:3b,calculadora,True,False,True,3,0,True,11,11,0,0,0,100.0,88.0,50.0,6,6,100.0,True,0,,686.9
 2026-06-19T00:01:33,qwen2.5-coder:3b,calculadora,True,False,True,3,0,True,18,17,1,0,0,94.4,100.0,100.0,6,6,100.0,True,0,,929.6
+2026-06-19T01:25:01,qwen2.5-coder:3b,validador_edad,True,False,True,3,0,True,8,8,0,0,0,100.0,90.0,87.5,2,2,100.0,True,0,,534.6
+2026-06-19T04:49:22,codellama:7b-instruct,calculadora,True,False,False,3,0,True,13,11,2,0,0,84.6,88.0,50.0,6,6,100.0,True,0,,10795.5

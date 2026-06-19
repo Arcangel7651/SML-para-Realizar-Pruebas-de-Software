@@ -6,10 +6,9 @@ import calculadora as module_0
 
 @pytest.mark.xfail(strict=True)
 def test_case_0():
-    int_0 = -1358
-    none_type_0 = None
     calculadora_0 = module_0.Calculadora()
-    calculadora_0.dividir(int_0, none_type_0)
+    calculadora_1 = module_0.Calculadora()
+    calculadora_0.dividir(calculadora_1, calculadora_0)
 
 
 @pytest.mark.xfail(strict=True)
@@ -21,43 +20,32 @@ def test_case_1():
 
 @pytest.mark.xfail(strict=True)
 def test_case_2():
-    complex_0 = -2988 - 738j
-    int_0 = -1358
     calculadora_0 = module_0.Calculadora()
-    var_0 = calculadora_0.restar(int_0, int_0)
-    assert var_0 == 0
-    var_1 = calculadora_0.dividir(complex_0, int_0)
-    assert var_1 == (2.200294550810015 + 0.5434462444771723j)
-    calculadora_0.multiplicar(var_1, calculadora_0)
+    set_0 = set()
+    list_0 = []
+    list_1 = [list_0, list_0]
+    calculadora_0.multiplicar(set_0, list_1)
 
 
 @pytest.mark.xfail(strict=True)
 def test_case_3():
-    none_type_0 = None
+    set_0 = set()
     calculadora_0 = module_0.Calculadora()
-    calculadora_0.multiplicar(none_type_0, none_type_0)
+    calculadora_0.potencia(set_0, set_0)
 
 
-@pytest.mark.xfail(strict=True)
 def test_case_4():
+    float_0 = -3910.818689
     calculadora_0 = module_0.Calculadora()
-    calculadora_1 = module_0.Calculadora()
-    calculadora_1.potencia(calculadora_0, calculadora_0)
+    var_0 = calculadora_0.es_par(float_0)
+    assert var_0 is False
 
 
 def test_case_5():
-    complex_0 = -2988 - 738j
+    int_0 = -2013
     calculadora_0 = module_0.Calculadora()
-    bool_0 = False
-    var_0 = calculadora_0.es_par(bool_0)
-    assert var_0 is True
-    calculadora_1 = module_0.Calculadora()
-    var_1 = calculadora_1.dividir(var_0, complex_0)
-    assert var_1 == (-0.0003154298396628321 + 7.790737003720552e-05j)
-
-
-def test_case_6():
-    bool_0 = False
-    calculadora_0 = module_0.Calculadora()
+    var_0 = calculadora_0.restar(int_0, int_0)
+    assert var_0 == 0
+    none_type_0 = None
     with pytest.raises(ValueError):
-        calculadora_0.dividir(bool_0, bool_0)
+        calculadora_0.dividir(none_type_0, var_0)
