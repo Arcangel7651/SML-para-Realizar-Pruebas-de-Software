@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from infrastructure.ollama_client import list_models, chat, chat_stream
 from infrastructure.file_reader import read_python_file
-from services.rag_service import rag_service
+from services.rag_service import rag_service, GLOBAL_LESSONS_DEFAULT
 from services.test_generator import (
     generate_tests,
     SYSTEM_PROMPT,
@@ -109,10 +109,11 @@ async def generate_tests_endpoint(
     prompt: str = Form(""),
     model: str = Form(...),
     run_pytest: bool = Form(True),
+    use_global_lessons: bool = Form(GLOBAL_LESSONS_DEFAULT),
 ):
     source_code  = await read_python_file(file)
     module_name  = os.path.splitext(file.filename)[0]
-    result       = generate_tests(source_code, prompt, model, rag_service, module_name, run_pytest)
+    result       = generate_tests(source_code, prompt, model, rag_service, module_name, run_pytest, use_global_lessons)
     return result
 
 
@@ -122,6 +123,7 @@ async def generate_tests_stream_endpoint(
     prompt: str = Form(""),
     model: str = Form(...),
     run_pytest: bool = Form(True),
+    use_global_lessons: bool = Form(GLOBAL_LESSONS_DEFAULT),
 ):
     source_code  = await read_python_file(file)
     module_name  = os.path.splitext(file.filename)[0]
@@ -129,12 +131,17 @@ async def generate_tests_stream_endpoint(
 
     functions        = extract_functions(source_code)
     functions_found  = [fn["nombre"] for fn in functions]
-    # Advertencias del módulo + ejemplo aprendido del PROPIO módulo + patrones
-    # por similitud (excluyendo aprendidos de otros módulos, problema 07).
+    # Advertencias del módulo + lecciones globales (memoria semántica, problemas
+    # recurrentes en varios módulos) + ejemplo aprendido del PROPIO módulo +
+    # patrones por similitud (excluyendo aprendidos de otros módulos, problema 07).
     warnings          = rag_service.get_warnings(module_name)
+    global_lessons    = (
+        rag_service.get_global_lessons(exclude_kinds=rag_service.get_warning_kinds(module_name))
+        if use_global_lessons else []
+    )
     own_examples      = [e["text"] for e in rag_service.get_learned_examples(module_name)][:1]
     patterns          = rag_service.query(source_code + " " + prompt, n_results=3 - len(own_examples), include_learned=False)
-    context_fragments = warnings + own_examples + patterns
+    context_fragments = warnings + global_lessons + own_examples + patterns
     context_block    = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
     functions_block  = _build_functions_block(functions)
     classes_block    = _build_classes_block(module_name, extract_classes(source_code))

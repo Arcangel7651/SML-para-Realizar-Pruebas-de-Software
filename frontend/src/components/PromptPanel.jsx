@@ -8,7 +8,7 @@ function formatElapsed(seconds) {
   return `${m}:${String(s).padStart(2, '0')}`
 }
 
-export default function PromptPanel({ prompt, onChange, onGenerate, onStop, disabled, loading, elapsed = 0 }) {
+export default function PromptPanel({ prompt, onChange, onGenerate, onStop, disabled, loading, elapsed = 0, useGlobalLessons = true, onToggleGlobalLessons }) {
   const textareaRef = useRef(null)
 
   useEffect(() => {
@@ -34,6 +34,15 @@ export default function PromptPanel({ prompt, onChange, onGenerate, onStop, disa
         placeholder="Usa esto si quieres dar alguna instrucción adicional..."
         rows={5}
       />
+      <label className="gen-toggle" title="Inyecta las lecciones globales (memoria semántica) aprendidas de varios módulos. Desactívalo para la condición OFF de la ablación.">
+        <input
+          type="checkbox"
+          checked={useGlobalLessons}
+          onChange={e => onToggleGlobalLessons?.(e.target.checked)}
+          disabled={loading}
+        />
+        <span>Lecciones globales</span>
+      </label>
       {loading ? (
         <div className="gen-running">
           <div className="gen-timer">

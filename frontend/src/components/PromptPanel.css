@@ -40,6 +40,15 @@
   background: rgba(0,0,0,0.26); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.18);
 }
 
+.gen-toggle {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  font-size: 12.5px; font-family: var(--font-ui); color: var(--text-muted);
+  user-select: none; margin: -2px 0 1px;
+}
+.gen-toggle input { accent-color: var(--violet); width: 15px; height: 15px; cursor: pointer; }
+.gen-toggle input:disabled { cursor: not-allowed; }
+.gen-toggle:hover { color: var(--text); }
+
 .gen-running { display: flex; gap: 11px; height: 48px; }
 .gen-timer {
   flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px;

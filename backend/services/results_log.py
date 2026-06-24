@@ -12,7 +12,7 @@ FIELDNAMES = [
     # ── Contexto RAG inyectado al prompt (la variable que explica la
     #    convergencia: nº de fragmentos, advertencias del módulo y si se
     #    recuperó el ejemplo aprendido propio del módulo) ──────────────
-    "rag_fragments", "rag_warnings", "rag_used_learned",
+    "rag_fragments", "rag_warnings", "rag_used_learned", "rag_global_lessons",
     # ── Ejecución de los tests (pytest) ──────────────────────────────
     "tests_total", "tests_passed", "tests_failed", "tests_skipped", "tests_errors", "pass_rate",
     # ── Cobertura del código bajo prueba ─────────────────────────────
@@ -42,7 +42,10 @@ def _rag_signals(module: str, context_fragments: list[str] | None, warnings: lis
     warns = warnings or []
     marker = f"para el módulo '{module}'"
     used_learned = any("Ejemplo verificado" in f and marker in f for f in frags)
-    return len(frags), len(warns), used_learned
+    # Lecciones globales (memoria semántica): se reconocen por su marcador de texto
+    # "LECCIÓN GENERAL", para medir si su presencia mejora las métricas (ablación).
+    global_lessons = sum("LECCIÓN GENERAL" in f for f in frags)
+    return len(frags), len(warns), used_learned, global_lessons
 
 
 def log_result(
@@ -76,7 +79,7 @@ def log_result(
         round(funcs_covered / funcs_total * 100, 1) if funcs_total else ""
     )
     smells = q.get("smells_detected") or []
-    rag_fragments, rag_warnings, rag_used_learned = _rag_signals(module, context_fragments, warnings)
+    rag_fragments, rag_warnings, rag_used_learned, rag_global_lessons = _rag_signals(module, context_fragments, warnings)
 
     row = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
@@ -88,6 +91,7 @@ def log_result(
         "rag_fragments": rag_fragments,
         "rag_warnings": rag_warnings,
         "rag_used_learned": rag_used_learned,
+        "rag_global_lessons": rag_global_lessons,
         "tests_total": _cell(m.get("tests_total", 0)),
         "tests_passed": _cell(m.get("tests_passed", 0)),
         "tests_failed": _cell(m.get("tests_failed", 0)),
@@ -121,7 +125,7 @@ _BOOL_COLS = {"compiles", "degraded", "learned", "given_when_then", "rag_used_le
 _INT_COLS = {
     "tests_total", "tests_passed", "tests_failed", "tests_skipped",
     "tests_errors", "funcs_total", "funcs_covered", "smells_count",
-    "rag_fragments", "rag_warnings",
+    "rag_fragments", "rag_warnings", "rag_global_lessons",
 }
 _FLOAT_COLS = {"pass_rate", "line_coverage", "branch_coverage", "func_coverage_pct", "time_s"}
 

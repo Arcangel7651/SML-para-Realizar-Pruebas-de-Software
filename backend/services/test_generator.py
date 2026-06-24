@@ -879,6 +879,7 @@ def _learn_from_failure(
             f"'FUNCIONES DETECTADAS POR AST PARSER', sin omitir ninguna (regla OR-8)."
         )
         rag.add_warning(doc_id, text)
+        rag.record_lesson_signal("coverage", module_name)
         learned_something = True
 
     smells = quality.get("smells_detected") or []
@@ -891,6 +892,7 @@ def _learn_from_failure(
             f"tests para este módulo, recuerda que {guidance}."
         )
         rag.add_warning(doc_id, text)
+        rag.record_lesson_signal("smells", module_name)
         learned_something = True
 
     # Lección de aserciones: la señal semántica más rica. El modelo fijó el valor
@@ -921,6 +923,7 @@ def _learn_from_failure(
             f"según el contrato de la función, el test sería tautológico y ocultaría un bug."
         )
         rag.add_warning(doc_id, text)
+        rag.record_lesson_signal("assertions", module_name)
         learned_something = True
 
     return learned_something
@@ -933,6 +936,7 @@ def generate_tests(
     rag: RAGService,
     module_name: str = "modulo",
     run_pytest: bool = True,
+    use_global_lessons: bool = True,
 ) -> dict:
     print(f"\n{'='*50}")
     print(f"[SLM] Solicitud recibida | modelo: {model}")
@@ -949,15 +953,25 @@ def generate_tests(
 
     print(f"[RAG] Buscando fragmentos relevantes...")
     warnings = rag.get_warnings(module_name)
+    # Lecciones globales (memoria semántica): debilidades sistemáticas vistas en
+    # varios módulos. Se inyectan en TODA generación, salvo las que este módulo ya
+    # cubre con su advertencia específica (más relevante). Dan contexto útil
+    # incluso en la primera corrida de un módulo nuevo (cold-start).
+    # use_global_lessons=False las desactiva (condición OFF de la ablación).
+    global_lessons = (
+        rag.get_global_lessons(exclude_kinds=rag.get_warning_kinds(module_name))
+        if use_global_lessons else []
+    )
     # Anclaje al MISMO módulo: el único ejemplo aprendido que se inyecta es el
     # del propio módulo. Los patrones por similitud excluyen los aprendidos
     # (include_learned=False) para no recibir el ejemplo de otro módulo casi
     # idéntico (contaminación cruzada buggy↔corregido, problema 07).
     own_examples = [e["text"] for e in rag.get_learned_examples(module_name)][:1]
     patterns = rag.query(source_code + " " + prompt, n_results=3 - len(own_examples), include_learned=False)
-    # Advertencias y ejemplo propio van primero (por clave exacta), aditivos.
-    context_fragments = warnings + own_examples + patterns
-    print(f"[RAG] {len(warnings)} advertencia(s) + {len(own_examples)} ejemplo(s) propio(s) + {len(patterns)} patrón(es)")
+    # Advertencias del módulo y lecciones globales van primero (por clave, aditivas),
+    # luego el ejemplo propio y los patrones por similitud.
+    context_fragments = warnings + global_lessons + own_examples + patterns
+    print(f"[RAG] {len(warnings)} advertencia(s) + {len(global_lessons)} lección(es) global(es) + {len(own_examples)} ejemplo(s) propio(s) + {len(patterns)} patrón(es)")
 
     context_block  = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
     functions_block = _build_functions_block(functions)

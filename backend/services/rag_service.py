@@ -11,12 +11,58 @@ from infrastructure.ollama_client import embed_texts
 STORE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "rag_store.json")
 LEARNED_STORE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "learned_store.json")
 WARNINGS_STORE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "warnings_store.json")
+LESSONS_STORE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "lessons_store.json")
 
 WARNING_PREFIX = "learned_warning_"
 # Tipos de advertencia que se generan por módulo (ver _learn_from_failure en
 # test_generator). El doc_id de una advertencia es siempre de la forma
 # f"{WARNING_PREFIX}{kind}_{module_name}".
 WARNING_KINDS = ("coverage", "smells", "assertions")
+
+# ── Memoria semántica/procedural (lecciones globales) ────────────────────
+# Segundo nivel de aprendizaje (taxonomía CoALA): las advertencias por módulo
+# son memoria episódica (atada a un módulo). Cuando el MISMO tipo de problema
+# se repite en VARIOS módulos distintos, deja de ser un capricho del módulo y
+# pasa a ser una debilidad sistemática del modelo: se promueve a "lección
+# global", texto agnóstico del módulo que se inyecta en TODA generación (incluida
+# la primera de un módulo nuevo → arregla el cold-start). Es texto-lección, no
+# código y no entra al índice de similitud, así que NO puede reintroducir la
+# contaminación cruzada entre módulos casi idénticos (problema 07).
+GLOBAL_LESSON_TEXTS = {
+    "coverage": (
+        "LECCIÓN GENERAL (problema recurrente en varios módulos): el modelo tiende "
+        "a dejar funciones sin ningún test. Incluye un método "
+        "test_<función>_<escenario> para CADA función de 'FUNCIONES DETECTADAS POR "
+        "AST PARSER', sin omitir ninguna (regla OR-8)."
+    ),
+    "smells": (
+        "LECCIÓN GENERAL (problema recurrente en varios módulos): los tests suelen "
+        "tener test smells. Cada test debe ejercitar comportamiento real e invocar "
+        "la función bajo prueba; verifica excepciones con `with pytest.raises(...): "
+        "funcion(...)` (nunca con un assert dentro de un except), usa nombres "
+        "test_<función>_<escenario> y pon un mensaje en cada assert si hay más de uno."
+    ),
+    "assertions": (
+        "LECCIÓN GENERAL (problema recurrente en varios módulos): el valor esperado "
+        "de los asserts suele fijarse mal. Derívalo del COMPORTAMIENTO ESPERADO "
+        "(docstring) de cada función, no de ejecutar el código mentalmente, y no "
+        "copies a ciegas el valor que la función devuelve solo para que el test pase "
+        "(regla OR-9)."
+    ),
+}
+
+# Nº de módulos DISTINTOS en que debe haberse visto un tipo de problema para
+# promover su lección a global. Bajo a propósito (corpus pequeño); subir si el
+# prompt se infla o si las lecciones empiezan a inyectarse sin aportar.
+PROMOTION_THRESHOLD = 2
+# Tope de lecciones globales inyectadas por generación (evita inflar el prompt).
+GLOBAL_LESSON_CAP = 3
+
+# Interruptor de la INYECCIÓN de lecciones globales (no afecta el registro de
+# señales, que sigue acumulándose siempre). Default por variable de entorno para
+# poder correr un lote entero en una condición; cada petición puede sobreescribirlo
+# (use_global_lessons) para intercalar ON/OFF en la ablación sin reiniciar.
+GLOBAL_LESSONS_DEFAULT = os.getenv("GLOBAL_LESSONS_ENABLED", "1").lower() not in ("0", "false", "no")
 
 
 def _is_warning_id(doc_id: str) -> bool:
@@ -49,6 +95,15 @@ class RAGService:
         self._warnings: dict[str, str] = {
             d["id"]: d["text"] for d in warning_docs + legacy_warnings
         }
+
+        # Lecciones globales: tally {kind: [módulos distintos]}. La primera vez
+        # se bootstrappea desde las advertencias ya existentes (así el aprendizaje
+        # acumulado hasta ahora cuenta de inmediato, sin esperar a re-observar
+        # cada problema). Persiste aparte y NO se borra con clear_warnings.
+        self._lessons: dict[str, list[str]] = self._load_lessons()
+        if self._lessons is None:
+            self._lessons = self._bootstrap_lessons_from_warnings()
+            self._save_lessons()
 
         # Recuperación: se intentan embeddings semánticos (Ollama); si no están
         # disponibles, se cae a TF-IDF (similitud léxica). _use_embeddings se
@@ -237,6 +292,72 @@ class RAGService:
 
     def _save_warnings(self):
         self._save_json(WARNINGS_STORE_PATH, dict(self._warnings))
+
+    # ── Lecciones globales (memoria semántica/procedural) ────────────
+    def _load_lessons(self) -> dict[str, list[str]] | None:
+        """Tally de lecciones desde lessons_store.json, o None si no existe aún
+        (señal para bootstrappear desde las advertencias)."""
+        try:
+            with open(LESSONS_STORE_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return {
+                k: list(dict.fromkeys(v))
+                for k, v in data.items() if k in WARNING_KINDS
+            }
+        except (FileNotFoundError, json.JSONDecodeError):
+            return None
+
+    def _bootstrap_lessons_from_warnings(self) -> dict[str, list[str]]:
+        """Conteo inicial de módulos por tipo de problema, derivado de las
+        advertencias ya guardadas (doc_id `learned_warning_<kind>_<module>`)."""
+        tally: dict[str, list[str]] = {kind: [] for kind in WARNING_KINDS}
+        for key in self._warnings:
+            rest = key[len(WARNING_PREFIX):]  # <kind>_<module>
+            for kind in WARNING_KINDS:
+                if rest.startswith(kind + "_"):
+                    module = rest[len(kind) + 1:]
+                    if module not in tally[kind]:
+                        tally[kind].append(module)
+                    break
+        return tally
+
+    def record_lesson_signal(self, kind: str, module_name: str):
+        """Registra que el problema `kind` se observó en `module_name`. Cuenta
+        módulos DISTINTOS: una vez registrado un módulo, repetirlo no infla el
+        conteo. Persiste aparte de las advertencias (no se borra al limpiarlas)."""
+        if kind not in WARNING_KINDS:
+            return
+        modules = self._lessons.setdefault(kind, [])
+        if module_name not in modules:
+            modules.append(module_name)
+            self._save_lessons()
+
+    def get_warning_kinds(self, module_name: str) -> set[str]:
+        """Tipos de advertencia que este módulo ya tiene (advertencia específica).
+        Sirve para NO inyectarle además la lección global del mismo tipo (la
+        específica del módulo es más relevante; la global cubre el resto)."""
+        return {
+            kind for kind in WARNING_KINDS
+            if f"{WARNING_PREFIX}{kind}_{module_name}" in self._warnings
+        }
+
+    def get_global_lessons(self, exclude_kinds: set[str] | None = None) -> list[str]:
+        """Lecciones promovidas a globales: las que se han visto en al menos
+        PROMOTION_THRESHOLD módulos distintos, excluyendo las que el módulo actual
+        ya cubre con su advertencia específica. Acotadas a GLOBAL_LESSON_CAP."""
+        exclude = exclude_kinds or set()
+        out = []
+        for kind in WARNING_KINDS:
+            if kind in exclude:
+                continue
+            if len(set(self._lessons.get(kind, []))) >= PROMOTION_THRESHOLD:
+                out.append(GLOBAL_LESSON_TEXTS[kind])
+            if len(out) >= GLOBAL_LESSON_CAP:
+                break
+        return out
+
+    def _save_lessons(self):
+        self._save_json(LESSONS_STORE_PATH, self._lessons)
 
     def get_document(self, doc_id: str) -> str | None:
         """Texto de un documento del índice por id, o None si no existe."""

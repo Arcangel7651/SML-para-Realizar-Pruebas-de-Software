@@ -32,6 +32,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [elapsed, setElapsed] = useState(0)
   const [showResults, setShowResults] = useState(false)
+  const [useGlobalLessons, setUseGlobalLessons] = useState(true)
 
   const abortControllerRef = useRef(null)
   const timerRef = useRef(null)
@@ -93,6 +94,7 @@ export default function App() {
     form.append('prompt', prompt)
     form.append('model', model)
     form.append('run_pytest', true)
+    form.append('use_global_lessons', useGlobalLessons)
 
     try {
       const response = await fetch('/api/generate-tests-stream', {
@@ -243,6 +245,8 @@ export default function App() {
             disabled={!file || loading || !model}
             loading={loading}
             elapsed={elapsed}
+            useGlobalLessons={useGlobalLessons}
+            onToggleGlobalLessons={setUseGlobalLessons}
           />
           {error && (
             <div className="error-banner">
