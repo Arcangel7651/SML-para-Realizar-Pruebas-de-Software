@@ -5,6 +5,7 @@ import FileUpload from './components/FileUpload'
 import PromptPanel from './components/PromptPanel'
 import TestOutput from './components/TestOutput'
 import ResultsModal from './components/ResultsModal'
+import AblationModal from './components/AblationModal'
 import Icon from './components/Icon'
 
 const PREFERRED = ['codellama', 'qwen', 'llama']
@@ -32,6 +33,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [elapsed, setElapsed] = useState(0)
   const [showResults, setShowResults] = useState(false)
+  const [showAblation, setShowAblation] = useState(false)
   const [useGlobalLessons, setUseGlobalLessons] = useState(true)
 
   const abortControllerRef = useRef(null)
@@ -208,6 +210,13 @@ export default function App() {
         <div className="header-right">
           <button
             className="results-btn"
+            onClick={() => setShowAblation(true)}
+            title="Ejecutar ablación de lecciones globales (ON vs OFF)"
+          >
+            <Icon name="sparkles" size={15} /> Ablación
+          </button>
+          <button
+            className="results-btn"
             onClick={() => setShowResults(true)}
             title="Ver historial de resultados"
           >
@@ -262,6 +271,13 @@ export default function App() {
       </main>
 
       {showResults && <ResultsModal onClose={() => setShowResults(false)} />}
+      {showAblation && (
+        <AblationModal
+          models={models}
+          defaultModel={model}
+          onClose={() => setShowAblation(false)}
+        />
+      )}
     </div>
   )
 }

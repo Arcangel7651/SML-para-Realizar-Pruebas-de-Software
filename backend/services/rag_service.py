@@ -359,6 +359,25 @@ class RAGService:
     def _save_lessons(self):
         self._save_json(LESSONS_STORE_PATH, self._lessons)
 
+    def reload(self):
+        """Recarga todos los stores desde disco y re-ajusta el índice de
+        similitud. Usado tras restaurar los stores (p.ej. al terminar una
+        ablación) para descartar de memoria los módulos sintéticos que se
+        crearon durante el experimento."""
+        user_docs = self._load_json(STORE_PATH)
+        learned_docs = self._load_json(LEARNED_STORE_PATH)
+        warning_docs = self._load_json(WARNINGS_STORE_PATH)
+        positive = [
+            d for d in user_docs + learned_docs
+            if d["id"] not in self._seed_ids and not _is_warning_id(d["id"])
+        ]
+        self._documents = list(SEED_DOCUMENTS) + positive
+        legacy_warnings = [d for d in learned_docs if _is_warning_id(d["id"])]
+        self._warnings = {d["id"]: d["text"] for d in warning_docs + legacy_warnings}
+        lessons = self._load_lessons()
+        self._lessons = lessons if lessons is not None else self._bootstrap_lessons_from_warnings()
+        self._fit()
+
     def get_document(self, doc_id: str) -> str | None:
         """Texto de un documento del índice por id, o None si no existe."""
         for d in self._documents:

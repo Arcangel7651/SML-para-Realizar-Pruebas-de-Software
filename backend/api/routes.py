@@ -5,6 +5,8 @@ from fastapi import APIRouter, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+from services.ablation import run_ablation
+
 from infrastructure.ollama_client import list_models, chat, chat_stream
 from infrastructure.file_reader import read_python_file
 from services.rag_service import rag_service, GLOBAL_LESSONS_DEFAULT
@@ -282,6 +284,30 @@ async def generate_tests_stream_endpoint(
 @router.get("/results")
 async def get_results():
     return {"results": read_results()}
+
+
+@router.post("/ablation/run")
+async def ablation_run(
+    files: list[UploadFile] = File(...),
+    model: str = Form(...),
+    reps: int = Form(5),
+):
+    """Corre la ablación de lecciones globales (ON vs OFF) sobre los módulos
+    subidos y transmite el progreso como NDJSON. Cada módulo se ejecuta con un
+    nombre único por corrida (siempre fresco) y los stores se respaldan/restauran;
+    ver services/ablation.py."""
+    reps = max(1, min(reps, 20))
+    sources: dict[str, str] = {}
+    for f in files:
+        code = await read_python_file(f)
+        base = os.path.splitext(f.filename)[0]
+        sources[base] = code
+
+    def event_stream():
+        for event in run_ablation(sources, model, reps):
+            yield json.dumps(event, ensure_ascii=False) + "\n"
+
+    return StreamingResponse(event_stream(), media_type="application/x-ndjson")
 
 
 @router.get("/bugs")
