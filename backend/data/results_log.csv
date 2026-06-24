@@ -46,3 +46,5 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-19T04:49:22,codellama:7b-instruct,calculadora,True,False,False,3,0,True,13,11,2,0,0,84.6,88.0,50.0,6,6,100.0,True,0,,10795.5
 2026-06-19T15:47:34,qwen2.5-coder:1.5b,calculadora,True,False,False,4,1,True,0,0,0,0,1,0.0,0.0,,6,6,100.0,True,1,generic_name,312.6
 2026-06-19T16:00:09,qwen2.5-coder:1.5b,calculadora,True,True,False,5,2,True,12,0,12,0,0,0.0,41.0,100.0,6,6,100.0,True,0,,364.5
+2026-06-23T23:08:33,qwen2.5-coder:3b,procesador_descuentos_corregido,True,False,True,3,0,True,21,12,9,0,0,57.1,100.0,100.0,3,3,100.0,True,0,,659.4
+2026-06-23T23:49:26,qwen2.5-coder:3b,procesador_descuentos_corregido,True,False,True,4,1,True,15,12,3,0,0,80.0,100.0,100.0,3,3,100.0,True,0,,551.6

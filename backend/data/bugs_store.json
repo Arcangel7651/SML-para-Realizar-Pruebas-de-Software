@@ -358,7 +358,16 @@
       "count": 1
     }
   ],
-  "procesador_descuentos_corregido": [],
+  "procesador_descuentos_corregido": [
+    {
+      "name": "test_precio_unitario_cero_cantidad",
+      "detail": "assert 'division por cero' in str(excinfo.value) → AssertionError: assert 'division por cero' in 'division by zero' | +  where 'division by zero' = str(ZeroDivisionError('division by zero'))",
+      "first_seen": "2026-06-23T23:08:33",
+      "last_seen": "2026-06-23T23:08:33",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
   "cuenta_bancaria": [
     {
       "name": "test_depositar_monto_negativo",
