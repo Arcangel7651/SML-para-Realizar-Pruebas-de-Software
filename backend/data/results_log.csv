@@ -48,3 +48,4 @@ timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_
 2026-06-19T16:00:09,qwen2.5-coder:1.5b,calculadora,True,True,False,5,2,True,,12,0,12,0,0,0.0,41.0,100.0,6,6,100.0,True,0,,364.5
 2026-06-23T23:08:33,qwen2.5-coder:3b,procesador_descuentos_corregido,True,False,True,3,0,True,,21,12,9,0,0,57.1,100.0,100.0,3,3,100.0,True,0,,659.4
 2026-06-23T23:49:26,qwen2.5-coder:3b,procesador_descuentos_corregido,True,False,True,4,1,True,,15,12,3,0,0,80.0,100.0,100.0,3,3,100.0,True,0,,551.6
+2026-06-24T19:00:32,qwen2.5-coder:3b,conversor_temperatura,True,False,False,5,0,True,2,6,6,0,0,3,100.0,62.0,75.0,4,4,100.0,True,0,,594.3

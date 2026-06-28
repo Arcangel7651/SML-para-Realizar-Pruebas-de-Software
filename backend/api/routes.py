@@ -10,23 +10,19 @@ from services.ablation import run_ablation
 from infrastructure.ollama_client import list_models, chat, chat_stream
 from infrastructure.file_reader import read_python_file
 from services.rag_service import rag_service, GLOBAL_LESSONS_DEFAULT
-from services.test_generator import (
-    generate_tests,
+from services.test_generator import generate_tests
+from services.test_prompt_builder import (
     SYSTEM_PROMPT,
-    _extract_code,
-    _check_compiles,
-    _run_pytest,
-    _learn_from_result,
-    _learn_from_failure,
-    _build_functions_block,
-    _build_classes_block,
-    _build_user_message,
-    _build_degraded_tests,
-    _missing_function_coverage,
-    _build_coverage_retry_message,
-    _repair_generated_tests,
-    _build_potential_bugs,
+    build_user_message,
+    build_functions_block,
+    build_classes_block,
+    build_coverage_retry_message,
 )
+from services.llm_output_parser import extract_code, check_compiles
+from services.test_repair import repair_generated_tests
+from services.degraded_suite import build_degraded_tests, missing_function_coverage
+from services.pytest_runner import run_pytest as run_pytest_suite, build_potential_bugs
+from services.rag_learning import learn_from_result, learn_from_failure
 from services.ast_parser import extract_functions, extract_classes
 from services.oracle import triage_failures
 from services.quality_analyzer import analyze as analyze_quality
@@ -145,10 +141,10 @@ async def generate_tests_stream_endpoint(
     patterns          = rag_service.query(source_code + " " + prompt, n_results=3 - len(own_examples), include_learned=False)
     context_fragments = warnings + global_lessons + own_examples + patterns
     context_block    = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
-    functions_block  = _build_functions_block(functions)
-    classes_block    = _build_classes_block(module_name, extract_classes(source_code))
+    functions_block  = build_functions_block(functions)
+    classes_block    = build_classes_block(module_name, extract_classes(source_code))
 
-    user_message = _build_user_message(
+    user_message = build_user_message(
         module_name, module_pascal, context_block, functions_block, classes_block, prompt, source_code
     )
 
@@ -178,11 +174,11 @@ async def generate_tests_stream_endpoint(
             return
 
         raw_response = "".join(raw_chunks)
-        tests_code, explanation = _extract_code(raw_response)
-        tests_code = _repair_generated_tests(
+        tests_code, explanation = extract_code(raw_response)
+        tests_code = repair_generated_tests(
             tests_code, module_name, extract_classes(source_code), functions_found
         )
-        compiles, compile_error = _check_compiles(tests_code)
+        compiles, compile_error = check_compiles(tests_code)
 
         if not compiles:
             yield json.dumps({"type": "retrying", "reason": compile_error}) + "\n"
@@ -195,11 +191,11 @@ async def generate_tests_stream_endpoint(
                 )},
             ]
             raw_retry = chat(model=model, messages=retry_messages)
-            tests_retry, explanation_retry = _extract_code(raw_retry)
-            tests_retry = _repair_generated_tests(
+            tests_retry, explanation_retry = extract_code(raw_retry)
+            tests_retry = repair_generated_tests(
                 tests_retry, module_name, extract_classes(source_code), functions_found
             )
-            compiles_retry, compile_error_retry = _check_compiles(tests_retry)
+            compiles_retry, compile_error_retry = check_compiles(tests_retry)
             if compiles_retry:
                 tests_code    = tests_retry
                 explanation   = explanation_retry or explanation
@@ -207,7 +203,7 @@ async def generate_tests_stream_endpoint(
                 compile_error = None
 
         if compiles:
-            missing_functions = _missing_function_coverage(tests_code, functions_found)
+            missing_functions = missing_function_coverage(tests_code, functions_found)
             if missing_functions:
                 yield json.dumps({
                     "type": "retrying",
@@ -215,14 +211,14 @@ async def generate_tests_stream_endpoint(
                 }) + "\n"
                 retry_messages = messages + [
                     {"role": "assistant", "content": tests_code},
-                    _build_coverage_retry_message(missing_functions),
+                    build_coverage_retry_message(missing_functions),
                 ]
                 raw_retry2 = chat(model=model, messages=retry_messages)
-                tests_retry2, explanation_retry2 = _extract_code(raw_retry2)
-                tests_retry2 = _repair_generated_tests(
+                tests_retry2, explanation_retry2 = extract_code(raw_retry2)
+                tests_retry2 = repair_generated_tests(
                     tests_retry2, module_name, extract_classes(source_code), functions_found
                 )
-                compiles_retry2, compile_error_retry2 = _check_compiles(tests_retry2)
+                compiles_retry2, compile_error_retry2 = check_compiles(tests_retry2)
                 if compiles_retry2:
                     tests_code  = tests_retry2
                     explanation = explanation_retry2 or explanation
@@ -230,10 +226,10 @@ async def generate_tests_stream_endpoint(
         degraded = False
         if not compiles:
             classes_detected = extract_classes(source_code)
-            degraded_code = _build_degraded_tests(
+            degraded_code = build_degraded_tests(
                 tests_code, module_name, module_pascal, functions_found, classes_detected, compile_error
             )
-            degraded_compiles, degraded_compile_error = _check_compiles(degraded_code)
+            degraded_compiles, degraded_compile_error = check_compiles(degraded_code)
             if degraded_compiles:
                 tests_code    = degraded_code
                 compiles      = True
@@ -244,7 +240,7 @@ async def generate_tests_stream_endpoint(
         passing_tests = set()
         failures = {}
         if compiles and run_pytest:
-            metrics, passing_tests, failures = _run_pytest(source_code, tests_code, module_name)
+            metrics, passing_tests, failures = run_pytest_suite(source_code, tests_code, module_name)
 
         quality = analyze_quality(tests_code, functions_found, f"Test{module_pascal}")
 
@@ -252,17 +248,17 @@ async def generate_tests_stream_endpoint(
         if failures and not degraded:
             oracle_triage = triage_failures(failures, functions, model)
 
-        learned = _learn_from_result(
+        learned = learn_from_result(
             rag_service, module_name, functions_found, tests_code, compiles, metrics, quality,
             passing_tests, source_code,
         )
-        _learn_from_failure(rag_service, module_name, quality, compiles, metrics, failures, degraded, oracle_triage)
+        learn_from_failure(rag_service, module_name, quality, compiles, metrics, failures, degraded, oracle_triage)
 
         log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_start)
 
         potential_bugs = record_and_annotate(
             module_name,
-            _build_potential_bugs(failures, degraded, tests_code, functions_found, oracle_triage),
+            build_potential_bugs(failures, degraded, tests_code, functions_found, oracle_triage),
         )
 
         yield json.dumps({
