@@ -1,33 +1,17 @@
 import os
 import json
-import time
 from fastapi import APIRouter, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from services.ablation import run_ablation
 
-from infrastructure.ollama_client import list_models, chat, chat_stream
+from infrastructure.ollama_client import list_models
 from infrastructure.file_reader import read_python_file
 from services.rag_service import rag_service, GLOBAL_LESSONS_DEFAULT
-from services.test_generator import generate_tests
-from services.test_prompt_builder import (
-    SYSTEM_PROMPT,
-    build_user_message,
-    build_functions_block,
-    build_classes_block,
-    build_coverage_retry_message,
-)
-from services.llm_output_parser import extract_code, check_compiles
-from services.test_repair import repair_generated_tests
-from services.degraded_suite import build_degraded_tests, missing_function_coverage
-from services.pytest_runner import run_pytest as run_pytest_suite, build_potential_bugs
-from services.rag_learning import learn_from_result, learn_from_failure
-from services.ast_parser import extract_functions, extract_classes
-from services.oracle import triage_failures
-from services.quality_analyzer import analyze as analyze_quality
-from services.results_log import log_result, read_results
-from services.bugs_store import record_and_annotate, set_triage, all_bugs
+from services.test_generator import generate_tests, run_pipeline
+from services.results_log import read_results
+from services.bugs_store import set_triage, all_bugs
 
 router = APIRouter()
 
@@ -123,156 +107,17 @@ async def generate_tests_stream_endpoint(
     run_pytest: bool = Form(True),
     use_global_lessons: bool = Form(GLOBAL_LESSONS_DEFAULT),
 ):
-    source_code  = await read_python_file(file)
-    module_name  = os.path.splitext(file.filename)[0]
-    module_pascal = "".join(w.capitalize() for w in module_name.split("_"))
+    source_code = await read_python_file(file)
+    module_name = os.path.splitext(file.filename)[0]
 
-    functions        = extract_functions(source_code)
-    functions_found  = [fn["nombre"] for fn in functions]
-    # Advertencias del módulo + lecciones globales (memoria semántica, problemas
-    # recurrentes en varios módulos) + ejemplo aprendido del PROPIO módulo +
-    # patrones por similitud (excluyendo aprendidos de otros módulos, problema 07).
-    warnings          = rag_service.get_warnings(module_name)
-    global_lessons    = (
-        rag_service.get_global_lessons(exclude_kinds=rag_service.get_warning_kinds(module_name))
-        if use_global_lessons else []
-    )
-    own_examples      = [e["text"] for e in rag_service.get_learned_examples(module_name)][:1]
-    patterns          = rag_service.query(source_code + " " + prompt, n_results=3 - len(own_examples), include_learned=False)
-    context_fragments = warnings + global_lessons + own_examples + patterns
-    context_block    = "\n\n".join(context_fragments) if context_fragments else "Sin contexto adicional."
-    functions_block  = build_functions_block(functions)
-    classes_block    = build_classes_block(module_name, extract_classes(source_code))
-
-    user_message = build_user_message(
-        module_name, module_pascal, context_block, functions_block, classes_block, prompt, source_code
-    )
-
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user",   "content": user_message},
-    ]
-
+    # El pipeline vive completo en services/test_generator.run_pipeline; aquí solo
+    # se serializa cada evento a NDJSON. La ruta no-stream (generate_tests) consume
+    # ese mismo generador, así que no hay lógica de dominio duplicada (regla 4).
     def event_stream():
-        t_start = time.time()
-        yield json.dumps({
-            "type": "meta",
-            "functions_found": functions_found,
-            "context_used": context_fragments,
-        }) + "\n"
-
-        raw_chunks = []
-        try:
-            for chunk in chat_stream(model=model, messages=messages):
-                raw_chunks.append(chunk)
-                yield json.dumps({"type": "token", "content": chunk}) + "\n"
-        except Exception as e:
-            yield json.dumps({
-                "type": "error",
-                "message": f"Ollama no respondió: {e}",
-            }) + "\n"
-            return
-
-        raw_response = "".join(raw_chunks)
-        tests_code, explanation = extract_code(raw_response)
-        tests_code = repair_generated_tests(
-            tests_code, module_name, extract_classes(source_code), functions_found
-        )
-        compiles, compile_error = check_compiles(tests_code)
-
-        if not compiles:
-            yield json.dumps({"type": "retrying", "reason": compile_error}) + "\n"
-            retry_messages = messages + [
-                {"role": "assistant", "content": raw_response},
-                {"role": "user", "content": (
-                    f"El código generado tiene un error de sintaxis Python:\n{compile_error}\n\n"
-                    f"Corrige únicamente ese error y devuelve el código completo corregido. "
-                    f"Solo código Python válido, sin explicaciones ni markdown."
-                )},
-            ]
-            raw_retry = chat(model=model, messages=retry_messages)
-            tests_retry, explanation_retry = extract_code(raw_retry)
-            tests_retry = repair_generated_tests(
-                tests_retry, module_name, extract_classes(source_code), functions_found
-            )
-            compiles_retry, compile_error_retry = check_compiles(tests_retry)
-            if compiles_retry:
-                tests_code    = tests_retry
-                explanation   = explanation_retry or explanation
-                compiles      = True
-                compile_error = None
-
-        if compiles:
-            missing_functions = missing_function_coverage(tests_code, functions_found)
-            if missing_functions:
-                yield json.dumps({
-                    "type": "retrying",
-                    "reason": f"Faltan tests para: {', '.join(missing_functions)}",
-                }) + "\n"
-                retry_messages = messages + [
-                    {"role": "assistant", "content": tests_code},
-                    build_coverage_retry_message(missing_functions),
-                ]
-                raw_retry2 = chat(model=model, messages=retry_messages)
-                tests_retry2, explanation_retry2 = extract_code(raw_retry2)
-                tests_retry2 = repair_generated_tests(
-                    tests_retry2, module_name, extract_classes(source_code), functions_found
-                )
-                compiles_retry2, compile_error_retry2 = check_compiles(tests_retry2)
-                if compiles_retry2:
-                    tests_code  = tests_retry2
-                    explanation = explanation_retry2 or explanation
-
-        degraded = False
-        if not compiles:
-            classes_detected = extract_classes(source_code)
-            degraded_code = build_degraded_tests(
-                tests_code, module_name, module_pascal, functions_found, classes_detected, compile_error
-            )
-            degraded_compiles, degraded_compile_error = check_compiles(degraded_code)
-            if degraded_compiles:
-                tests_code    = degraded_code
-                compiles      = True
-                compile_error = None
-                degraded      = True
-
-        metrics = None
-        passing_tests = set()
-        failures = {}
-        if compiles and run_pytest:
-            metrics, passing_tests, failures = run_pytest_suite(source_code, tests_code, module_name)
-
-        quality = analyze_quality(tests_code, functions_found, f"Test{module_pascal}")
-
-        oracle_triage = {}
-        if failures and not degraded:
-            oracle_triage = triage_failures(failures, functions, model)
-
-        learned = learn_from_result(
-            rag_service, module_name, functions_found, tests_code, compiles, metrics, quality,
-            passing_tests, source_code,
-        )
-        learn_from_failure(rag_service, module_name, quality, compiles, metrics, failures, degraded, oracle_triage)
-
-        log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_start)
-
-        potential_bugs = record_and_annotate(
-            module_name,
-            build_potential_bugs(failures, degraded, tests_code, functions_found, oracle_triage),
-        )
-
-        yield json.dumps({
-            "type":          "done",
-            "tests":         tests_code,
-            "explanation":   explanation,
-            "compiles":      compiles,
-            "compile_error": compile_error,
-            "metrics":       metrics,
-            "quality":       quality,
-            "learned":       learned,
-            "degraded":      degraded,
-            "potential_bugs": potential_bugs,
-        }) + "\n"
+        for event in run_pipeline(
+            source_code, prompt, model, rag_service, module_name, run_pytest, use_global_lessons
+        ):
+            yield json.dumps(event, ensure_ascii=False) + "\n"
 
     return StreamingResponse(event_stream(), media_type="application/x-ndjson")
 

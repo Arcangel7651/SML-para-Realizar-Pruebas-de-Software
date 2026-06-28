@@ -3,12 +3,18 @@ solicitud: análisis AST → recuperación de contexto RAG → construcción del
 → llamada al LLM → reparación determinística → reintentos (compilación y
 cobertura) → suite degradada de respaldo → ejecución bajo pytest → oráculo →
 aprendizaje en RAG → registro de resultados. Cada paso vive en su propio módulo
-de la capa `services/`; aquí solo se encadenan. La única función pública es
-`generate_tests`."""
+de la capa `services/`; aquí solo se encadenan.
+
+El pipeline se expresa UNA sola vez como `run_pipeline`, un generador que emite
+eventos (`meta`/`token`/`retrying`/`error`/`done`). El endpoint de streaming
+serializa esos eventos a NDJSON; `generate_tests` los drena e ignora los `token`
+para devolver el resultado completo. Así ambas rutas (stream y no-stream)
+comparten exactamente la misma lógica de dominio (ver regla 4 del proyecto)."""
 
 import time
+from collections.abc import Generator
 
-from infrastructure.ollama_client import chat
+from infrastructure.ollama_client import chat, chat_stream
 from services.rag_service import RAGService
 from services.ast_parser import extract_functions, extract_classes
 from services.quality_analyzer import analyze as analyze_quality
@@ -30,7 +36,7 @@ from services.pytest_runner import run_pytest as run_pytest_suite, build_potenti
 from services.rag_learning import learn_from_result, learn_from_failure
 
 
-def generate_tests(
+def run_pipeline(
     source_code: str,
     prompt: str,
     model: str,
@@ -38,7 +44,11 @@ def generate_tests(
     module_name: str = "modulo",
     run_pytest: bool = True,
     use_global_lessons: bool = True,
-) -> dict:
+) -> Generator[dict, None, None]:
+    """Ejecuta el pipeline completo y emite eventos. La primera llamada al LLM
+    se hace siempre en streaming (emite eventos `token`); el resto del pipeline
+    es idéntico para ambas rutas. El consumidor decide qué hacer con los eventos:
+    el endpoint stream los manda por NDJSON, `generate_tests` los acumula."""
     print(f"\n{'='*50}")
     print(f"[SLM] Solicitud recibida | modelo: {model}")
     print(f"[SLM] Líneas de código fuente: {len(source_code.splitlines())}")
@@ -88,9 +98,25 @@ def generate_tests(
         {"role": "user",   "content": user_message},
     ]
 
+    # Metadatos tempranos: el front pinta funciones detectadas y contexto usado
+    # antes de que empiece a llegar el código. En no-stream se acumulan igual.
+    yield {
+        "type": "meta",
+        "functions_found": functions_found,
+        "context_used": context_fragments,
+    }
+
     print(f"[LLM] Enviando a Ollama...")
     t0 = time.time()
-    raw_response = chat(model=model, messages=messages)
+    raw_chunks: list[str] = []
+    try:
+        for chunk in chat_stream(model=model, messages=messages):
+            raw_chunks.append(chunk)
+            yield {"type": "token", "content": chunk}
+    except Exception as e:
+        yield {"type": "error", "message": f"Ollama no respondió: {e}"}
+        return
+    raw_response = "".join(raw_chunks)
     print(f"[LLM] Respuesta en {time.time() - t0:.1f}s (~{len(raw_response.split())} tokens)")
 
     tests_code, explanation = extract_code(raw_response)
@@ -104,6 +130,7 @@ def generate_tests(
 
     if not compiles:
         print(f"[RETRY] Compilación fallida, reintentando con error en contexto...")
+        yield {"type": "retrying", "reason": compile_error}
         retry_messages = messages + [
             {"role": "assistant", "content": raw_response},
             {"role": "user", "content": (
@@ -133,6 +160,7 @@ def generate_tests(
         missing_functions = missing_function_coverage(tests_code, functions_found)
         if missing_functions:
             print(f"[RETRY] Faltan tests para: {', '.join(missing_functions)} — reintentando...")
+            yield {"type": "retrying", "reason": f"Faltan tests para: {', '.join(missing_functions)}"}
             retry_messages = messages + [
                 {"role": "assistant", "content": tests_code},
                 build_coverage_retry_message(missing_functions),
@@ -221,16 +249,42 @@ def generate_tests(
     print(f"[SLM] Listo. {len(tests_code.splitlines())} líneas generadas")
     print(f"{'='*50}\n")
 
-    return {
-        "tests":          tests_code,
-        "explanation":    explanation,
-        "context_used":   context_fragments,
-        "functions_found": functions_found,
-        "compiles":        compiles,
-        "compile_error":   compile_error,
-        "metrics":         metrics,
-        "quality":         quality,
-        "learned":         learned,
-        "degraded":        degraded,
-        "potential_bugs":  potential_bugs,
+    yield {
+        "type":          "done",
+        "tests":         tests_code,
+        "explanation":   explanation,
+        "compiles":      compiles,
+        "compile_error": compile_error,
+        "metrics":       metrics,
+        "quality":       quality,
+        "learned":       learned,
+        "degraded":      degraded,
+        "potential_bugs": potential_bugs,
     }
+
+
+def generate_tests(
+    source_code: str,
+    prompt: str,
+    model: str,
+    rag: RAGService,
+    module_name: str = "modulo",
+    run_pytest: bool = True,
+    use_global_lessons: bool = True,
+) -> dict:
+    """Variante no-stream: drena `run_pipeline`, ignora los tokens y arma el dict
+    de respuesta a partir de los eventos `meta` y `done`. Misma firma y mismas
+    claves de retorno de siempre."""
+    result: dict = {}
+    for event in run_pipeline(
+        source_code, prompt, model, rag, module_name, run_pytest, use_global_lessons
+    ):
+        kind = event["type"]
+        if kind == "error":
+            # Sin stream no hay canal de eventos: propagamos como excepción para
+            # conservar el comportamiento previo (500 en el endpoint).
+            raise RuntimeError(event["message"])
+        if kind in ("meta", "done"):
+            result.update(event)
+    result.pop("type", None)
+    return result
