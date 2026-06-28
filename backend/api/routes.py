@@ -129,23 +129,28 @@ async def get_results():
 
 @router.post("/ablation/run")
 async def ablation_run(
-    files: list[UploadFile] = File(...),
+    correctos: list[UploadFile] = File(default=[]),
+    incorrectos: list[UploadFile] = File(default=[]),
     model: str = Form(...),
     reps: int = Form(5),
 ):
     """Corre la ablación de lecciones globales (ON vs OFF) sobre los módulos
-    subidos y transmite el progreso como NDJSON. Cada módulo se ejecuta con un
-    nombre único por corrida (siempre fresco) y los stores se respaldan/restauran;
-    ver services/ablation.py."""
+    subidos y transmite el progreso como NDJSON. Los archivos llegan en dos
+    grupos etiquetados (correctos / incorrectos) para que el resumen separe
+    ambas clases y mida bug_detected_rate en los incorrectos. Cada módulo se
+    ejecuta con un nombre único por corrida (siempre fresco) y los stores se
+    respaldan/restauran; ver services/ablation.py."""
     reps = max(1, min(reps, 20))
-    sources: dict[str, str] = {}
-    for f in files:
+    modules: dict[str, dict] = {}
+    for f in correctos:
         code = await read_python_file(f)
-        base = os.path.splitext(f.filename)[0]
-        sources[base] = code
+        modules[os.path.splitext(f.filename)[0]] = {"code": code, "label": "correcto"}
+    for f in incorrectos:
+        code = await read_python_file(f)
+        modules[os.path.splitext(f.filename)[0]] = {"code": code, "label": "incorrecto"}
 
     def event_stream():
-        for event in run_ablation(sources, model, reps):
+        for event in run_ablation(modules, model, reps):
             yield json.dumps(event, ensure_ascii=False) + "\n"
 
     return StreamingResponse(event_stream(), media_type="application/x-ndjson")

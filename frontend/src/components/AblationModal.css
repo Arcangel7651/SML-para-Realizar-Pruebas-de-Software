@@ -80,11 +80,31 @@
 
 /* Resumen */
 .am-summary { padding: 10px 18px 4px; }
+.am-sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 720px) { .am-sum-grid { grid-template-columns: 1fr; } }
+.am-sum-block {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+}
+.am-sum-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; font-size: 11px; }
 .am-sum-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.am-sum-table th, .am-sum-table td { text-align: right; padding: 7px 12px; border-bottom: 1px solid var(--border); }
+.am-sum-table th, .am-sum-table td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--border); }
 .am-sum-table th:first-child, .am-sum-table td:first-child { text-align: left; color: var(--text-muted); }
 .am-sum-table th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
 .am-sum-table td { font-family: var(--font-mono); color: var(--text); }
+.am-sum-table td:first-child { font-family: var(--font-ui); display: flex; align-items: center; gap: 5px; }
+.am-star-row td { background: rgba(124,92,255,0.06); }
+.am-star-row td:first-child { color: var(--text-strong); font-weight: 600; }
+
+/* Descargas */
+.am-downloads { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 0 4px; }
+.am-dl-btn {
+  display: flex; align-items: center; gap: 6px; padding: 7px 12px;
+  background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--radius-sm);
+  color: var(--text); font-size: 12px; cursor: pointer; font-family: var(--font-ui); transition: background .15s, border-color .15s;
+}
+.am-dl-btn:hover { background: var(--surface-2, rgba(255,255,255,0.05)); border-color: var(--violet, #7c5cff); }
+
 .am-hint { font-size: 11px; color: var(--text-faint); padding: 8px 0 2px; }
 
 /* Tabla de corridas */
@@ -99,6 +119,8 @@
 .am-badge.on { background: rgba(124,92,255,0.18); color: #b9a8ff; border: 1px solid rgba(124,92,255,0.4); }
 .am-badge.off { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border-2); }
 .am-badge.warn { background: rgba(255,176,32,0.14); color: #ffc24d; border: 1px solid rgba(255,176,32,0.35); }
+.am-badge.cls-incorrecto { background: rgba(255,122,143,0.13); color: #ff9aa9; border: 1px solid rgba(255,122,143,0.34); }
+.am-badge.cls-correcto { background: rgba(95,208,138,0.13); color: #7fdfa6; border: 1px solid rgba(95,208,138,0.32); }
 
 .am-dim { color: var(--text-faint); }
 .good { color: #5fd08a; }

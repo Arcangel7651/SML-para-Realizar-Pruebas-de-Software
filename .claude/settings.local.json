@@ -48,14 +48,19 @@
       "Skill(update-config)",
       "Skill(update-config:*)",
       "Bash(ls codigos-prueba/test/qwen3B/matriz/)",
-      "Bash(python -c \"import json;d=json.load\\(open\\('backend/data/bugs_store.json',encoding='utf-8'\\)\\);import pprint;pprint.pprint\\(d.get\\('matriz','\\(sin entradas\\)'\\)\\)\")"
+      "Bash(python -c \"import json;d=json.load\\(open\\('backend/data/bugs_store.json',encoding='utf-8'\\)\\);import pprint;pprint.pprint\\(d.get\\('matriz','\\(sin entradas\\)'\\)\\)\")",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error srs.tex)",
+      "Bash(echo \"EXIT1=$?\")",
+      "Bash(echo \"EXIT2=$?\")",
+      "Bash(ls -la srs.pdf)"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory",
       "C:\\Users\\angel\\Documents\\PRACTICAS\\resultados",
       "C:\\Users\\angel\\Documents\\estafando\\SML-para-Realizar-Pruebas-de-Software\\codigos-prueba\\test\\qwen3B\\matriz",
       "C:\\Users\\angel\\Documents\\PRACTICAS\\Mapeo",
-      "C:\\Users\\angel\\Documents\\PRACTICAS"
+      "C:\\Users\\angel\\Documents\\PRACTICAS",
+      "C:\\Users\\angel\\Documents\\PRACTICAS\\documentacion\\SRS"
     ]
   }
 }

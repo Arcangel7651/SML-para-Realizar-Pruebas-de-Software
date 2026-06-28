@@ -9,7 +9,8 @@ function rateClass(v) {
   return 'bad'
 }
 
-// Diferencia ON - OFF para una métrica (smells: menos es mejor, se invierte el signo bueno).
+// Diferencia ON - OFF para una métrica (lowerBetter: menos es mejor, p.ej. smells
+// o falsos positivos → se invierte el signo "bueno").
 function Delta({ on, off, lowerBetter = false }) {
   if (on === null || on === undefined || off === null || off === undefined) return <span className="am-dim">—</span>
   const d = Math.round((on - off) * 100) / 100
@@ -20,8 +21,60 @@ function Delta({ on, off, lowerBetter = false }) {
   return <span className={cls}>{sign}{d}</span>
 }
 
+// ── Descargas (cliente, sin endpoint nuevo) ────────────────────────────────
+function triggerDownload(filename, content, mime) {
+  const blob = new Blob([content], { type: mime })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
+function csvCell(v) {
+  if (v === null || v === undefined) return ''
+  const s = String(v)
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+}
+
+function toCSV(headers, rows) {
+  const lines = [headers.join(',')]
+  for (const row of rows) lines.push(headers.map(h => csvCell(row[h])).join(','))
+  return lines.join('\n')
+}
+
+const STAMP = () => new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
+
+// Filas de resumen por clase para descarga / render.
+const SUMMARY_ROWS = {
+  correcto: [
+    { key: 'pass_rate', label: 'Pass rate', rate: true },
+    { key: 'line_coverage', label: 'Cob. línea', rate: true },
+    { key: 'func_coverage', label: 'Cob. función', rate: true },
+    { key: 'smells', label: 'Smells (media)', lowerBetter: true },
+    { key: 'bug_detected_rate', label: 'Falsos positivos %', lowerBetter: true, rate: true },
+  ],
+  incorrecto: [
+    { key: 'bug_detected_rate', label: 'Bug detectado %', star: true, rate: true },
+    { key: 'pass_rate', label: 'Pass rate', rate: true },
+    { key: 'line_coverage', label: 'Cob. línea', rate: true },
+    { key: 'smells', label: 'Smells (media)', lowerBetter: true },
+  ],
+}
+
+const DETAIL_COLS = [
+  'i', 'cond', 'label', 'module', 'pass_rate', 'line_coverage', 'branch_coverage',
+  'func_coverage_pct', 'smells', 'given_when_then', 'tests_total', 'tests_passed',
+  'tests_failed', 'tests_errors', 'potential_bugs', 'bug_detected',
+  'lessons_injected', 'compiles', 'degraded', 'elapsed',
+]
+
 export default function AblationModal({ models, defaultModel, onClose }) {
-  const [files, setFiles] = useState([])
+  const [correctos, setCorrectos] = useState([])
+  const [incorrectos, setIncorrectos] = useState([])
   const [model, setModel] = useState(defaultModel || (models[0] ?? ''))
   const [reps, setReps] = useState(5)
   const [running, setRunning] = useState(false)
@@ -45,8 +98,10 @@ export default function AblationModal({ models, defaultModel, onClose }) {
     else if (msg.type === 'done') setSummary(msg.summary)
   }
 
+  const totalFiles = correctos.length + incorrectos.length
+
   async function run() {
-    if (!files.length || !model || running) return
+    if (!totalFiles || !model || running) return
     setRunning(true)
     setMeta(null); setRuns([]); setSummary(null); setError('')
 
@@ -54,7 +109,8 @@ export default function AblationModal({ models, defaultModel, onClose }) {
     abortRef.current = controller
 
     const form = new FormData()
-    files.forEach(f => form.append('files', f))
+    correctos.forEach(f => form.append('correctos', f))
+    incorrectos.forEach(f => form.append('incorrectos', f))
     form.append('model', model)
     form.append('reps', reps)
 
@@ -87,6 +143,46 @@ export default function AblationModal({ models, defaultModel, onClose }) {
     onClose()
   }
 
+  // ── Descargas ──────────────────────────────────────────────────────────
+  function downloadSummary() {
+    if (!summary) return
+    const headers = ['clase', 'metrica', 'ON', 'OFF', 'delta']
+    const rows = []
+    for (const label of ['correcto', 'incorrecto']) {
+      const blk = summary[label]
+      if (!blk) continue
+      rows.push({ clase: label, metrica: 'n_corridas', ON: blk.ON?.n, OFF: blk.OFF?.n, delta: '' })
+      for (const { key, label: name } of SUMMARY_ROWS[label]) {
+        const on = blk.ON?.[key], off = blk.OFF?.[key]
+        const delta = (on != null && off != null) ? Math.round((on - off) * 100) / 100 : ''
+        rows.push({ clase: label, metrica: name, ON: on ?? '', OFF: off ?? '', delta })
+      }
+    }
+    triggerDownload(`ablacion-resumen-${STAMP()}.csv`, toCSV(headers, rows), 'text/csv;charset=utf-8')
+  }
+
+  function downloadDetail() {
+    const ok = runs.filter(r => !r.failed)
+    if (!ok.length) return
+    triggerDownload(`ablacion-detalle-${STAMP()}.csv`, toCSV(DETAIL_COLS, ok), 'text/csv;charset=utf-8')
+  }
+
+  function downloadBundle() {
+    const ok = runs.filter(r => !r.failed)
+    if (!ok.length) return
+    const bundle = ok.map(r => ({
+      i: r.i, module: r.module, label: r.label, cond: r.cond,
+      lessons_injected: r.lessons_injected,
+      metrics: {
+        pass_rate: r.pass_rate, line_coverage: r.line_coverage,
+        smells: r.smells, bug_detected: r.bug_detected,
+      },
+      context_rag: r.context || [],
+      tests_code: r.tests || '',
+    }))
+    triggerDownload(`ablacion-codigo-contexto-${STAMP()}.json`, JSON.stringify(bundle, null, 2), 'application/json')
+  }
+
   const done = runs.length
   const total = meta?.total ?? 0
   const pct = total ? Math.round((done / total) * 100) : 0
@@ -98,7 +194,7 @@ export default function AblationModal({ models, defaultModel, onClose }) {
           <span className="am-head-ic"><Icon name="sparkles" size={18} /></span>
           <div className="am-head-txt">
             <b>Ablación de lecciones globales</b>
-            <span>Compara la generación con lecciones ON vs OFF en módulos frescos</span>
+            <span>Compara la generación con lecciones ON vs OFF, separando correctos / incorrectos</span>
           </div>
           <button className="am-icon-btn" onClick={handleClose} title={running ? 'Detener y cerrar' : 'Cerrar (Esc)'}>
             <Icon name="x" size={17} />
@@ -108,13 +204,23 @@ export default function AblationModal({ models, defaultModel, onClose }) {
         {/* Configuración */}
         <div className="am-config">
           <label className="am-field am-file">
-            <span>Módulos (.py)</span>
+            <span>Correctos (.py)</span>
             <input
               type="file" accept=".py" multiple disabled={running}
-              onChange={e => setFiles(Array.from(e.target.files))}
+              onChange={e => setCorrectos(Array.from(e.target.files))}
             />
             <span className="am-file-names">
-              {files.length ? files.map(f => f.name).join(', ') : 'Ninguno seleccionado'}
+              {correctos.length ? `${correctos.length} archivo(s)` : 'Ninguno'}
+            </span>
+          </label>
+          <label className="am-field am-file">
+            <span>Incorrectos (.py)</span>
+            <input
+              type="file" accept=".py" multiple disabled={running}
+              onChange={e => setIncorrectos(Array.from(e.target.files))}
+            />
+            <span className="am-file-names">
+              {incorrectos.length ? `${incorrectos.length} archivo(s)` : 'Ninguno'}
             </span>
           </label>
           <label className="am-field">
@@ -130,16 +236,16 @@ export default function AblationModal({ models, defaultModel, onClose }) {
               onChange={e => setReps(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
             />
           </label>
-          <button className="am-run-btn" onClick={run} disabled={running || !files.length || !model}>
+          <button className="am-run-btn" onClick={run} disabled={running || !totalFiles || !model}>
             <Icon name="sparkles" size={15} />
             {running ? 'Ejecutando…' : 'Ejecutar ablación'}
           </button>
         </div>
 
-        {files.length > 0 && !running && !meta && (
+        {totalFiles > 0 && !running && !meta && (
           <div className="am-estimate">
-            {files.length} módulo(s) × {reps} rep × 2 condiciones = <b>{files.length * reps * 2} corridas</b>.
-            En CPU pueden tardar varias horas; no cierres esta ventana.
+            {correctos.length} correcto(s) + {incorrectos.length} incorrecto(s) × {reps} rep × 2 condiciones
+            = <b>{totalFiles * reps * 2} corridas</b>. En CPU pueden tardar varias horas; no cierres esta ventana.
           </div>
         )}
 
@@ -158,39 +264,53 @@ export default function AblationModal({ models, defaultModel, onClose }) {
           </div>
         )}
 
-        {/* Resumen ON vs OFF */}
+        {/* Resumen ON vs OFF por clase + descargas */}
         {summary && (
           <div className="am-summary">
-            <table className="am-sum-table">
-              <thead>
-                <tr><th></th><th>ON</th><th>OFF</th><th>Δ (ON−OFF)</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Corridas</td>
-                  <td>{summary.ON.n}</td><td>{summary.OFF.n}</td><td className="am-dim">—</td>
-                </tr>
-                <tr>
-                  <td>Smells (media)</td>
-                  <td>{summary.ON.smells ?? '—'}</td><td>{summary.OFF.smells ?? '—'}</td>
-                  <td><Delta on={summary.ON.smells} off={summary.OFF.smells} lowerBetter /></td>
-                </tr>
-                <tr>
-                  <td>Cob. línea (media)</td>
-                  <td className={rateClass(summary.ON.line_coverage)}>{summary.ON.line_coverage ?? '—'}</td>
-                  <td className={rateClass(summary.OFF.line_coverage)}>{summary.OFF.line_coverage ?? '—'}</td>
-                  <td><Delta on={summary.ON.line_coverage} off={summary.OFF.line_coverage} /></td>
-                </tr>
-                <tr>
-                  <td>Pass rate (media)</td>
-                  <td className={rateClass(summary.ON.pass_rate)}>{summary.ON.pass_rate ?? '—'}</td>
-                  <td className={rateClass(summary.OFF.pass_rate)}>{summary.OFF.pass_rate ?? '—'}</td>
-                  <td><Delta on={summary.ON.pass_rate} off={summary.OFF.pass_rate} /></td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="am-sum-grid">
+              {['incorrecto', 'correcto'].map(label => {
+                const blk = summary[label]
+                if (!blk) return null
+                return (
+                  <div className="am-sum-block" key={label}>
+                    <div className="am-sum-title">
+                      <span className={`am-badge cls-${label}`}>{label === 'incorrecto' ? 'Incorrectos' : 'Correctos'}</span>
+                      <span className="am-dim">{blk.ON?.n ?? 0} ON · {blk.OFF?.n ?? 0} OFF</span>
+                    </div>
+                    <table className="am-sum-table">
+                      <thead>
+                        <tr><th></th><th>ON</th><th>OFF</th><th>Δ</th></tr>
+                      </thead>
+                      <tbody>
+                        {SUMMARY_ROWS[label].map(({ key, label: name, lowerBetter, rate, star }) => (
+                          <tr key={key} className={star ? 'am-star-row' : ''}>
+                            <td>{star && <Icon name="bug" size={12} />} {name}</td>
+                            <td className={rate ? rateClass(blk.ON?.[key]) : ''}>{blk.ON?.[key] ?? '—'}</td>
+                            <td className={rate ? rateClass(blk.OFF?.[key]) : ''}>{blk.OFF?.[key] ?? '—'}</td>
+                            <td><Delta on={blk.ON?.[key]} off={blk.OFF?.[key]} lowerBetter={lowerBetter} /></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="am-downloads">
+              <button className="am-dl-btn" onClick={downloadSummary} title="Resumen ON/OFF por clase">
+                <Icon name="download" size={14} /> Resumen (CSV)
+              </button>
+              <button className="am-dl-btn" onClick={downloadDetail} title="Una fila por corrida con todas las métricas">
+                <Icon name="download" size={14} /> Detalle por corrida (CSV)
+              </button>
+              <button className="am-dl-btn" onClick={downloadBundle} title="Código generado + contexto RAG de cada corrida">
+                <Icon name="filecode" size={14} /> Código + contexto (JSON)
+              </button>
+            </div>
             <div className="am-hint">
-              Δ verde = ON mejora. Detalle por corrida en results_log.csv (columna rag_global_lessons).
+              Δ verde = ON mejora. En incorrectos, "Bug detectado %" es la señal clave (mayor = mejor).
+              En correctos, "Falsos positivos %" mide tests que fallan sobre código correcto (menor = mejor).
             </div>
           </div>
         )}
@@ -201,8 +321,8 @@ export default function AblationModal({ models, defaultModel, onClose }) {
             <table className="am-runs">
               <thead>
                 <tr>
-                  <th>#</th><th>Cond</th><th>Módulo</th><th>Pass</th>
-                  <th>Cob.</th><th>Smells</th><th>Lecc.</th><th>Tiempo</th>
+                  <th>#</th><th>Cond</th><th>Clase</th><th>Módulo</th><th>Pass</th>
+                  <th>Cob.</th><th>Smells</th><th>Bug</th><th>Lecc.</th><th>Tiempo</th>
                 </tr>
               </thead>
               <tbody>
@@ -210,14 +330,20 @@ export default function AblationModal({ models, defaultModel, onClose }) {
                   <tr key={i} className={r.failed ? 'am-row-fail' : ''}>
                     <td className="am-dim">{r.i}</td>
                     <td><span className={`am-badge ${r.cond === 'ON' ? 'on' : 'off'}`}>{r.cond}</span></td>
+                    <td><span className={`am-badge cls-${r.label}`}>{r.label === 'incorrecto' ? 'inc' : 'cor'}</span></td>
                     <td>{r.module}</td>
                     {r.failed ? (
-                      <td colSpan={5} className="am-fail-msg">{r.message}</td>
+                      <td colSpan={6} className="am-fail-msg">{r.message}</td>
                     ) : (
                       <>
                         <td className={rateClass(r.pass_rate)}>{r.pass_rate ?? '—'}</td>
                         <td className={rateClass(r.line_coverage)}>{r.line_coverage ?? '—'}</td>
                         <td>{r.smells > 0 ? <span className="am-badge warn">{r.smells}</span> : <span className="am-dim">0</span>}</td>
+                        <td>
+                          {r.bug_detected
+                            ? <span className={r.label === 'incorrecto' ? 'good' : 'bad'}><Icon name="check" size={13} /></span>
+                            : <span className="am-dim">—</span>}
+                        </td>
                         <td className="am-dim">{r.lessons_injected}</td>
                         <td className="am-dim">{r.elapsed}s</td>
                       </>

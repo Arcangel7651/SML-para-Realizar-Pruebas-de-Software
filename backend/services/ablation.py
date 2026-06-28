@@ -7,6 +7,11 @@ advertencia ni ejemplo previo) y que el estado no se contamine entre repeticione
 sin necesidad de reiniciar el servidor. Ver protocolo en
 resultados/ablacion-lecciones-globales.md y problema 10.
 
+Los módulos se etiquetan como 'correcto' o 'incorrecto' (dataset de 200): así el
+resumen separa ambas clases y, en los incorrectos, mide bug_detected_rate (¿la
+generación CAZÓ el bug inyectado?), que es la señal clave del SMS. Cada corrida
+expone también el código generado y el contexto RAG inyectado, para descarga.
+
 run_ablation() es un generador que produce eventos (dict) para que el endpoint
 los serialice como NDJSON y el frontend muestre el progreso en vivo.
 """
@@ -61,39 +66,57 @@ def _build_jobs(modules: list[str], reps: int) -> list[tuple[str, str, bool]]:
     return jobs
 
 
+def _stats(rs: list[dict]) -> dict:
+    """Agregados de un grupo de corridas (una clase × condición)."""
+    def mean(k):
+        vals = [r[k] for r in rs if r.get(k) is not None]
+        return round(st.mean(vals), 2) if vals else None
+
+    n = len(rs)
+    bugs = sum(1 for r in rs if r.get("bug_detected"))
+    return {
+        "n": n,
+        "pass_rate": mean("pass_rate"),
+        "line_coverage": mean("line_coverage"),
+        "func_coverage": mean("func_coverage_pct"),
+        "smells": mean("smells"),
+        # En incorrectos: % de corridas que cazaron el bug (mayor = mejor).
+        # En correctos: % de falsos positivos (tests que fallan sobre código
+        # correcto), donde menor = mejor.
+        "bug_detected_rate": round(bugs / n * 100, 1) if n else None,
+        "elapsed": mean("elapsed"),
+    }
+
+
 def _summary(results: list[dict]) -> dict:
-    by = defaultdict(lambda: defaultdict(list))
-    for r in results:
-        for k in ("pass_rate", "line_coverage", "smells", "elapsed"):
-            if r.get(k) is not None:
-                by[r["cond"]][k].append(r[k])
-
-    def stats(cond: str) -> dict:
-        d = by[cond]
-        mean = lambda k: round(st.mean(d[k]), 2) if d[k] else None
-        return {
-            "n": len(d["smells"]),
-            "pass_rate": mean("pass_rate"),
-            "line_coverage": mean("line_coverage"),
-            "smells": mean("smells"),
-            "elapsed": mean("elapsed"),
+    """Resumen ON vs OFF SEPARADO por clase (correcto / incorrecto)."""
+    out: dict[str, dict] = {}
+    for label in ("correcto", "incorrecto"):
+        out[label] = {
+            cond: _stats([r for r in results if r["label"] == label and r["cond"] == cond])
+            for cond in ("ON", "OFF")
         }
+    return out
 
-    return {"ON": stats("ON"), "OFF": stats("OFF")}
 
+def run_ablation(modules: dict[str, dict], model: str, reps: int):
+    """Generador de eventos de la ablación.
 
-def run_ablation(sources: dict[str, str], model: str, reps: int):
-    """Generador de eventos de la ablación. `sources` = {módulo_base: código}."""
-    modules = list(sources.keys())
-    jobs = _build_jobs(modules, reps)
+    `modules` = {módulo_base: {"code": str, "label": "correcto"|"incorrecto"}}.
+    """
+    names = list(modules.keys())
+    labels = {name: modules[name].get("label", "correcto") for name in names}
+    jobs = _build_jobs(names, reps)
     total = len(jobs)
 
     yield {
         "type": "start",
         "total": total,
-        "modules": modules,
+        "modules": names,
         "model": model,
         "reps": reps,
+        "n_correctos": sum(1 for l in labels.values() if l == "correcto"),
+        "n_incorrectos": sum(1 for l in labels.values() if l == "incorrecto"),
         "est_minutes": round(total * 8),  # ~8 min/corrida en CPU
     }
 
@@ -104,31 +127,53 @@ def run_ablation(sources: dict[str, str], model: str, reps: int):
             t0 = time.time()
             try:
                 out = generate_tests(
-                    sources[module], "", model, rag_service,
+                    modules[module]["code"], "", model, rag_service,
                     module_name=synth, run_pytest=True, use_global_lessons=cond,
                 )
                 m = out.get("metrics") or {}
                 q = out.get("quality") or {}
+                ctx = out.get("context_used") or []
+                pbugs = out.get("potential_bugs") or []
+                tpf = q.get("tests_per_function") or {}
+                funcs_total = len(tpf)
+                funcs_covered = sum(1 for c in tpf.values() if c > 0)
+                tests_failed = m.get("tests_failed", 0) or 0
+                tests_errors = m.get("tests_errors", 0) or 0
                 r = {
                     "module": module,
+                    "label": labels[module],
                     "cond": "ON" if cond else "OFF",
-                    "lessons_injected": sum(
-                        "LECCIÓN GENERAL" in f for f in (out.get("context_used") or [])
-                    ),
+                    "lessons_injected": sum("LECCIÓN GENERAL" in f for f in ctx),
                     "pass_rate": m.get("pass_rate"),
                     "line_coverage": m.get("line_coverage"),
+                    "branch_coverage": m.get("branch_coverage"),
+                    "func_coverage_pct": (
+                        round(funcs_covered / funcs_total * 100, 1) if funcs_total else None
+                    ),
                     "smells": len(q.get("smells_detected") or []),
+                    "given_when_then": q.get("has_given_when_then"),
+                    "tests_total": m.get("tests_total", 0),
+                    "tests_passed": m.get("tests_passed", 0),
+                    "tests_failed": tests_failed,
+                    "tests_errors": tests_errors,
+                    "potential_bugs": len(pbugs),
+                    # ¿La generación cazó algo? Para incorrectos = detectó el bug;
+                    # para correctos = falso positivo.
+                    "bug_detected": bool(tests_failed > 0 or tests_errors > 0 or pbugs),
                     "compiles": out.get("compiles"),
                     "degraded": out.get("degraded"),
                     "elapsed": round(time.time() - t0, 1),
+                    # Artefactos para descarga (no se renderizan en vivo).
+                    "tests": out.get("tests") or "",
+                    "context": ctx,
                 }
                 results.append(r)
                 yield {"type": "run", "i": i, "total": total, **r}
             except Exception as e:
                 yield {
                     "type": "run_error", "i": i, "total": total,
-                    "module": module, "cond": "ON" if cond else "OFF",
-                    "message": str(e),
+                    "module": module, "label": labels[module],
+                    "cond": "ON" if cond else "OFF", "message": str(e),
                 }
     finally:
         _restore()
