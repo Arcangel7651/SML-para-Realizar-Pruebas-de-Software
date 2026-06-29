@@ -53,13 +53,23 @@ def _restore():
     rag_service.reload()
 
 
-def _build_jobs(modules: list[str], reps: int) -> list[tuple[str, str, bool]]:
+def _conds(conditions: str) -> tuple[bool, ...]:
+    """Condiciones a correr según la elección del usuario:
+    'both' = ON y OFF (ablación pareada, default) · 'on' = solo ON · 'off' = solo OFF."""
+    if conditions == "on":
+        return (True,)
+    if conditions == "off":
+        return (False,)
+    return (True, False)
+
+
+def _build_jobs(modules: list[str], reps: int, conditions: str = "both") -> list[tuple[str, str, bool]]:
     """Lista de (módulo_base, nombre_sintético_único, use_lessons), barajada con
     semilla fija para repartir las condiciones ON/OFF en el tiempo."""
     jobs = []
     for module in modules:
         for rep in range(1, reps + 1):
-            for cond in (True, False):
+            for cond in _conds(conditions):
                 tag = "on" if cond else "off"
                 jobs.append((module, f"{module}_abl{tag}{rep}", cond))
     random.Random(SEED).shuffle(jobs)
@@ -99,14 +109,15 @@ def _summary(results: list[dict]) -> dict:
     return out
 
 
-def run_ablation(modules: dict[str, dict], model: str, reps: int):
+def run_ablation(modules: dict[str, dict], model: str, reps: int, conditions: str = "both"):
     """Generador de eventos de la ablación.
 
     `modules` = {módulo_base: {"code": str, "label": "correcto"|"incorrecto"}}.
+    `conditions` = 'both' (ON+OFF pareado) | 'on' (solo ON) | 'off' (solo OFF).
     """
     names = list(modules.keys())
     labels = {name: modules[name].get("label", "correcto") for name in names}
-    jobs = _build_jobs(names, reps)
+    jobs = _build_jobs(names, reps, conditions)
     total = len(jobs)
 
     yield {
@@ -115,6 +126,7 @@ def run_ablation(modules: dict[str, dict], model: str, reps: int):
         "modules": names,
         "model": model,
         "reps": reps,
+        "conditions": conditions,
         "n_correctos": sum(1 for l in labels.values() if l == "correcto"),
         "n_incorrectos": sum(1 for l in labels.values() if l == "incorrecto"),
         "est_minutes": round(total * 8),  # ~8 min/corrida en CPU

@@ -133,6 +133,7 @@ async def ablation_run(
     incorrectos: list[UploadFile] = File(default=[]),
     model: str = Form(...),
     reps: int = Form(5),
+    conditions: str = Form("both"),
 ):
     """Corre la ablación de lecciones globales (ON vs OFF) sobre los módulos
     subidos y transmite el progreso como NDJSON. Los archivos llegan en dos
@@ -141,6 +142,8 @@ async def ablation_run(
     ejecuta con un nombre único por corrida (siempre fresco) y los stores se
     respaldan/restauran; ver services/ablation.py."""
     reps = max(1, min(reps, 20))
+    if conditions not in ("both", "on", "off"):
+        conditions = "both"
     modules: dict[str, dict] = {}
     for f in correctos:
         code = await read_python_file(f)
@@ -150,7 +153,7 @@ async def ablation_run(
         modules[os.path.splitext(f.filename)[0]] = {"code": code, "label": "incorrecto"}
 
     def event_stream():
-        for event in run_ablation(modules, model, reps):
+        for event in run_ablation(modules, model, reps, conditions):
             yield json.dumps(event, ensure_ascii=False) + "\n"
 
     return StreamingResponse(event_stream(), media_type="application/x-ndjson")

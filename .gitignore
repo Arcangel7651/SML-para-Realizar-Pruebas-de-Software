@@ -1,0 +1,6 @@
+# Respaldo temporal de stores durante la ablación (se regenera en cada corrida)
+backend/data/.ablation_snapshot/
+
+# Python
+__pycache__/
+*.py[cod]

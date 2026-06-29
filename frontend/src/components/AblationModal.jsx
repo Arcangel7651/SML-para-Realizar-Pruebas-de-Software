@@ -110,6 +110,7 @@ export default function AblationModal({ models, defaultModel, onClose }) {
   const [incorrectos, setIncorrectos] = useState([])
   const [model, setModel] = useState(defaultModel || (models[0] ?? ''))
   const [reps, setReps] = useState(5)
+  const [conditions, setConditions] = useState('both')   // both | on | off
   const [running, setRunning] = useState(false)
   const [meta, setMeta] = useState(null)        // evento start
   const [runs, setRuns] = useState([])
@@ -147,6 +148,7 @@ export default function AblationModal({ models, defaultModel, onClose }) {
     incorrectos.forEach(f => form.append('incorrectos', f))
     form.append('model', model)
     form.append('reps', reps)
+    form.append('conditions', conditions)
 
     try {
       const resp = await fetch('/api/ablation/run', { method: 'POST', body: form, signal: controller.signal })
@@ -276,6 +278,14 @@ export default function AblationModal({ models, defaultModel, onClose }) {
               {models.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
           </label>
+          <label className="am-field">
+            <span>Condiciones</span>
+            <select value={conditions} disabled={running} onChange={e => setConditions(e.target.value)}>
+              <option value="both">Ambas (ON + OFF)</option>
+              <option value="on">Solo ON</option>
+              <option value="off">Solo OFF</option>
+            </select>
+          </label>
           <label className="am-field am-reps">
             <span>Repeticiones</span>
             <input
@@ -298,8 +308,9 @@ export default function AblationModal({ models, defaultModel, onClose }) {
 
         {totalFiles > 0 && !running && !meta && (
           <div className="am-estimate">
-            {correctos.length} correcto(s) + {incorrectos.length} incorrecto(s) × {reps} rep × 2 condiciones
-            = <b>{totalFiles * reps * 2} corridas</b>. En CPU pueden tardar varias horas; no cierres esta ventana.
+            {correctos.length} correcto(s) + {incorrectos.length} incorrecto(s) × {reps} rep ×{' '}
+            {conditions === 'both' ? '2 condiciones (ON+OFF)' : conditions === 'on' ? '1 condición (solo ON)' : '1 condición (solo OFF)'}
+            = <b>{totalFiles * reps * (conditions === 'both' ? 2 : 1)} corridas</b>. En CPU pueden tardar varias horas; no cierres esta ventana.
           </div>
         )}
 
