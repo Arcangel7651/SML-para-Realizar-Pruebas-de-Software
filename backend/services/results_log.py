@@ -13,6 +13,11 @@ FIELDNAMES = [
     #    convergencia: nº de fragmentos, advertencias del módulo y si se
     #    recuperó el ejemplo aprendido propio del módulo) ──────────────
     "rag_fragments", "rag_warnings", "rag_used_learned", "rag_global_lessons",
+    # ── Condición de la ablación: ¿se PIDIÓ usar las lecciones globales en esta
+    #    generación? (flag use_global_lessons). Distinto de rag_global_lessons,
+    #    que cuenta cuántas se INYECTARON de hecho: en ON pueden ser 0 si ninguna
+    #    estaba promovida o si el módulo ya las cubría con su advertencia. ─────
+    "global_lessons_enabled",
     # ── Ejecución de los tests (pytest) ──────────────────────────────
     "tests_total", "tests_passed", "tests_failed", "tests_skipped", "tests_errors", "pass_rate",
     # ── Cobertura del código bajo prueba ─────────────────────────────
@@ -60,6 +65,7 @@ def log_result(
     learned: bool,
     degraded: bool,
     time_s: float,
+    global_lessons_enabled: bool = True,
 ) -> None:
     """Anexa una fila por generación a results_log.csv (en data/, montado como
     volumen, así que persiste en el host). Pensado para armar la tabla de
@@ -92,6 +98,7 @@ def log_result(
         "rag_warnings": rag_warnings,
         "rag_used_learned": rag_used_learned,
         "rag_global_lessons": rag_global_lessons,
+        "global_lessons_enabled": global_lessons_enabled,
         "tests_total": _cell(m.get("tests_total", 0)),
         "tests_passed": _cell(m.get("tests_passed", 0)),
         "tests_failed": _cell(m.get("tests_failed", 0)),
@@ -121,7 +128,7 @@ def log_result(
 
 
 # ── Lectura para la UI ───────────────────────────────────────────────
-_BOOL_COLS = {"compiles", "degraded", "learned", "given_when_then", "rag_used_learned"}
+_BOOL_COLS = {"compiles", "degraded", "learned", "given_when_then", "rag_used_learned", "global_lessons_enabled"}
 _INT_COLS = {
     "tests_total", "tests_passed", "tests_failed", "tests_skipped",
     "tests_errors", "funcs_total", "funcs_covered", "smells_count",

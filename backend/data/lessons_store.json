@@ -4,7 +4,9 @@
     "lista_compras",
     "lista_compras_corregido",
     "tienda",
-    "calculadora"
+    "calculadora",
+    "ok_alternate_disjoint_set_abloff3",
+    "ok_alternate_disjoint_set_ablon2"
   ],
   "assertions": [
     "matriz",
@@ -16,6 +18,8 @@
     "tienidta",
     "tienda",
     "calculadora",
-    "procesador_descuentos_corregido"
+    "procesador_descuentos_corregido",
+    "ok_alternate_disjoint_set_abloff3",
+    "ok_alternate_disjoint_set_ablon2"
   ]
 }

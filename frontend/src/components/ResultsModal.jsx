@@ -14,6 +14,8 @@ const EXPORT_COLUMNS = [
   ['Fragmentos RAG', r => r.rag_fragments ?? ''],
   ['Advertencias RAG', r => r.rag_warnings ?? ''],
   ['Usó ej. aprendido', r => (r.rag_used_learned === true ? 'sí' : r.rag_used_learned === false ? 'no' : '')],
+  ['Lecciones globales', r => (r.global_lessons_enabled === true ? 'ON' : r.global_lessons_enabled === false ? 'OFF' : '')],
+  ['Lecc. glob. inyectadas', r => r.rag_global_lessons ?? ''],
   ['Tests aprobados', r => r.tests_passed ?? 0],
   ['Tests totales', r => r.tests_total ?? 0],
   ['Tests fallidos', r => r.tests_failed ?? 0],
@@ -226,6 +228,7 @@ export default function ResultsModal({ onClose }) {
                     <th title="Nº de fragmentos de contexto RAG inyectados al prompt">RAG</th>
                     <th title="Nº de advertencias del módulo inyectadas (cobertura/smells/aserción)">Adv.</th>
                     <th title="¿El contexto incluyó el ejemplo aprendido propio del módulo?">Usó ej.</th>
+                    <th title="¿Se pidió usar las lecciones globales en esta generación? (condición ON/OFF de la ablación)">Lecc. glob.</th>
                     <th>Tests</th>
                     <th>Pass</th>
                     <th>Cob. línea</th>
@@ -262,6 +265,13 @@ export default function ResultsModal({ onClose }) {
                           ? <span className="rm-badge accent">sí</span>
                           : r.rag_used_learned === false
                             ? <span className="rm-dim">no</span>
+                            : <span className="rm-dim">—</span>}
+                      </td>
+                      <td>
+                        {r.global_lessons_enabled === true
+                          ? <span className="rm-badge accent">ON</span>
+                          : r.global_lessons_enabled === false
+                            ? <span className="rm-dim">OFF</span>
                             : <span className="rm-dim">—</span>}
                       </td>
                       <td className="rm-mono">

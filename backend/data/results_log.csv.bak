@@ -1,0 +1,14 @@
+timestamp,model,module,compiles,degraded,learned,rag_fragments,rag_warnings,rag_used_learned,rag_global_lessons,tests_total,tests_passed,tests_failed,tests_skipped,tests_errors,pass_rate,line_coverage,branch_coverage,funcs_total,funcs_covered,func_coverage_pct,given_when_then,smells_count,smells,time_s
+2026-06-28T20:44:29,qwen2.5-coder:3b,ok_adler32_abloff1,True,False,True,3,0,False,0,2,2,0,0,0,100.0,100.0,100.0,1,1,100.0,True,0,,337.9
+2026-06-28T20:49:41,qwen2.5-coder:3b,ok_adler32_abloff2,True,False,True,3,0,False,0,3,3,0,0,0,100.0,100.0,100.0,1,1,100.0,True,0,,312.4
+2026-06-28T20:59:46,qwen2.5-coder:3b,ok_adler32_ablon1,True,False,True,5,0,False,2,7,4,3,0,0,57.1,100.0,100.0,1,1,100.0,True,0,,604.6
+2026-06-28T21:39:57,qwen2.5-coder:3b,ok_adler32_abloff1,True,False,True,3,0,False,0,3,3,0,0,0,100.0,100.0,100.0,1,1,100.0,True,0,,187.5
+2026-06-28T21:43:06,qwen2.5-coder:3b,ok_adler32_abloff2,True,False,True,3,0,False,0,2,2,0,0,0,100.0,100.0,100.0,1,1,100.0,True,0,,188.9
+2026-06-28T21:46:10,qwen2.5-coder:3b,ok_adler32_ablon1,True,False,True,5,0,False,2,2,2,0,0,0,100.0,100.0,100.0,1,1,100.0,False,0,,183.6
+2026-06-28T21:52:06,qwen2.5-coder:3b,ok_alternative_list_arrange_abloff1,True,False,True,3,0,False,0,4,4,0,0,0,100.0,90.0,87.5,1,1,100.0,False,0,,246.4
+2026-06-28T21:57:27,qwen2.5-coder:3b,ok_alternate_disjoint_set_abloff3,True,False,True,3,0,False,0,10,5,5,0,0,50.0,71.0,50.0,2,2,100.0,False,1,generic_name,321.4
+2026-06-28T22:04:28,qwen2.5-coder:3b,ok_alternate_disjoint_set_ablon2,True,False,True,5,0,False,2,8,1,7,0,0,12.5,79.0,62.5,2,2,100.0,False,1,assertion_roulette,420.6
+2026-06-28T22:11:27,qwen2.5-coder:3b,ok_alternative_list_arrange_ablon2,True,False,True,5,0,False,2,7,5,2,0,0,71.4,90.0,87.5,1,1,100.0,True,0,,419.3
+2026-06-28T22:17:09,qwen2.5-coder:3b,ok_alternative_list_arrange_abloff2,True,False,True,3,0,False,0,5,5,0,0,0,100.0,90.0,87.5,1,1,100.0,True,0,,341.8
+2026-06-28T22:25:14,qwen2.5-coder:3b,ok_alternative_list_arrange_ablon1,True,False,True,5,0,False,2,4,3,1,0,0,75.0,90.0,87.5,1,1,100.0,False,0,,484.0
+2026-06-28T22:29:43,qwen2.5-coder:3b,ok_alternative_list_arrange_abloff3,True,False,True,3,0,False,0,5,5,0,0,0,100.0,90.0,87.5,1,1,100.0,False,0,,269.5

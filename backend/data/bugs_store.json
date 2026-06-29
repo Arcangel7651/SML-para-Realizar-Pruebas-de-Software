@@ -735,5 +735,70 @@
       "oracle_triage": "falso_positivo"
     }
   ],
-  "validador_edad": []
+  "validador_edad": [],
+  "ok_alternative_list_arrange_abloff1": [],
+  "ok_alternate_disjoint_set_abloff3": [
+    {
+      "name": "test_merge",
+      "detail": "assert result == expected → assert True == False",
+      "first_seen": "2026-06-28T21:57:27",
+      "last_seen": "2026-06-28T21:57:27",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_get_parent",
+      "detail": "IndexError: list index out of range",
+      "first_seen": "2026-06-28T21:57:27",
+      "last_seen": "2026-06-28T21:57:27",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_merge_with_same_parent",
+      "detail": "assert not result → assert not True",
+      "first_seen": "2026-06-28T21:57:27",
+      "last_seen": "2026-06-28T21:57:27",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_max_set_after_merge",
+      "detail": "assert result == 3 → assert 2 == 3",
+      "first_seen": "2026-06-28T21:57:27",
+      "last_seen": "2026-06-28T21:57:27",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_alternate_disjoint_set_ablon2": [
+    {
+      "name": "test_merge_success_with_same_parents",
+      "detail": "assert self.ds.get_parent(1) == 2 → assert 1 == 2 | +  where 1 = get_parent(1)",
+      "first_seen": "2026-06-28T22:04:28",
+      "last_seen": "2026-06-28T22:04:28",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_merge_fail_with_same_parents",
+      "detail": "assert result == False → assert True == False | IndexError: list index out of range",
+      "first_seen": "2026-06-28T22:04:28",
+      "last_seen": "2026-06-28T22:04:28",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_max_set_is_updated",
+      "detail": "assert self.ds.max_set == 3 → assert 2 == 3 | +  where 2 = <ok_alternate_disjoint_set_ablon2.DisjointSet object at 0x78c308e93e10>.max_set",
+      "first_seen": "2026-06-28T22:04:28",
+      "last_seen": "2026-06-28T22:04:28",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_alternative_list_arrange_ablon2": [],
+  "ok_alternative_list_arrange_abloff2": [],
+  "ok_alternative_list_arrange_ablon1": [],
+  "ok_alternative_list_arrange_abloff3": []
 }

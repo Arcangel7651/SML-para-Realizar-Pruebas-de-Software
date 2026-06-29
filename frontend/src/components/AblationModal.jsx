@@ -48,6 +48,39 @@ function toCSV(headers, rows) {
 
 const STAMP = () => new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
 
+// Resumen ON/OFF por clase calculado en el cliente (espejo de _summary del
+// backend). Permite mostrar resultados y habilitar descargas aunque el proceso
+// se detenga a media corrida (no llega el evento `done`).
+function computeStats(rs) {
+  const mean = (k) => {
+    const vals = rs.map(r => r[k]).filter(v => v !== null && v !== undefined)
+    return vals.length ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 100) / 100 : null
+  }
+  const n = rs.length
+  const bugs = rs.filter(r => r.bug_detected).length
+  return {
+    n,
+    pass_rate: mean('pass_rate'),
+    line_coverage: mean('line_coverage'),
+    func_coverage: mean('func_coverage_pct'),
+    smells: mean('smells'),
+    bug_detected_rate: n ? Math.round((bugs / n) * 1000) / 10 : null,
+    elapsed: mean('elapsed'),
+  }
+}
+
+function computeSummary(runs) {
+  const ok = runs.filter(r => !r.failed)
+  const out = {}
+  for (const label of ['correcto', 'incorrecto']) {
+    out[label] = {}
+    for (const cond of ['ON', 'OFF']) {
+      out[label][cond] = computeStats(ok.filter(r => r.label === label && r.cond === cond))
+    }
+  }
+  return out
+}
+
 // Filas de resumen por clase para descarga / render.
 const SUMMARY_ROWS = {
   correcto: [
@@ -81,6 +114,7 @@ export default function AblationModal({ models, defaultModel, onClose }) {
   const [meta, setMeta] = useState(null)        // evento start
   const [runs, setRuns] = useState([])
   const [summary, setSummary] = useState(null)
+  const [stopped, setStopped] = useState(false)
   const [error, setError] = useState('')
 
   const abortRef = useRef(null)
@@ -103,7 +137,7 @@ export default function AblationModal({ models, defaultModel, onClose }) {
   async function run() {
     if (!totalFiles || !model || running) return
     setRunning(true)
-    setMeta(null); setRuns([]); setSummary(null); setError('')
+    setMeta(null); setRuns([]); setSummary(null); setStopped(false); setError('')
 
     const controller = new AbortController()
     abortRef.current = controller
@@ -136,6 +170,19 @@ export default function AblationModal({ models, defaultModel, onClose }) {
     } finally {
       setRunning(false)
     }
+  }
+
+  // Detener: corta el stream y trata lo ya corrido como resultado final
+  // (calcula el resumen en el cliente y habilita las descargas). El backend
+  // ejecuta su finally → _restore() al cerrarse la conexión, así los stores
+  // quedan limpios igual que en una corrida completa.
+  function handleStop() {
+    setStopped(true)
+    abortRef.current?.abort()
+    setRuns(prev => {
+      if (prev.length) setSummary(computeSummary(prev))
+      return prev
+    })
   }
 
   function handleClose() {
@@ -236,10 +283,17 @@ export default function AblationModal({ models, defaultModel, onClose }) {
               onChange={e => setReps(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
             />
           </label>
-          <button className="am-run-btn" onClick={run} disabled={running || !totalFiles || !model}>
-            <Icon name="sparkles" size={15} />
-            {running ? 'Ejecutando…' : 'Ejecutar ablación'}
-          </button>
+          {running ? (
+            <button className="am-stop-btn" onClick={handleStop} title="Detener y conservar lo ya corrido">
+              <Icon name="stop" size={15} />
+              Detener
+            </button>
+          ) : (
+            <button className="am-run-btn" onClick={run} disabled={!totalFiles || !model}>
+              <Icon name="sparkles" size={15} />
+              Ejecutar ablación
+            </button>
+          )}
         </div>
 
         {totalFiles > 0 && !running && !meta && (
@@ -259,7 +313,7 @@ export default function AblationModal({ models, defaultModel, onClose }) {
             </div>
             <div className="am-progress-txt">
               {done}/{total} corridas {running && <span className="am-live">●</span>}
-              {summary && <span className="am-done-tag">completado</span>}
+              {summary && <span className="am-done-tag">{stopped ? 'detenido — resultados parciales' : 'completado'}</span>}
             </div>
           </div>
         )}

@@ -236,7 +236,7 @@ def run_pipeline(
     if learn_from_failure(rag, module_name, quality, compiles, metrics, failures, degraded, oracle_triage):
         print(f"[RAG] Advertencia(s) guardada(s) para '{module_name}'")
 
-    log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_total)
+    log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_total, global_lessons_enabled=use_global_lessons)
 
     # Opción A + oráculo + persistencia: registra los fallos de esta corrida (con
     # el veredicto del oráculo) en un store aparte del RAG y recupera los
