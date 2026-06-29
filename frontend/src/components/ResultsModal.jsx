@@ -29,6 +29,8 @@ const EXPORT_COLUMNS = [
   ['Smells', r => r.smells_count ?? 0],
   ['Detalle smells', r => r.smells ?? ''],
   ['Tiempo (s)', r => r.time_s ?? ''],
+  ['LLM (s)', r => r.llm_s ?? ''],
+  ['LLM (% del total)', r => (r.llm_s != null && r.time_s ? Math.round((r.llm_s / r.time_s) * 100) : '')],
 ]
 
 function fmtDate(iso) {
@@ -126,6 +128,10 @@ export default function ResultsModal({ onClose }) {
     // Solo las corridas que registraron la señal RAG (las previas a esta
     // columna la tienen vacía y no deben contar en el %).
     const withRag = filtered.filter(r => r.rag_used_learned === true || r.rag_used_learned === false)
+    // Fracción de la corrida gastada en el SLM: solo las corridas que ya
+    // registran llm_s (las previas a esta columna la tienen vacía). Es la
+    // señal que dice cuánto ahorraría una GPU (acelera el LLM, no el resto).
+    const withLlm = filtered.filter(r => typeof r.llm_s === 'number' && r.time_s)
     return {
       n,
       compiledPct: Math.round((compiled / n) * 100),
@@ -138,6 +144,10 @@ export default function ResultsModal({ onClose }) {
       lineCov: avg(filtered.map(r => r.line_coverage)),
       funcCov: avg(filtered.map(r => r.func_coverage_pct)),
       time: avg(filtered.map(r => r.time_s)),
+      llm: avg(withLlm.map(r => r.llm_s)),
+      llmPct: withLlm.length
+        ? Math.round(avg(withLlm.map(r => (r.llm_s / r.time_s) * 100)))
+        : null,
     }
   }, [filtered])
 
@@ -213,6 +223,12 @@ export default function ResultsModal({ onClose }) {
                 <Stat label="Cob. func. prom." value={pct(summary.funcCov)} cls={rateClass(summary.funcCov)} />
                 <Stat label="Degradadas" value={summary.degraded} cls={summary.degraded ? 'warn' : ''} />
                 <Stat label="Tiempo prom." value={summary.time !== null ? `${summary.time}s` : '—'} />
+                <Stat label="LLM prom." value={summary.llm !== null ? `${summary.llm}s` : '—'} />
+                <Stat
+                  label="% en LLM"
+                  value={summary.llmPct !== null ? `${summary.llmPct}%` : '—'}
+                  cls={summary.llmPct >= 70 ? 'warn' : ''}
+                />
               </div>
             )}
 
@@ -237,6 +253,7 @@ export default function ResultsModal({ onClose }) {
                     <th>GWT</th>
                     <th>Smells</th>
                     <th>Tiempo</th>
+                    <th title="Tiempo gastado en el SLM (generación + reintentos + oráculo) y su % sobre el total. Es la parte que aceleraría una GPU; el resto (pytest, AST, cobertura) es CPU.">LLM</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,6 +312,11 @@ export default function ResultsModal({ onClose }) {
                           : <span className="rm-dim">0</span>}
                       </td>
                       <td className="rm-mono rm-dim">{r.time_s}s</td>
+                      <td className="rm-mono rm-dim">
+                        {typeof r.llm_s === 'number'
+                          ? <>{r.llm_s}s {r.time_s ? <span className="rm-dim">({Math.round((r.llm_s / r.time_s) * 100)}%)</span> : null}</>
+                          : '—'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

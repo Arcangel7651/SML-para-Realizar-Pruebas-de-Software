@@ -36,7 +36,7 @@ const SMELL_LABELS = {
 }
 
 export default function MetricsPanel({ result, moduleName }) {
-  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time, learned, degraded, potential_bugs = [] } = result
+  const { compiles, compile_error, functions_found = [], metrics, quality, generation_time, llm_time, learned, degraded, potential_bugs = [] } = result
 
   // Estado local de los bugs para reflejar la clasificación (triaje) sin
   // re-generar. Se resincroniza cuando llega un nuevo resultado.
@@ -84,6 +84,14 @@ export default function MetricsPanel({ result, moduleName }) {
           )}
           {generation_time !== undefined && (
             <span className="gen-mtime"><Icon name="timer" size={13} /> {formatDuration(generation_time)}</span>
+          )}
+          {typeof llm_time === 'number' && generation_time > 0 && (
+            <span
+              className="gen-mtime"
+              title="Tiempo dentro del SLM (generación + reintentos + oráculo). El resto es CPU (pytest, AST, cobertura) y no se acelera con GPU; esta es la fracción que sí."
+            >
+              <Icon name="cpu" size={13} /> LLM {formatDuration(Math.round(llm_time))} ({Math.round((llm_time / generation_time) * 100)}%)
+            </span>
           )}
         </div>
       </div>

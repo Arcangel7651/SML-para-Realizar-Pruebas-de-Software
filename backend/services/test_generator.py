@@ -53,6 +53,12 @@ def run_pipeline(
     print(f"[SLM] Solicitud recibida | modelo: {model}")
     print(f"[SLM] Líneas de código fuente: {len(source_code.splitlines())}")
     t_total = time.time()
+    # Tiempo acumulado en llamadas al SLM (generación + reintentos + oráculo).
+    # Lo separamos del total para medir qué fracción de la corrida es inferencia
+    # —la única parte que una GPU aceleraría— frente al resto (AST, pytest,
+    # cobertura, análisis), que es CPU y no cambia con GPU. Las dos se registran
+    # en la telemetría (time_s total y llm_s) para decidir con datos si conviene.
+    llm_time = 0.0
 
     print(f"[AST] Analizando funciones...")
     functions = extract_functions(source_code)
@@ -116,6 +122,7 @@ def run_pipeline(
     except Exception as e:
         yield {"type": "error", "message": f"Ollama no respondió: {e}"}
         return
+    llm_time += time.time() - t0
     raw_response = "".join(raw_chunks)
     print(f"[LLM] Respuesta en {time.time() - t0:.1f}s (~{len(raw_response.split())} tokens)")
 
@@ -141,6 +148,7 @@ def run_pipeline(
         ]
         t0 = time.time()
         raw_retry = chat(model=model, messages=retry_messages)
+        llm_time += time.time() - t0
         print(f"[RETRY] Respuesta en {time.time() - t0:.1f}s")
         tests_retry, explanation_retry = extract_code(raw_retry)
         tests_retry = repair_generated_tests(
@@ -167,6 +175,7 @@ def run_pipeline(
             ]
             t0 = time.time()
             raw_retry2 = chat(model=model, messages=retry_messages)
+            llm_time += time.time() - t0
             print(f"[RETRY] Respuesta en {time.time() - t0:.1f}s")
             tests_retry2, explanation_retry2 = extract_code(raw_retry2)
             tests_retry2 = repair_generated_tests(
@@ -221,7 +230,9 @@ def run_pipeline(
     oracle_triage: dict[str, str] = {}
     if failures and not degraded:
         print(f"[ORACLE] Clasificando {len(failures)} fallo(s) contra el docstring...")
+        t0 = time.time()
         oracle_triage = triage_failures(failures, functions, model)
+        llm_time += time.time() - t0
         for name, verdict in oracle_triage.items():
             print(f"[ORACLE]   {name}: {verdict}")
 
@@ -236,7 +247,7 @@ def run_pipeline(
     if learn_from_failure(rag, module_name, quality, compiles, metrics, failures, degraded, oracle_triage):
         print(f"[RAG] Advertencia(s) guardada(s) para '{module_name}'")
 
-    log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_total, global_lessons_enabled=use_global_lessons)
+    log_result(model, module_name, metrics, quality, functions_found, context_fragments, warnings, compiles, learned, degraded, time.time() - t_total, global_lessons_enabled=use_global_lessons, llm_time_s=llm_time)
 
     # Opción A + oráculo + persistencia: registra los fallos de esta corrida (con
     # el veredicto del oráculo) en un store aparte del RAG y recupera los
@@ -260,6 +271,10 @@ def run_pipeline(
         "learned":       learned,
         "degraded":      degraded,
         "potential_bugs": potential_bugs,
+        # Tiempo medido en el servidor dentro del SLM (generación + reintentos +
+        # oráculo). El total lo cronometra el cliente; este desglosa la parte
+        # acelerable por GPU para mostrarla junto al timer en vivo.
+        "llm_time_s":    round(llm_time, 1),
     }
 
 

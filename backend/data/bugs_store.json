@@ -800,5 +800,279 @@
   "ok_alternative_list_arrange_ablon2": [],
   "ok_alternative_list_arrange_abloff2": [],
   "ok_alternative_list_arrange_ablon1": [],
-  "ok_alternative_list_arrange_abloff3": []
+  "ok_alternative_list_arrange_abloff3": [],
+  "ok_arc_length_ablon4": [],
+  "bug_breadth_first_search_ablon2": [
+    {
+      "name": "test_breadth_first_search_found_goal",
+      "detail": "AttributeError: 'str' object has no attribute 'successors'",
+      "first_seen": "2026-06-29T07:36:11",
+      "last_seen": "2026-06-29T07:36:11",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_breadth_first_search_not_found_goal",
+      "detail": "AttributeError: 'str' object has no attribute 'successors' | AttributeError: 'str' object has no attribute 'successors'",
+      "first_seen": "2026-06-29T07:36:11",
+      "last_seen": "2026-06-29T07:36:11",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_breadth_first_search_no_successors",
+      "detail": "AttributeError: 'str' object has no attribute 'successors' | AttributeError: 'str' object has no attribute 'successors'",
+      "first_seen": "2026-06-29T07:36:11",
+      "last_seen": "2026-06-29T07:36:11",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_breadth_first_search_not_found_goal",
+      "detail": "AttributeError: 'str' object has no attribute 'successors'",
+      "first_seen": "2026-06-29T13:14:27",
+      "last_seen": "2026-06-29T13:14:27",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_breadth_first_search_no_successors",
+      "detail": "AttributeError: 'str' object has no attribute 'successors'",
+      "first_seen": "2026-06-29T13:14:27",
+      "last_seen": "2026-06-29T13:14:27",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "bug_breadth_first_search_ablon1": [],
+  "ok_bidirectional_search_ablon4": [
+    {
+      "name": "test_expand_search_no_exception",
+      "detail": "NameError: name 'deque' is not defined",
+      "first_seen": "2026-06-29T08:06:51",
+      "last_seen": "2026-06-29T08:06:51",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_construct_path_no_exception",
+      "detail": "KeyError: 0",
+      "first_seen": "2026-06-29T08:06:51",
+      "last_seen": "2026-06-29T08:06:51",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_articulation_points_ablon1": [],
+  "bug_bucketsort_ablon1": [
+    {
+      "name": "test_bucketsort_single_element",
+      "detail": "assert result == [3] → AssertionError: assert [0, 0, 0] == [3] | At index 0 diff: 0 != 3",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_small_array",
+      "detail": "assert result == [2, 3, 4, 6, 7] → AssertionError: assert [0, 0, 1, 1, 1, 1, ...] == [2, 3, 4, 6, 7] | At index 0 diff: 0 != 2",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_large_array",
+      "detail": "assert result == [1, 3, 5, 8, 9] → AssertionError: assert [0, 0, 0, 0, 0, 1, ...] == [1, 3, 5, 8, 9] | At index 0 diff: 0 != 1",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_duplicates",
+      "detail": "assert result == [2, 2, 4, 4, 6] → AssertionError: assert [0, 0, 1, 1, 2, 2, ...] == [2, 2, 4, 4, 6] | At index 0 diff: 0 != 2",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_negative_numbers",
+      "detail": "assert result == [-5, -3, -2, -1] → AssertionError: assert [] == [-5, -3, -2, -1] | Right contains 4 more items, first extra item: -5",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_zero",
+      "detail": "assert result == [0, 0, 0, 0] → AssertionError: assert [] == [0, 0, 0, 0] | Right contains 4 more items, first extra item: 0",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_large_range",
+      "detail": "assert result == [1000, 2000, 3000] → AssertionError: assert [0, 0, 0, 0, 0, 0, ...] == [1000, 2000, 3000] | At index 0 diff: 0 != 1000",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_zero_and_positive_numbers",
+      "detail": "assert result == [0, 1, 2, 3] → AssertionError: assert [1, 2, 2, 3, 3, 3] == [0, 1, 2, 3] | At index 0 diff: 1 != 0",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_random_numbers",
+      "detail": "assert result == [1, 3, 5, 8, 9] → AssertionError: assert [0, 0, 0, 0, 0, 1, ...] == [1, 3, 5, 8, 9] | At index 0 diff: 0 != 1",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_single_element_and_zero",
+      "detail": "assert result == [0] → assert [] == [0] | Right contains one more item: 0",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_large_array_and_zero",
+      "detail": "assert result == [0, 0, 0] → AssertionError: assert [] == [0, 0, 0] | Right contains 3 more items, first extra item: 0",
+      "first_seen": "2026-06-29T08:27:41",
+      "last_seen": "2026-06-29T08:27:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_single_element",
+      "detail": "assert result == [0] * 5 → AssertionError: assert [0, 0, 0] == [0, 0, 0, 0, 0] | Right contains 2 more items, first extra item: 0",
+      "first_seen": "2026-06-29T14:15:19",
+      "last_seen": "2026-06-29T14:15:19",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_small_array",
+      "detail": "assert result == [0] * 5 + [1] * 2 + [2] + [3] + [4] + [5] + [6] → AssertionError: assert [0, 0, 1, 1, 1, 2, ...] == [0, 0, 0, 0, 0, 1, ...] | At index 2 diff: 1 != 0",
+      "first_seen": "2026-06-29T14:15:19",
+      "last_seen": "2026-06-29T14:15:19",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_large_array",
+      "detail": "assert result == [0] * 4 + [1] + [2] * 3 + [3] + [4] → AssertionError: assert [0, 1, 1, 1, 2, 2, ...] == [0, 0, 0, 0, 1, 2, ...] | At index 1 diff: 1 != 0",
+      "first_seen": "2026-06-29T14:15:19",
+      "last_seen": "2026-06-29T14:15:19",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_duplicates",
+      "detail": "assert result == [0] * 3 + [1] * 2 + [2] * 2 + [3] + [4] → AssertionError: assert [0, 0, 1, 1, 2, 2, ...] == [0, 0, 0, 1, 1, 2, ...] | At index 2 diff: 1 != 0",
+      "first_seen": "2026-06-29T14:15:19",
+      "last_seen": "2026-06-29T14:15:19",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_large_k",
+      "detail": "assert result == [0] * 5 + [1] * 2 + [2] + [3] + [4] + [5] + [6] → AssertionError: assert [0, 0, 1, 1, 1, 2, ...] == [0, 0, 0, 0, 0, 1, ...] | At index 2 diff: 1 != 0",
+      "first_seen": "2026-06-29T14:15:19",
+      "last_seen": "2026-06-29T14:15:19",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_negative_numbers",
+      "detail": "assert result == [0] * 3 + [1] * 2 → AssertionError: assert [] == [0, 0, 0, 1, 1] | Right contains 5 more items, first extra item: 0",
+      "first_seen": "2026-06-29T14:15:19",
+      "last_seen": "2026-06-29T14:15:19",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bucketsort_with_zero",
+      "detail": "assert result == [0] * 3 → AssertionError: assert [] == [0, 0, 0] | Right contains 3 more items, first extra item: 0",
+      "first_seen": "2026-06-29T14:15:19",
+      "last_seen": "2026-06-29T14:15:19",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_bidirectional_search_ablon3": [],
+  "bug_depth_first_search_ablon1": [],
+  "bug_depth_first_search_ablon2": [
+    {
+      "name": "test_depth_first_search_no_exception",
+      "detail": "assert not depth_first_search(\"A\", \"E\") → Failed: DID NOT RAISE Exception | AttributeError: 'str' object has no attribute 'successors'",
+      "first_seen": "2026-06-29T14:58:24",
+      "last_seen": "2026-06-29T14:58:24",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_goal_node_in_graph",
+      "detail": "assert depth_first_search(\"A\", \"C\") → AttributeError: 'str' object has no attribute 'successors'",
+      "first_seen": "2026-06-29T14:58:24",
+      "last_seen": "2026-06-29T14:58:24",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_bidirectional_search_ablon1": [
+    {
+      "name": "test_expand_search_no_queue_returns_none",
+      "detail": "NameError: name 'deque' is not defined",
+      "first_seen": "2026-06-29T15:24:58",
+      "last_seen": "2026-06-29T15:24:58",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_main_no_input_returns_none",
+      "detail": "NameError: name 'deque' is not defined",
+      "first_seen": "2026-06-29T15:24:58",
+      "last_seen": "2026-06-29T15:24:58",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_main_empty_graph_returns_none",
+      "detail": "assert result is None → assert [0] is None",
+      "first_seen": "2026-06-29T15:24:58",
+      "last_seen": "2026-06-29T15:24:58",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_bitmask_ablon1": [
+    {
+      "name": "test_count_ways_until_no_exception",
+      "detail": "assert result == 1, \"No debería haber excepciones al calcular formas hasta el primer tarea\" → AssertionError: No debería haber excepciones al calcular formas hasta el primer tarea | assert 0 == 1",
+      "first_seen": "2026-06-29T19:05:44",
+      "last_seen": "2026-06-29T19:05:44",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_count_ways_until_final_mask",
+      "detail": "assert result == 1, \"No debería haber excepciones al calcular formas hasta el último tarea\" → AssertionError: No debería haber excepciones al calcular formas hasta el último tarea | assert 0 == 1",
+      "first_seen": "2026-06-29T19:05:44",
+      "last_seen": "2026-06-29T19:05:44",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_binary_tree_mirror_ablon2": []
 }

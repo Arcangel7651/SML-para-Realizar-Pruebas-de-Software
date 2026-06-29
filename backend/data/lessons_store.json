@@ -1,12 +1,18 @@
 {
-  "coverage": [],
+  "coverage": [
+    "ok_bidirectional_search_ablon4",
+    "bug_depth_first_search_ablon1",
+    "bug_depth_first_search_ablon2",
+    "ok_bidirectional_search_ablon1"
+  ],
   "smells": [
     "lista_compras",
     "lista_compras_corregido",
     "tienda",
     "calculadora",
     "ok_alternate_disjoint_set_abloff3",
-    "ok_alternate_disjoint_set_ablon2"
+    "ok_alternate_disjoint_set_ablon2",
+    "ok_bidirectional_search_ablon4"
   ],
   "assertions": [
     "matriz",
@@ -20,6 +26,12 @@
     "calculadora",
     "procesador_descuentos_corregido",
     "ok_alternate_disjoint_set_abloff3",
-    "ok_alternate_disjoint_set_ablon2"
+    "ok_alternate_disjoint_set_ablon2",
+    "bug_breadth_first_search_ablon2",
+    "ok_bidirectional_search_ablon4",
+    "bug_bucketsort_ablon1",
+    "bug_depth_first_search_ablon2",
+    "ok_bidirectional_search_ablon1",
+    "ok_bitmask_ablon1"
   ]
 }

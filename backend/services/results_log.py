@@ -27,8 +27,11 @@ FIELDNAMES = [
     "funcs_total", "funcs_covered", "func_coverage_pct",
     # ── Calidad estructural (reglas OR / test smells del SMS) ────────
     "given_when_then", "smells_count", "smells",
-    # ── Tiempo total de la generación ────────────────────────────────
-    "time_s",
+    # ── Tiempo: total de la corrida y la fracción gastada en el SLM
+    #    (generación + reintentos + oráculo). El resto (time_s - llm_s) es
+    #    CPU (AST, pytest, cobertura, análisis) y no se acelera con GPU; la
+    #    separación permite estimar cuánto ahorraría una GPU. ──────────────
+    "time_s", "llm_s",
 ]
 
 
@@ -66,6 +69,7 @@ def log_result(
     degraded: bool,
     time_s: float,
     global_lessons_enabled: bool = True,
+    llm_time_s: float | None = None,
 ) -> None:
     """Anexa una fila por generación a results_log.csv (en data/, montado como
     volumen, así que persiste en el host). Pensado para armar la tabla de
@@ -114,10 +118,17 @@ def log_result(
         "smells_count": len(smells),
         "smells": ";".join(smells),
         "time_s": round(time_s, 1),
+        "llm_s": round(llm_time_s, 1) if llm_time_s is not None else "",
     }
     try:
         os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
         file_exists = os.path.exists(LOG_PATH)
+        # Si el CSV existe con una cabecera vieja (p. ej. antes de añadir una
+        # columna nueva), lo migramos: reescribimos con FIELDNAMES actual y las
+        # celdas que falten en las filas históricas quedan vacías. Así anexar no
+        # desalinea columnas cuando el esquema crece.
+        if file_exists:
+            _migrate_header()
         with open(LOG_PATH, "a", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
             if not file_exists:
@@ -127,6 +138,26 @@ def log_result(
         print(f"[LOG] No se pudo registrar el resultado: {e}")
 
 
+def _migrate_header() -> None:
+    """Si la cabecera del CSV no coincide con FIELDNAMES, reescribe el archivo
+    con el esquema actual conservando las filas existentes (las columnas nuevas
+    quedan vacías y se descartan columnas que ya no existen). No-op si ya
+    coincide. Nunca lanza hacia afuera."""
+    try:
+        with open(LOG_PATH, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            if reader.fieldnames == FIELDNAMES:
+                return
+            old_rows = list(reader)
+        with open(LOG_PATH, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=FIELDNAMES, extrasaction="ignore")
+            writer.writeheader()
+            for r in old_rows:
+                writer.writerow({col: r.get(col, "") for col in FIELDNAMES})
+    except Exception as e:
+        print(f"[LOG] No se pudo migrar la cabecera del log: {e}")
+
+
 # ── Lectura para la UI ───────────────────────────────────────────────
 _BOOL_COLS = {"compiles", "degraded", "learned", "given_when_then", "rag_used_learned", "global_lessons_enabled"}
 _INT_COLS = {
@@ -134,7 +165,7 @@ _INT_COLS = {
     "tests_errors", "funcs_total", "funcs_covered", "smells_count",
     "rag_fragments", "rag_warnings", "rag_global_lessons",
 }
-_FLOAT_COLS = {"pass_rate", "line_coverage", "branch_coverage", "func_coverage_pct", "time_s"}
+_FLOAT_COLS = {"pass_rate", "line_coverage", "branch_coverage", "func_coverage_pct", "time_s", "llm_s"}
 
 
 def _coerce(col: str, value):

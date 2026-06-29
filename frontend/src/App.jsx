@@ -145,6 +145,7 @@ export default function App() {
             functions_found: partialMeta?.functions_found ?? [],
             context_used: partialMeta?.context_used ?? [],
             generation_time: elapsedNow(),
+            llm_time: msg.llm_time_s,
           })
           setStreamingCode('')
         }

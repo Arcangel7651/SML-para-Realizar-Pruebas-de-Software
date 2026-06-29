@@ -52,7 +52,9 @@
       "Bash(pdflatex -interaction=nonstopmode -halt-on-error srs.tex)",
       "Bash(echo \"EXIT1=$?\")",
       "Bash(echo \"EXIT2=$?\")",
-      "Bash(ls -la srs.pdf)"
+      "Bash(ls -la srs.pdf)",
+      "Read(//c/Users/angel/Documents/PRACTICAS/documentacion/vision-y-alcance/**)",
+      "Read(//c/Users/angel/Documents/PRACTICAS/documentacion/SRS/**)"
     ],
     "additionalDirectories": [
       "c:\\Users\\angel\\.claude\\projects\\c--Users-angel-Documents-estafando-SML-para-Realizar-Pruebas-de-Software\\memory",
@@ -60,7 +62,11 @@
       "C:\\Users\\angel\\Documents\\estafando\\SML-para-Realizar-Pruebas-de-Software\\codigos-prueba\\test\\qwen3B\\matriz",
       "C:\\Users\\angel\\Documents\\PRACTICAS\\Mapeo",
       "C:\\Users\\angel\\Documents\\PRACTICAS",
-      "C:\\Users\\angel\\Documents\\PRACTICAS\\documentacion\\SRS"
+      "C:\\Users\\angel\\Documents\\PRACTICAS\\documentacion\\SRS",
+      "C:\\Users\\angel\\Documents\\PRACTICAS\\documentacion\\vision-y-alcance",
+      "C:\\Users\\angel\\Documents\\PRACTICAS\\documentacion\\SDD",
+      "c:\\Users\\angel\\Documents\\PRACTICAS\\documentacion\\SDD\\diagramas",
+      "c:\\Users\\angel\\Documents\\PRACTICAS\\documentacion\\SDD"
     ]
   }
 }
