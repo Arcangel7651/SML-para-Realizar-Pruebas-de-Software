@@ -1,6 +1,9 @@
 # Respaldo temporal de stores durante la ablación (se regenera en cada corrida)
 backend/data/.ablation_snapshot/
 
+# Configuración local de Claude Code
+.claude/
+
 # Python
 __pycache__/
 *.py[cod]
