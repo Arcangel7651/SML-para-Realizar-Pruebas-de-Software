@@ -3,22 +3,31 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
-    environment:
-      - OLLAMA_HOST=http://host.docker.internal:11434
-      - PYTHONUNBUFFERED=1
+    # Configuración centralizada en backend/.env (versionado). Para overrides
+    # locales (p. ej. otro puerto de Ollama) usa docker-compose.override.yml.
+    env_file:
+      - ./backend/.env
     volumes:
       - ./backend/data:/app/data
     networks:
       - app-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    # python:3.11-slim no trae curl; se usa Python (urllib) para el healthcheck.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
   frontend:
     build: ./frontend
     ports:
       - "3000:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - app-network
 

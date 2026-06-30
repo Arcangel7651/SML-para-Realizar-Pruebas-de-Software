@@ -7,3 +7,9 @@ backend/data/.ablation_snapshot/
 # Python
 __pycache__/
 *.py[cod]
+
+# Variables de entorno locales: cada máquina crea su backend/.env desde
+# backend/.env.example. El .env real NO se versiona; la plantilla SÍ.
+.env
+*.env
+!*.env.example

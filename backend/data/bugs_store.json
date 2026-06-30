@@ -795,6 +795,14 @@
       "last_seen": "2026-06-28T22:04:28",
       "count": 1,
       "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_merge_success_with_same_parents",
+      "detail": "assert result == False → assert True == False | assert 0 != 0",
+      "first_seen": "2026-06-30T05:47:25",
+      "last_seen": "2026-06-30T05:47:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
     }
   ],
   "ok_alternative_list_arrange_ablon2": [],
@@ -1074,5 +1082,3196 @@
       "oracle_triage": "sin_oraculo"
     }
   ],
-  "ok_binary_tree_mirror_ablon2": []
+  "ok_binary_tree_mirror_ablon2": [],
+  "ok_gauss_easter_ablon2": [
+    {
+      "name": "test_gauss_easter_1994",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T04:04:48",
+      "last_seen": "2026-06-30T04:04:48",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2000",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T04:04:48",
+      "last_seen": "2026-06-30T04:04:48",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2010",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T04:04:48",
+      "last_seen": "2026-06-30T04:04:48",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2021",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T04:04:48",
+      "last_seen": "2026-06-30T04:04:48",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2023",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T04:04:48",
+      "last_seen": "2026-06-30T04:04:48",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2032",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T04:04:48",
+      "last_seen": "2026-06-30T04:04:48",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2100",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T04:04:48",
+      "last_seen": "2026-06-30T04:04:48",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_self_organizing_map_ablon3": [
+    {
+      "name": "test_main_no_exception",
+      "detail": "NameError: name 'main' is not defined",
+      "first_seen": "2026-06-30T03:49:34",
+      "last_seen": "2026-06-30T03:49:34",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_get_winner_with_exception",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T03:49:34",
+      "last_seen": "2026-06-30T03:49:34",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_update_with_exception",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T03:49:34",
+      "last_seen": "2026-06-30T03:49:34",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_get_winner_correct_result",
+      "detail": "assert result == 0 → assert 1 == 0",
+      "first_seen": "2026-06-30T04:05:12",
+      "last_seen": "2026-06-30T04:05:12",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_coloring_ablon2": [
+    {
+      "name": "test_util_color_base_case_incomplete",
+      "detail": "assert result is False → assert True is False",
+      "first_seen": "2026-06-30T04:47:24",
+      "last_seen": "2026-06-30T04:47:24",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_util_color_recursive_case_single_color_fail",
+      "detail": "assert result is False → assert True is False | assert 0 == 1",
+      "first_seen": "2026-06-30T04:47:24",
+      "last_seen": "2026-06-30T04:47:24",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_util_color_recursive_case_multiple_colors_fail",
+      "detail": "assert result is False → assert True is False | assert True is False",
+      "first_seen": "2026-06-30T04:47:24",
+      "last_seen": "2026-06-30T04:47:24",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_fermat_little_theorem_ablon3": [
+    {
+      "name": "test_binary_exponentiation_even_n",
+      "detail": "assert result == 6 → assert 3 == 6 | assert 18 == 6",
+      "first_seen": "2026-06-30T03:49:44",
+      "last_seen": "2026-06-30T03:49:44",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_binary_exponentiation_even_n",
+      "detail": "NameError: name 'p' is not defined",
+      "first_seen": "2026-06-30T04:05:28",
+      "last_seen": "2026-06-30T04:05:28",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_binary_exponentiation_odd_n",
+      "detail": "NameError: name 'p' is not defined",
+      "first_seen": "2026-06-30T04:05:28",
+      "last_seen": "2026-06-30T04:05:28",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_binary_exponentiation_zero_n",
+      "detail": "NameError: name 'p' is not defined",
+      "first_seen": "2026-06-30T04:05:28",
+      "last_seen": "2026-06-30T04:05:28",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_circular_queue_ablon3": [
+    {
+      "name": "test_dequeue_multiple_elements",
+      "detail": "assert cq.array[0] == \"C\" → AssertionError: assert None == 'C'",
+      "first_seen": "2026-06-30T03:50:13",
+      "last_seen": "2026-06-30T03:50:13",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_dequeue_full_queue_after_enqueue",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T03:50:13",
+      "last_seen": "2026-06-30T03:50:13",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_dequeue_after_full_queue",
+      "detail": "assert str(result) == \"0\", \"El valor devuelto por dequeue debe ser el primer elemento en la cola\" → AssertionError: El valor devuelto por dequeue debe ser el primer elemento en la cola | assert '1' == '0'",
+      "first_seen": "2026-06-30T04:05:56",
+      "last_seen": "2026-06-30T04:05:56",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_smith_waterman_ablon2": [
+    {
+      "name": "test_smith_waterman_empty_query",
+      "detail": "assert smith_waterman(\"\", \"CA\") == [[0] * (3 + 1)], \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert [[0, 0, 0]] == [[0, 0, 0, 0]]",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T03:50:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_smith_waterman_single_char_alignment",
+      "detail": "assert smith_waterman(\"A\", \"A\") == [[1]], \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert [[0, 0], [0, 1]] == [[1]]",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T03:50:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_smith_waterman_no_match_alignment",
+      "detail": "assert smith_waterman(\"AGT\", \"GTA\") == [ → AssertionError: Mismatched function behavior | assert [[0, 0, 0, 0]... [0, 0, 2, 0]] == [[0, 0, 0], [...0], [0, 0, 2]]",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T03:50:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_smith_waterman_gap_alignment",
+      "detail": "assert smith_waterman(\"AGT\", \"GTC\") == [ → AssertionError: Mismatched function behavior | assert [[0, 0, 0, 0]... [0, 0, 2, 0]] == [[0, 0, 0], [...2], [0, 1, 0]]",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T03:50:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_smith_waterman_single_character_query",
+      "detail": "assert smith_waterman(\"G\", \"AGT\") == [ → AssertionError: Mismatched function behavior | assert [[0, 0, 0, 0], [0, 0, 1, 0]] == [[0, 0], [0, 1], [0, 0]]",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T03:50:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_single_char_alignment",
+      "detail": "assert traceback([[1]], \"A\", \"A\") == \"AA\\nAA\", \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert '' == 'AA\\nAA'",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T04:49:28",
+      "count": 3,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_no_match_alignment",
+      "detail": "assert traceback([[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 0, 2], [0, 1, 0]], \"AGT\", \"GTA\") == \"GA\\nTG\", \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert 'GT\\nGT' == 'GA\\nTG'",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T04:06:29",
+      "count": 2,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_traceback_gap_alignment",
+      "detail": "assert traceback([[0, 0, 0], [0, 0, 0], [0, 1, 0], [0, 0, 2], [0, 1, 0]], \"AGT\", \"GTC\") == \"GA\\nTG\", \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert 'GT\\nGT' == 'GA\\nTG'",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T04:49:28",
+      "count": 3,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_single_character_query",
+      "detail": "assert traceback([[0, 0], [0, 1], [0, 0]], \"G\", \"AGT\") == \"GA\\nAG\", \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert '-\\nA' == 'GA\\nAG'",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T04:06:29",
+      "count": 2,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_long_sequence_alignment",
+      "detail": "assert traceback([[0, 0, 0, 0], [0, 1, 0, 0], [0, 0, 2, 0], [0, 0, 0, 3], [0, 0, 0, 1], [0, 0, 0, 1]], \"AGTCT\", \"AGT\") == \"CA\\nCA\", \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert 'AGT\\nAGT' == 'CA\\nCA",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T03:50:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_long_sequence_alignment_reverse",
+      "detail": "assert traceback([[0, 0, 0, 0], [0, 1, 0, 0], [0, 0, 2, 0], [0, 0, 0, 3], [0, 0, 1, 1]], \"AGTCT\", \"GTC\") == \"CA\\nCA\", \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert '--T-\\nGT-C' == 'CA\\nCA'",
+      "first_seen": "2026-06-30T03:50:59",
+      "last_seen": "2026-06-30T03:50:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_no_match_alignment",
+      "detail": "assert traceback([[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 0, 2], [0, 1, 0]], \"AGT\", \"GTA\") == \"GT\\nTG\", \"Mismatched function behavior\" → AssertionError: Mismatched function behavior | assert 'GT\\nGT' == 'GT\\nTG'",
+      "first_seen": "2026-06-30T04:49:28",
+      "last_seen": "2026-06-30T04:49:28",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_no_match_single_char",
+      "detail": "assert traceback([[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 0, 2], [0, 1, 0]], \"A\", \"C\") == \"CA\\nAC\", \"Mismatched function behavior\" → IndexError: string index out of range",
+      "first_seen": "2026-06-30T04:49:28",
+      "last_seen": "2026-06-30T04:49:28",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_prime_numbers_ablon1": [
+    {
+      "name": "test_is_prime_negative_one_returns_false",
+      "detail": "assert isinstance(number, int) and (number >= 0), ( → AssertionError: 'number' must been an int and positive | AssertionError: Expected next prime after 10 with factor 2",
+      "first_seen": "2026-06-30T03:51:26",
+      "last_seen": "2026-06-30T03:51:26",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_next_prime_zero_raises_exception",
+      "detail": "Failed: DID NOT RAISE AssertionError",
+      "first_seen": "2026-06-30T04:06:54",
+      "last_seen": "2026-06-30T04:06:54",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_hexagonal_numbers_ablon1": [
+    {
+      "name": "test_hexagonal_numbers_non_integer_length",
+      "detail": "ValueError: Length must be a positive integer.",
+      "first_seen": "2026-06-30T04:07:19",
+      "last_seen": "2026-06-30T04:07:19",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_sdbm_ablon1": [],
+  "ok_chebyshev_distance_ablon1": [
+    {
+      "name": "test_chebyshev_distance_with_float_values",
+      "detail": "assert result == 4.3 → assert 4.5 == 4.3 | assert 6.0 == 5.0",
+      "first_seen": "2026-06-30T04:09:25",
+      "last_seen": "2026-06-30T04:09:25",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_word_frequency_functions_ablon2": [],
+  "ok_g_topological_sort_ablon2": [
+    {
+      "name": "test_print_stack_dos_casos",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T04:10:29",
+      "count": 2,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_vacia",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_print_stack_mayor_cantidad",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_uno_nodo",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_print_stack_sin_corte",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_cero_nodo",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_print_stack_con_corte",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_negativo_nodo",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_print_stack_con_corte_y_orden",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_cadena_vacia_nodo",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_print_stack_con_corte_y_ordenamiento",
+      "detail": "NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_none_nodo",
+      "detail": "NameError: name 'graph' is not defined | NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_lista_vacia_nodo",
+      "detail": "NameError: name 'graph' is not defined | NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_valor_maximo_nodo",
+      "detail": "NameError: name 'graph' is not defined | NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_cero_nodo_negativo",
+      "detail": "assert all(v == \"\" or v == 4 or v == 2 or v == 7 or v == 3 for v in visited) → NameError: name 'graph' is not defined | NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T03:55:41",
+      "last_seen": "2026-06-30T03:55:41",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_vacia",
+      "detail": "Failed: DID NOT RAISE AssertionError",
+      "first_seen": "2026-06-30T04:10:29",
+      "last_seen": "2026-06-30T04:53:31",
+      "count": 2,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_uno_nodo",
+      "detail": "assert all(v == 1 or v == 4 or v == 2 or v == 7 or v == 3 for v in visited) → assert False | +  where False = all(<generator object TestOkGTopologicalSortAblon2.test_depth_first_search_uno_nodo.<locals>.<genexpr> at 0x7c1f1b97edc0>)",
+      "first_seen": "2026-06-30T04:10:29",
+      "last_seen": "2026-06-30T04:10:29",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_topological_sort_nodos_sin_enlaces",
+      "detail": "assert all(v == 1 or v == 4 or v == 2 or v == 7 or v == 3 for v in visited) → assert False | +  where False = all(<generator object TestOkGTopologicalSortAblon2.test_topological_sort_nodos_sin_enlaces.<locals>.<genexpr> at 0x7c1f1b9f9150>)",
+      "first_seen": "2026-06-30T04:10:29",
+      "last_seen": "2026-06-30T04:10:29",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_topological_sort_nodos_con_enlaces",
+      "detail": "assert all(v == 1 or v == 4 or v == 2 or v == 7 or v == 3 for v in visited) → assert False | +  where False = all(<generator object TestOkGTopologicalSortAblon2.test_topological_sort_nodos_con_enlaces.<locals>.<genexpr> at 0x7c1f1b8ed3c0>)",
+      "first_seen": "2026-06-30T04:10:29",
+      "last_seen": "2026-06-30T04:10:29",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_uno_nodo",
+      "detail": "Failed: DID NOT RAISE AssertionError",
+      "first_seen": "2026-06-30T04:53:31",
+      "last_seen": "2026-06-30T04:53:31",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_topological_sort_nodos_sin_enlaces",
+      "detail": "Failed: DID NOT RAISE AssertionError",
+      "first_seen": "2026-06-30T04:53:31",
+      "last_seen": "2026-06-30T04:53:31",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_topological_sort_nodos_con_enlaces",
+      "detail": "Failed: DID NOT RAISE AssertionError | Failed: DID NOT RAISE AssertionError",
+      "first_seen": "2026-06-30T04:53:31",
+      "last_seen": "2026-06-30T04:53:31",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_print_stack_vacia",
+      "detail": "NameError: name 'print_stack' is not defined",
+      "first_seen": "2026-06-30T04:53:31",
+      "last_seen": "2026-06-30T04:53:31",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_rotate_array_ablon2": [
+    {
+      "name": "test_reverse_1",
+      "detail": "NameError: name 'reverse_test' is not defined",
+      "first_seen": "2026-06-30T04:10:59",
+      "last_seen": "2026-06-30T04:10:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_reverse_2",
+      "detail": "NameError: name 'reverse_test' is not defined",
+      "first_seen": "2026-06-30T04:10:59",
+      "last_seen": "2026-06-30T04:10:59",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_rabin_miller_ablon2": [
+    {
+      "name": "test_rabin_miller_returns_true_for_known_primes",
+      "detail": "ValueError: empty range for randrange() (2, 1, -1)",
+      "first_seen": "2026-06-30T03:56:30",
+      "last_seen": "2026-06-30T03:56:30",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_rabin_miller_returns_false_for_non_primes",
+      "detail": "assert result == False → ValueError: empty range for randrange() (2, -1, -3) | assert True == False",
+      "first_seen": "2026-06-30T03:56:30",
+      "last_seen": "2026-06-30T03:56:30",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_word_ladder_ablon1": [],
+  "ok_word_break_ablon1": [],
+  "ok_coloring_ablon3": [
+    {
+      "name": "test_color_graph_two_nodes_1_color",
+      "detail": "assert result == [0, 0] → assert [] == [0, 0] | Right contains 2 more items, first extra item: 0",
+      "first_seen": "2026-06-30T04:55:19",
+      "last_seen": "2026-06-30T04:55:19",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_color_graph_two_nodes_multiple_colors_possible",
+      "detail": "assert result in [[0, 2], [2, 0]] → assert [0, 1] in [[0, 2], [2, 0]]",
+      "first_seen": "2026-06-30T04:55:19",
+      "last_seen": "2026-06-30T04:55:19",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_color_graph_three_nodes_1_color",
+      "detail": "assert result == [0, 0, 0] → AssertionError: assert [] == [0, 0, 0] | Right contains 3 more items, first extra item: 0",
+      "first_seen": "2026-06-30T04:55:19",
+      "last_seen": "2026-06-30T04:55:19",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_minimum_cut_ablon3": [
+    {
+      "name": "test_bfs_no_excepciones",
+      "detail": "assert bfs(graph, s, t, []) == [False] * len(graph) → IndexError: list assignment index out of range",
+      "first_seen": "2026-06-30T03:57:50",
+      "last_seen": "2026-06-30T04:13:22",
+      "count": 2,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bfs_no_excepciones",
+      "detail": "assert bfs(graph, source, sink, []) == [False] * len(graph) → IndexError: list assignment index out of range",
+      "first_seen": "2026-06-30T04:55:45",
+      "last_seen": "2026-06-30T04:55:45",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_onepad_cipher_ablon3": [
+    {
+      "name": "test_decrypt_handles_non_list_input_for_cipher",
+      "detail": "Failed: DID NOT RAISE TypeError | Failed: DID NOT RAISE IndexError",
+      "first_seen": "2026-06-30T03:57:57",
+      "last_seen": "2026-06-30T03:57:57",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_encrypt_space_with_random_seed_1",
+      "detail": "NameError: name 'random' is not defined",
+      "first_seen": "2026-06-30T04:13:51",
+      "last_seen": "2026-06-30T04:13:51",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_encrypt_hello_with_random_seed_1",
+      "detail": "NameError: name 'random' is not defined",
+      "first_seen": "2026-06-30T04:13:51",
+      "last_seen": "2026-06-30T04:13:51",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_encrypt_raises_type_error_for_int",
+      "detail": "assert \"int object is not iterable\" in str(excinfo.value) → assert 'int object is not iterable' in \"'int' object is not iterable\" | +  where \"'int' object is not iterable\" = str(TypeError(\"'int' object is not iterable\"))",
+      "first_seen": "2026-06-30T04:13:51",
+      "last_seen": "2026-06-30T04:13:51",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_encrypt_raises_type_error_for_float",
+      "detail": "assert \"float object is not iterable\" in str(excinfo.value) → assert 'float object is not iterable' in \"'float' object is not iterable\" | +  where \"'float' object is not iterable\" = str(TypeError(\"'float' object is not iterable\"))",
+      "first_seen": "2026-06-30T04:13:51",
+      "last_seen": "2026-06-30T04:13:51",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_decrypt_empty_list_with_random_seed_1",
+      "detail": "NameError: name 'random' is not defined | Failed: DID NOT RAISE IndexError",
+      "first_seen": "2026-06-30T04:13:51",
+      "last_seen": "2026-06-30T04:13:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_decrypt_with_random_seed_1_and_key",
+      "detail": "NameError: name 'random' is not defined",
+      "first_seen": "2026-06-30T04:13:51",
+      "last_seen": "2026-06-30T04:13:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_encrypt_single_character_string",
+      "detail": "assert cipher == [107] → assert [96558] == [107] | At index 0 diff: 96558 != 107",
+      "first_seen": "2026-06-30T04:55:53",
+      "last_seen": "2026-06-30T04:55:53",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_encrypt_multiple_characters_string",
+      "detail": "assert cipher == [9729, 114756, 4653, 31309, 10492] → AssertionError: assert [20020, 9222,... 17533, 57682] == [9729, 114756... 31309, 10492] | At index 0 diff: 20020 != 9729",
+      "first_seen": "2026-06-30T04:55:53",
+      "last_seen": "2026-06-30T04:55:53",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_decrypt_single_character_cipher_and_key",
+      "detail": "ValueError: chr() arg not in range(0x110000)",
+      "first_seen": "2026-06-30T04:55:53",
+      "last_seen": "2026-06-30T04:55:53",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_decrypt_invalid_ciphertext_key_length",
+      "detail": "Failed: DID NOT RAISE IndexError",
+      "first_seen": "2026-06-30T04:55:53",
+      "last_seen": "2026-06-30T04:55:53",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_sin_ablon3": [
+    {
+      "name": "test_sin_450_degrees",
+      "detail": "assert result == -0.017364817766, \"sin(450.0) should be approximately -0.017364817766\" → AssertionError: sin(450.0) should be approximately -0.017364817766 | assert 1.0 == -0.017364817766",
+      "first_seen": "2026-06-30T03:58:29",
+      "last_seen": "2026-06-30T03:58:29",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_adler32_ablon2": [],
+  "ok_scoring_algorithm_ablon3": [],
+  "ok_smith_waterman_ablon3": [],
+  "ok_knapsack_ablon1": [],
+  "ok_johnson_ablon2": [
+    {
+      "name": "test_collect_nodes_and_edges_raises_exception_for_negative_weight_cycle",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T04:59:16",
+      "last_seen": "2026-06-30T04:59:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bellman_ford_raises_exception_for_negative_weight_cycle",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T04:59:16",
+      "last_seen": "2026-06-30T04:59:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bellman_ford_correctly_calculates_potentials",
+      "detail": "Failed: DID NOT RAISE ValueError | KeyError: 2",
+      "first_seen": "2026-06-30T04:59:16",
+      "last_seen": "2026-06-30T04:59:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_dijkstra_correctly_calculates_distances",
+      "detail": "KeyError: 2",
+      "first_seen": "2026-06-30T04:59:16",
+      "last_seen": "2026-06-30T04:59:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_johnson_raises_exception_for_negative_weight_cycle",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T04:59:16",
+      "last_seen": "2026-06-30T04:59:16",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_johnson_correctly_calculates_all_pairs_shortest_paths",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T04:59:16",
+      "last_seen": "2026-06-30T04:59:16",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_sliding_window_maximum_ablon1": [
+    {
+      "name": "test_sliding_window_maximum_with_zeros",
+      "detail": "assert result == [0, 0], \"Expected the maximum of each sliding window\" → AssertionError: Expected the maximum of each sliding window | assert [0, 0, 0] == [0, 0]",
+      "first_seen": "2026-06-30T04:18:04",
+      "last_seen": "2026-06-30T04:18:04",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_rabin_miller_ablon3": [
+    {
+      "name": "test_rabin_miller_returns_true_for_known_primes",
+      "detail": "ValueError: empty range for randrange() (2, 1, -1) | NameError: name 'generate_large_prime' is not defined",
+      "first_seen": "2026-06-30T05:00:23",
+      "last_seen": "2026-06-30T05:00:23",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_even_tree_ablon3": [
+    {
+      "name": "test_dfs_traversal",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:00:32",
+      "last_seen": "2026-06-30T05:00:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_even_tree_without_cuts",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:00:32",
+      "last_seen": "2026-06-30T05:00:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_even_tree_with_cuts",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:00:32",
+      "last_seen": "2026-06-30T05:00:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_dfs_recursive_call",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:00:32",
+      "last_seen": "2026-06-30T05:00:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_dfs_recursion_depth",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:00:32",
+      "last_seen": "2026-06-30T05:00:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_dfs_not_visited",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:00:32",
+      "last_seen": "2026-06-30T05:00:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_alternate_disjoint_set_ablon3": [
+    {
+      "name": "test_max_set_after_merging",
+      "detail": "assert ds.max_set == 4 → assert 6 == 4 | +  where 6 = <ok_alternate_disjoint_set_ablon3.DisjointSet object at 0x70161e7ab650>.max_set",
+      "first_seen": "2026-06-30T05:01:00",
+      "last_seen": "2026-06-30T05:01:00",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_get_parent_of_non_existent_element",
+      "detail": "IndexError: list index out of range",
+      "first_seen": "2026-06-30T05:01:00",
+      "last_seen": "2026-06-30T05:01:00",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_tarjans_scc_ablon2": [],
+  "ok_intersection_ablon1": [
+    {
+      "name": "test_intersection_function_f_with_3_and_35",
+      "detail": "assert intersection(function, x0, x1) == 2.9999999846721094 → NameError: name 'math' is not defined",
+      "first_seen": "2026-06-30T05:01:53",
+      "last_seen": "2026-06-30T05:01:53",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_f_with_2",
+      "detail": "NameError: name 'math' is not defined",
+      "first_seen": "2026-06-30T05:01:53",
+      "last_seen": "2026-06-30T05:01:53",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_f_with_2",
+      "detail": "assert f(x) == -1.0 → NameError: name 'math' is not defined",
+      "first_seen": "2026-06-30T07:02:43",
+      "last_seen": "2026-06-30T07:02:43",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_price_plus_tax_ablon2": [],
+  "ok_closest_pair_of_points_ablon2": [],
+  "ok_segment_tree_ablon1": [
+    {
+      "name": "test_right_returns_correct_right_child_index",
+      "detail": "assert result == 4 → assert 5 == 4",
+      "first_seen": "2026-06-30T05:03:11",
+      "last_seen": "2026-06-30T05:03:11",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_build_correctly_sets_segment_tree",
+      "detail": "assert result[1] == 1 → assert 15 == 1",
+      "first_seen": "2026-06-30T05:03:11",
+      "last_seen": "2026-06-30T05:03:11",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_query_returns_maximum_value_in_range",
+      "detail": "assert result == -4 → assert 7 == -4 | assert 7 == -4",
+      "first_seen": "2026-06-30T05:03:11",
+      "last_seen": "2026-06-30T05:03:11",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_polynomial_evaluation_ablon2": [
+    {
+      "name": "test_evaluate_poly_raises_no_exception",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T05:03:49",
+      "last_seen": "2026-06-30T05:03:49",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_horner_raises_no_exception",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T05:03:49",
+      "last_seen": "2026-06-30T05:03:49",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_sol1_ablon1": [],
+  "ok_gauss_easter_ablon3": [
+    {
+      "name": "test_gauss_easter_1994_is_correct",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T05:04:10",
+      "last_seen": "2026-06-30T05:04:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2000_is_correct",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T05:04:10",
+      "last_seen": "2026-06-30T05:04:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2010_is_correct",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T05:04:10",
+      "last_seen": "2026-06-30T05:04:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2021_is_correct",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T05:04:10",
+      "last_seen": "2026-06-30T05:04:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2023_is_correct",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T05:04:10",
+      "last_seen": "2026-06-30T05:04:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2032_is_correct",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T05:04:10",
+      "last_seen": "2026-06-30T05:04:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2100_is_correct",
+      "detail": "NameError: name 'datetime' is not defined",
+      "first_seen": "2026-06-30T05:04:10",
+      "last_seen": "2026-06-30T05:04:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_hamiltonian_cycle_ablon2": [
+    {
+      "name": "test_valid_connection_no_path",
+      "detail": "assert result == expected_result, \"Valid connection returned True when it should have been False\" → AssertionError: Valid connection returned True when it should have been False | assert True == False",
+      "first_seen": "2026-06-30T05:04:41",
+      "last_seen": "2026-06-30T05:04:41",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_valid_connection_same_vertex",
+      "detail": "assert result == expected_result, \"Valid connection returned True when it should have been False\" → AssertionError: Valid connection returned True when it should have been False | assert True == False",
+      "first_seen": "2026-06-30T05:04:41",
+      "last_seen": "2026-06-30T05:04:41",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_crossword_puzzle_solver_ablon1": [],
+  "ok_sol1_ablon2": [],
+  "ok_signum_ablon3": [],
+  "ok_sum_of_geometric_progression_ablon1": [],
+  "ok_disjoint_set_ablon2": [],
+  "ok_sol6_ablon2": [],
+  "ok_from_sequence_ablon2": [],
+  "ok_sol4_ablon1": [],
+  "ok_minimum_spanning_tree_boruvka_ablon1": [
+    {
+      "name": "test_find_no_lanza_excepciones",
+      "detail": "AttributeError: 'Graph' object has no attribute 'find'",
+      "first_seen": "2026-06-30T05:08:03",
+      "last_seen": "2026-06-30T05:08:03",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_union_no_lanza_excepciones",
+      "detail": "AttributeError: 'Graph' object has no attribute 'make_set'",
+      "first_seen": "2026-06-30T05:08:03",
+      "last_seen": "2026-06-30T05:08:03",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_radix_tree_ablon2": [
+    {
+      "name": "test_trie",
+      "detail": "assert not root.find(\"all\"), \"All should not be found after deletion\" → AssertionError: All should not be found after deletion | assert not True",
+      "first_seen": "2026-06-30T05:08:38",
+      "last_seen": "2026-06-30T05:08:38",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_pytests",
+      "detail": "NameError: name 'pytests' is not defined",
+      "first_seen": "2026-06-30T05:08:38",
+      "last_seen": "2026-06-30T05:08:38",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_main",
+      "detail": "NameError: name 'main' is not defined",
+      "first_seen": "2026-06-30T05:08:38",
+      "last_seen": "2026-06-30T05:08:38",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_insert_with_exact_match",
+      "detail": "assert node.is_leaf, \"Node should be a leaf after insertion\" → AssertionError: Node should be a leaf after insertion | assert False",
+      "first_seen": "2026-06-30T05:08:38",
+      "last_seen": "2026-06-30T05:08:38",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_insert_with_partial_match",
+      "detail": "assert root.is_leaf, \"Node should be a leaf after insertion\" → AssertionError: Node should be a leaf after insertion | assert False",
+      "first_seen": "2026-06-30T05:08:38",
+      "last_seen": "2026-06-30T05:08:38",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_insert_with_multiple_edges",
+      "detail": "assert word[0] in root.nodes, \"Edge from root to node should exist\" → NameError: name 'word' is not defined",
+      "first_seen": "2026-06-30T05:08:38",
+      "last_seen": "2026-06-30T05:08:38",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_print_tree_with_multiple_nodes",
+      "detail": "assert \"myprefix\" in node.prefix, \"Prefix should be printed\" → NameError: name 'node' is not defined",
+      "first_seen": "2026-06-30T05:08:38",
+      "last_seen": "2026-06-30T05:08:38",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_decimal_isolate_ablon2": [],
+  "ok_sol6_ablon3": [],
+  "ok_chebyshev_distance_ablon3": [],
+  "ok_segment_tree_ablon3": [
+    {
+      "name": "test_query_within_range",
+      "detail": "assert query_result == 10 → assert 7 == 10 | assert 235 == 10",
+      "first_seen": "2026-06-30T05:10:34",
+      "last_seen": "2026-06-30T05:10:34",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_show_data_correct",
+      "detail": "assert self.segt.st == expected_output → AssertionError: assert [0, 15, 11, 15, 7, 11, ...] == [1, 2, -4, 7, 3, -5, ...] | At index 0 diff: 0 != 1",
+      "first_seen": "2026-06-30T05:10:34",
+      "last_seen": "2026-06-30T05:10:34",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_grahams_law_ablon3": [
+    {
+      "name": "test_validate_negative_molar_mass",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_validate_missing_parameters",
+      "detail": "Failed: DID NOT RAISE TypeError",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_effusion_ratio_negative_molar_mass",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_effusion_ratio_missing_effusion_rate",
+      "detail": "Failed: DID NOT RAISE TypeError",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_first_effusion_rate_negative_molar_mass",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_first_effusion_rate_missing_molar_mass",
+      "detail": "assert \"first_effusion_rate() missing 2 required positional arguments\" in str(excinfo.value) → assert 'first_effusion_rate() missing 2 required positional arguments' in \"first_effusion_rate() missing 1 required positional argument: 'molar_m",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_second_effusion_rate_negative_molar_mass",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_second_effusion_rate_missing_molar_mass",
+      "detail": "assert \"second_effusion_rate() missing 2 required positional arguments\" in str(excinfo.value) → assert 'second_effusion_rate() missing 2 required positional arguments' in \"second_effusion_rate() missing 1 required positional argument: 'mola",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_first_molar_mass_correct_values",
+      "detail": "assert result == pytest.approx(0.50) → assert 0.507524 == 0.5 ± 5.0e-07 | comparison failed",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_first_molar_mass_negative_effusion_rate",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_first_molar_mass_missing_effusion_rate",
+      "detail": "assert \"first_molar_mass() missing 2 required positional arguments\" in str(excinfo.value) → assert 'first_molar_mass() missing 2 required positional arguments' in \"first_molar_mass() missing 1 required positional argument: 'effusion_rate_2'",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_second_molar_mass_correct_values",
+      "detail": "assert result == pytest.approx(1.9) → assert 1.970351 == 1.9 ± 1.9e-06 | comparison failed",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_second_molar_mass_negative_effusion_rate",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_second_molar_mass_missing_effusion_rate",
+      "detail": "assert \"second_molar_mass() missing 2 required positional arguments\" in str(excinfo.value) → assert 'second_molar_mass() missing 2 required positional arguments' in \"second_molar_mass() missing 1 required positional argument: 'effusion_rate",
+      "first_seen": "2026-06-30T05:11:26",
+      "last_seen": "2026-06-30T05:11:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_karatsuba_ablon2": [
+    {
+      "name": "test_main_imprime_resultado",
+      "detail": "NameError: name 'main' is not defined",
+      "first_seen": "2026-06-30T05:11:51",
+      "last_seen": "2026-06-30T05:11:51",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_max_product_subarray_ablon1": [],
+  "ok_gauss_easter_ablon1": [
+    {
+      "name": "test_gauss_easter_2007",
+      "detail": "NameError: name 'math' is not defined",
+      "first_seen": "2026-06-30T05:13:26",
+      "last_seen": "2026-06-30T05:13:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2008",
+      "detail": "NameError: name 'math' is not defined",
+      "first_seen": "2026-06-30T05:13:26",
+      "last_seen": "2026-06-30T05:13:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2020",
+      "detail": "NameError: name 'math' is not defined",
+      "first_seen": "2026-06-30T05:13:26",
+      "last_seen": "2026-06-30T05:13:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_gauss_easter_2021",
+      "detail": "NameError: name 'math' is not defined",
+      "first_seen": "2026-06-30T05:13:26",
+      "last_seen": "2026-06-30T05:13:26",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_tarjans_scc_ablon3": [],
+  "ok_price_plus_tax_ablon1": [],
+  "ok_segment_tree_ablon2": [
+    {
+      "name": "test_right_returns_correct_right_child_index",
+      "detail": "assert result == 4, \"The right child index for index 2 should be 4.\" → AssertionError: The right child index for index 2 should be 4. | assert 5 == 4",
+      "first_seen": "2026-06-30T05:14:33",
+      "last_seen": "2026-06-30T05:14:33",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_update_updates_correctly_in_range",
+      "detail": "assert segt.st[3] == 111, \"The value at index 3 in the segment tree should be updated to 111.\" → AssertionError: The value at index 3 in the segment tree should be updated to 111. | assert 15 == 111",
+      "first_seen": "2026-06-30T05:14:33",
+      "last_seen": "2026-06-30T05:14:33",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_query_returns_correct_max_value_in_range",
+      "detail": "assert result == expected_result, \"The query should return the correct maximum value in the range [7, 12].\" → AssertionError: The query should return the correct maximum value in the range [7, 12]. | assert 15 == 11",
+      "first_seen": "2026-06-30T05:14:33",
+      "last_seen": "2026-06-30T05:14:33",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_sin_ablon1": [],
+  "ok_cramers_rule_2x2_ablon2": [],
+  "ok_sol2_ablon2": [],
+  "ok_secant_method_ablon1": [],
+  "ok_rod_cutting_ablon2": [],
+  "ok_segment_tree_other_ablon3": [
+    {
+      "name": "test_update_no_lanza_excepciones",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_query_range_no_lanza_excepciones",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_update_lanza_excepciones",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_query_range_lanza_excepciones",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_build_tree_no_lanza_excepciones",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_update_tree_no_lanza_excepciones",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_query_range_tree_no_lanza_excepciones",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traverse_no_lanza_excepciones",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_empty_tree_builds_correctly",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_single_element_tree_builds_correctly",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_small_tree_builds_correctly",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_large_tree_builds_correctly",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_update_tree_single_element",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_update_tree_large_tree",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_query_range_tree_single_element",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_query_range_tree_large_tree",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traverse_small_tree",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_traverse_large_tree",
+      "detail": "NameError: name 'operator' is not defined",
+      "first_seen": "2026-06-30T05:17:32",
+      "last_seen": "2026-06-30T05:17:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_johnson_ablon1": [
+    {
+      "name": "test_bellman_ford_negative_weight_cycle",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:18:06",
+      "last_seen": "2026-06-30T05:18:06",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_dijkstra_negative_edge_weight_after_reweighting",
+      "detail": "NameError: name 'heapq' is not defined",
+      "first_seen": "2026-06-30T05:18:06",
+      "last_seen": "2026-06-30T05:18:06",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_johnson_negative_weight_cycle",
+      "detail": "NameError: name 'heapq' is not defined",
+      "first_seen": "2026-06-30T05:18:06",
+      "last_seen": "2026-06-30T05:18:06",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_johnson_no_negative_weight_cycles",
+      "detail": "NameError: name 'heapq' is not defined",
+      "first_seen": "2026-06-30T05:18:06",
+      "last_seen": "2026-06-30T05:18:06",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_deque_doubly_ablon3": [
+    {
+      "name": "test_has_next_and_prev_for_non_empty_node",
+      "detail": "assert node.has_next_and_prev() == \" Prev -> True, Next -> False\" → AssertionError: assert ' Prev -> Fal...Next -> False' == ' Prev -> True, Next -> False' | -  Prev -> True, Next -> False",
+      "first_seen": "2026-06-30T05:18:40",
+      "last_seen": "2026-06-30T05:18:40",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_insert_after_element_in_list",
+      "detail": "assert self.dd.first() == 'C' → AssertionError: assert 'A' == 'C' | - C",
+      "first_seen": "2026-06-30T05:18:40",
+      "last_seen": "2026-06-30T05:18:40",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_insert_before_element_in_list",
+      "detail": "assert self.dd.first() == 'C' → AssertionError: assert 'A' == 'C' | - C",
+      "first_seen": "2026-06-30T05:18:40",
+      "last_seen": "2026-06-30T05:18:40",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_delete_last_node_of_list",
+      "detail": "assert self.dd.is_empty() → assert False | +  where False = is_empty()",
+      "first_seen": "2026-06-30T05:18:40",
+      "last_seen": "2026-06-30T05:18:40",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_radix_tree_ablon1": [
+    {
+      "name": "test_insert_word_with_prefix",
+      "detail": "assert node.is_leaf is True, \"The word should become a leaf node.\" → AssertionError: The word should become a leaf node. | assert False is True",
+      "first_seen": "2026-06-30T05:19:23",
+      "last_seen": "2026-06-30T05:19:23",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_delete_non_existent_word",
+      "detail": "assert all(root.find(word) for word in words), \"The original words should still be found after deletion.\" → AssertionError: The original words should still be found after deletion. | assert False",
+      "first_seen": "2026-06-30T05:19:23",
+      "last_seen": "2026-06-30T05:19:23",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_delete_leaf_node",
+      "detail": "assert result is True, \"Deleting a leaf node should return True.\" → AssertionError: Deleting a leaf node should return True. | assert False is True",
+      "first_seen": "2026-06-30T05:19:23",
+      "last_seen": "2026-06-30T05:19:23",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_delete_non_leaf_node_with_single_child",
+      "detail": "assert result is True, \"Deleting a non-leaf node with a single child should return True.\" → AssertionError: Deleting a non-leaf node with a single child should return True. | assert False is True",
+      "first_seen": "2026-06-30T05:19:23",
+      "last_seen": "2026-06-30T05:19:23",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_delete_non_leaf_node_with_multiple_children",
+      "detail": "assert result is True, \"Deleting a non-leaf node with multiple children should return True.\" → AssertionError: Deleting a non-leaf node with multiple children should return True. | assert False is True",
+      "first_seen": "2026-06-30T05:19:23",
+      "last_seen": "2026-06-30T05:19:23",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_count_islands_in_matrix_ablon1": [
+    {
+      "name": "test_is_safe_no_exception",
+      "detail": "assert result is True → assert 1 is True",
+      "first_seen": "2026-06-30T05:19:48",
+      "last_seen": "2026-06-30T05:19:48",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_count_islands_correct_result",
+      "detail": "assert count == expected_count → assert 3 == 4",
+      "first_seen": "2026-06-30T05:19:48",
+      "last_seen": "2026-06-30T05:19:48",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_jaccard_similarity_ablon3": [
+    {
+      "name": "test_jaccard_similarity_alternative_union",
+      "detail": "assert result == 0.2, \"Expected jaccard similarity of 0.2 with alternative union\" → AssertionError: Expected jaccard similarity of 0.2 with alternative union | assert 0.0 == 0.2",
+      "first_seen": "2026-06-30T05:20:21",
+      "last_seen": "2026-06-30T05:20:21",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_jaccard_similarity_large_sets",
+      "detail": "assert abs(result - expected) < 0.01, f\"Expected jaccard similarity of {expected} but got {result}\" → AssertionError: Expected jaccard similarity of 0.1 but got 0.0 | assert 0.1 < 0.01",
+      "first_seen": "2026-06-30T05:20:21",
+      "last_seen": "2026-06-30T05:20:21",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_jaccard_similarity_empty_set",
+      "detail": "ZeroDivisionError: division by zero | ValueError: Set a and b must either both be sets or be either a list or a tuple.",
+      "first_seen": "2026-06-30T05:20:21",
+      "last_seen": "2026-06-30T05:20:21",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_jaccard_similarity_empty_list_and_set",
+      "detail": "ValueError: Set a and b must either both be sets or be either a list or a tuple. | ValueError: Set a and b must either both be sets or be either a list or a tuple.",
+      "first_seen": "2026-06-30T05:20:21",
+      "last_seen": "2026-06-30T05:20:21",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_stock_span_problem_ablon1": [],
+  "ok_stock_span_problem_ablon2": [],
+  "ok_sdbm_ablon3": [
+    {
+      "name": "test_sdbm_implements_scramble_bits",
+      "detail": "assert result == 7302476491489448196406582954005553173187206082, \"Expected hash value is incorrect\" → AssertionError: Expected hash value is incorrect | assert 730247649148944819...0608290373040936089 == 730247649148944819...400555317318720",
+      "first_seen": "2026-06-30T05:23:17",
+      "last_seen": "2026-06-30T05:23:17",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_arc_length_ablon1": [],
+  "ok_johnson_ablon3": [
+    {
+      "name": "test_bellman_ford_no_negative_weight_cycle",
+      "detail": "assert dist[1] == 3.0 → assert 0.0 == 3.0",
+      "first_seen": "2026-06-30T05:24:16",
+      "last_seen": "2026-06-30T05:24:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_bellman_ford_negative_weight_cycle",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:24:16",
+      "last_seen": "2026-06-30T05:24:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_dijkstra_reweighted_graph",
+      "detail": "ValueError: Negative edge weight after reweighting: numeric error",
+      "first_seen": "2026-06-30T05:24:16",
+      "last_seen": "2026-06-30T05:24:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_johnson_no_negative_weight_cycle",
+      "detail": "NameError: name 'nodes' is not defined",
+      "first_seen": "2026-06-30T05:24:16",
+      "last_seen": "2026-06-30T05:24:16",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_johnson_negative_weight_cycle",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:24:16",
+      "last_seen": "2026-06-30T05:24:16",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_from_sequence_ablon1": [
+    {
+      "name": "test_make_linked_list_tuple_creates_head_node",
+      "detail": "NameError: name 'make_linked_list' is not defined | NameError: name 'make_linked_list' is not defined",
+      "first_seen": "2026-06-30T05:24:21",
+      "last_seen": "2026-06-30T05:24:21",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_strongly_connected_components_ablon3": [],
+  "ok_minimum_cut_ablon1": [
+    {
+      "name": "test_mincut_returns_correct_cut",
+      "detail": "assert False, \"Expected cut does not match the mincut result\" → AssertionError: Expected cut does not match the mincut result | assert False",
+      "first_seen": "2026-06-30T05:24:55",
+      "last_seen": "2026-06-30T05:24:55",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_mincut_max_flow_is_correct",
+      "detail": "assert len(mincut_result) == expected_max_flow → assert 3 == 41 | +  where 3 = len([(1, 3), (4, 3), (4, 5)])",
+      "first_seen": "2026-06-30T05:24:55",
+      "last_seen": "2026-06-30T05:24:55",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_sol5_ablon3": [],
+  "ok_linear_congruential_generator_ablon2": [],
+  "ok_minimum_cut_ablon2": [
+    {
+      "name": "test_bfs_no_lanza_excepciones",
+      "detail": "NameError: name 'test_graph' is not defined",
+      "first_seen": "2026-06-30T05:26:11",
+      "last_seen": "2026-06-30T05:26:11",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_mincut_no_lanza_excepciones",
+      "detail": "NameError: name 'test_graph' is not defined",
+      "first_seen": "2026-06-30T05:26:11",
+      "last_seen": "2026-06-30T05:26:11",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_mincut_returns_expected_result",
+      "detail": "NameError: name 'test_graph' is not defined",
+      "first_seen": "2026-06-30T05:26:11",
+      "last_seen": "2026-06-30T05:26:11",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_mincut_with_source_sink_in_bounds",
+      "detail": "NameError: name 'test_graph' is not defined",
+      "first_seen": "2026-06-30T05:26:11",
+      "last_seen": "2026-06-30T05:26:11",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_bfs_returns_correct_visited_status",
+      "detail": "NameError: name 'test_graph' is not defined",
+      "first_seen": "2026-06-30T05:26:11",
+      "last_seen": "2026-06-30T05:26:11",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_scoring_algorithm_ablon1": [],
+  "ok_lens_formulae_ablon2": [
+    {
+      "name": "test_focal_length_of_lens_negative_inputs",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:27:09",
+      "last_seen": "2026-06-30T05:27:09",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_object_distance_negative_inputs",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:27:09",
+      "last_seen": "2026-06-30T05:27:09",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_image_distance_negative_inputs",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T05:27:09",
+      "last_seen": "2026-06-30T05:27:09",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_remove_digit_ablon1": [],
+  "ok_circular_queue_ablon2": [
+    {
+      "name": "test_first_with_elements",
+      "detail": "assert self.circular_queue.first() == \"A\" → AssertionError: assert False == 'A' | +  where False = first()",
+      "first_seen": "2026-06-30T05:28:00",
+      "last_seen": "2026-06-30T05:28:00",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_trie_ablon1": [
+    {
+      "name": "test_print_words_root_empty",
+      "detail": "NameError: name 'print_words' is not defined",
+      "first_seen": "2026-06-30T05:28:37",
+      "last_seen": "2026-06-30T05:28:37",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_delete_root_node_with_single_child",
+      "detail": "assert not root.is_leaf → assert not True | +  where True = <ok_trie_ablon1.TrieNode object at 0x77d6eeb1df10>.is_leaf",
+      "first_seen": "2026-06-30T05:28:37",
+      "last_seen": "2026-06-30T05:28:37",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_delete_root_node_with_child",
+      "detail": "assert root.find('a') → AssertionError: assert False | +  where False = find('a')",
+      "first_seen": "2026-06-30T05:28:37",
+      "last_seen": "2026-06-30T05:28:37",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_delete_existing_word_with_child",
+      "detail": "assert root.find(\"bananas\") → AssertionError: assert False | +  where False = find('bananas')",
+      "first_seen": "2026-06-30T05:28:37",
+      "last_seen": "2026-06-30T05:28:37",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_word_ladder_ablon3": [
+    {
+      "name": "test_backtrack_hit_to_cog",
+      "detail": "assert len(result) == 7 → AssertionError: assert 6 == 7 | +  where 6 = len(['hit', 'hot', 'dot', 'lot', 'log', 'cog'])",
+      "first_seen": "2026-06-30T05:29:05",
+      "last_seen": "2026-06-30T05:29:05",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_word_ladder_hit_to_cog",
+      "detail": "assert len(result) == 7 → AssertionError: assert 6 == 7 | +  where 6 = len(['hit', 'hot', 'dot', 'lot', 'log', 'cog'])",
+      "first_seen": "2026-06-30T05:29:05",
+      "last_seen": "2026-06-30T05:29:05",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_deterministic_miller_rabin_ablon1": [
+    {
+      "name": "test_miller_rabin_no_exception",
+      "detail": "assert not result → assert not True",
+      "first_seen": "2026-06-30T14:41:19",
+      "last_seen": "2026-06-30T14:41:19",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_miller_rabin_negative_input",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T14:41:19",
+      "last_seen": "2026-06-30T14:41:19",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_polynom_for_points_ablon1": [],
+  "ok_sol6_ablon1": [],
+  "ok_radix_tree_ablon3": [],
+  "ok_even_tree_ablon2": [
+    {
+      "name": "test_dfs_traversal",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:30:51",
+      "last_seen": "2026-06-30T05:30:51",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_even_tree_no_cuts",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:30:51",
+      "last_seen": "2026-06-30T05:30:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_even_tree_two_cuts",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:30:51",
+      "last_seen": "2026-06-30T05:30:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_even_tree_three_cuts",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:30:51",
+      "last_seen": "2026-06-30T05:30:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_even_tree_maximum_cuts",
+      "detail": "NameError: name 'defaultdict' is not defined",
+      "first_seen": "2026-06-30T05:30:51",
+      "last_seen": "2026-06-30T05:30:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_data_transformations_ablon1": [
+    {
+      "name": "test_normalization_rounds_to_ndigits",
+      "detail": "assert result == expected → AssertionError: assert [0.0, 0.1042,..., 0.5833, 1.0] == [0.0, 0.104, ...33333333, 1.0] | At index 1 diff: 0.1042 != 0.104",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_normalization_min_value",
+      "detail": "ZeroDivisionError: division by zero",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_normalization_max_value",
+      "detail": "ZeroDivisionError: division by zero",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_normalization_edge_case_one_value",
+      "detail": "assert result == expected → AssertionError: assert [0.0, 0.5, 1.0] == [-1.0, -0.5, 0.0] | At index 0 diff: 0.0 != -1.0",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_normalization_negative_values",
+      "detail": "assert result == expected → AssertionError: assert [0.0, 0.5, 1.0] == [0.25, 0.6666...66666666, 1.0] | At index 0 diff: 0.0 != 0.25",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_standardization_rounds_to_ndigits",
+      "detail": "assert result == expected → AssertionError: assert [-0.9992, -0.....5696, 1.6902] == [-0.999, -0.7...9, 0.57, 1.69] | At index 0 diff: -0.9992 != -0.999",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_standardization_min_value",
+      "detail": "statistics.StatisticsError: stdev requires at least two data points",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_standardization_max_value",
+      "detail": "statistics.StatisticsError: stdev requires at least two data points",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_standardization_min_max_values",
+      "detail": "assert result == expected → AssertionError: assert [-0.707, 0.707] == [-1.0, 1.0] | At index 0 diff: -0.707 != -1.0",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_standardization_edge_case_one_value",
+      "detail": "assert result == expected → AssertionError: assert [-1.0, 0.0, 1.0] == [-1.0, -0.5, 0.0] | At index 1 diff: 0.0 != -0.5",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_standardization_negative_values",
+      "detail": "assert result == expected → AssertionError: assert [-1.0, 0.0, 1.0] == [0.25, 0.6666...66666666, 1.0] | At index 0 diff: -1.0 != 0.25",
+      "first_seen": "2026-06-30T05:31:25",
+      "last_seen": "2026-06-30T05:31:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_karatsuba_ablon1": [],
+  "ok_fischer_yates_shuffle_ablon2": [
+    {
+      "name": "test_fisher_yates_shuffle_randomization",
+      "detail": "assert result != data, \"El resultado debe ser diferente de la lista original\" → AssertionError: El resultado debe ser diferente de la lista original | assert [2, 3, 1] != [2, 3, 1]",
+      "first_seen": "2026-06-30T05:32:16",
+      "last_seen": "2026-06-30T05:32:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_fisher_yates_shuffle_no_duplicates",
+      "detail": "assert data != result, \"El resultado debe ser diferente de la lista original\" → AssertionError: El resultado debe ser diferente de la lista original | assert [20, 40, 10, 30] != [20, 40, 10, 30]",
+      "first_seen": "2026-06-30T05:32:16",
+      "last_seen": "2026-06-30T05:32:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_signum_ablon2": [
+    {
+      "name": "test_signum_small_positive_float_returns_one",
+      "detail": "assert result == 1, \"The signum of a small positive float should be 1\" → NameError: name 'result' is not defined",
+      "first_seen": "2026-06-30T05:32:49",
+      "last_seen": "2026-06-30T05:32:49",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_signum_large_negative_integer_returns_minus_one",
+      "detail": "assert result == -1, \"The signum of a large negative integer should be -1\" → NameError: name 'result' is not defined | NameError: name 'test_signum' is not defined",
+      "first_seen": "2026-06-30T05:32:49",
+      "last_seen": "2026-06-30T05:32:49",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_fermat_little_theorem_ablon2": [],
+  "ok_minimum_spanning_tree_boruvka_ablon3": [
+    {
+      "name": "test_distinct_weight",
+      "detail": "assert self.graph.adjacency[head][tail] == weight → assert 2 == 1",
+      "first_seen": "2026-06-30T05:33:24",
+      "last_seen": "2026-06-30T05:33:24",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_get_edges",
+      "detail": "assert len(graph.get_edges()) == len(edges) → assert 6 == 3 | +  where 6 = len([(0, 1, 1), (0, 2, 1), (1, 0, 1), (2, 0, 1), (2, 3, 1), (3, 2, 1)])",
+      "first_seen": "2026-06-30T05:33:24",
+      "last_seen": "2026-06-30T05:33:24",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_get_vertices",
+      "detail": "TypeError: 'NoneType' object is not iterable",
+      "first_seen": "2026-06-30T05:33:24",
+      "last_seen": "2026-06-30T05:33:24",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_build",
+      "detail": "assert len(graph.get_edges()) == len(edges) → assert 6 == 3 | +  where 6 = len([(0, 1, 1), (0, 2, 1), (1, 0, 1), (2, 0, 1), (2, 3, 1), (3, 2, 1)])",
+      "first_seen": "2026-06-30T05:33:24",
+      "last_seen": "2026-06-30T05:33:24",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_boruvka_mst",
+      "detail": "assert edge in bg.get_edges() → assert (0, 2, 1) in [(0, 1, 1), (0, 2, 2), (1, 0, 1), (2, 0, 2), (2, 3, 3), (3, 2, 3)] | +  where [(0, 1, 1), (0, 2, 2), (1, 0, 1), (2, 0, 2), (2, 3, 3), (3, 2, 3)] = get_edges()",
+      "first_seen": "2026-06-30T05:33:24",
+      "last_seen": "2026-06-30T05:33:24",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_make_set",
+      "detail": "TypeError: Graph.UnionFind.make_set() missing 1 required positional argument: 'item'",
+      "first_seen": "2026-06-30T05:33:24",
+      "last_seen": "2026-06-30T05:33:24",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_find",
+      "detail": "TypeError: Graph.UnionFind.find() missing 1 required positional argument: 'item'",
+      "first_seen": "2026-06-30T05:33:24",
+      "last_seen": "2026-06-30T05:33:24",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_union",
+      "detail": "TypeError: Graph.UnionFind.union() missing 1 required positional argument: 'item2'",
+      "first_seen": "2026-06-30T05:33:24",
+      "last_seen": "2026-06-30T05:33:24",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_frequent_pattern_graph_miner_ablon1": [],
+  "ok_rgb_hsv_conversion_ablon3": [
+    {
+      "name": "test_hsv_to_rgb_conversion_with_zero_value",
+      "detail": "assert rgb_color == [0, 255, 0], \"Expected RGB color to be [0, 255, 0]\" → AssertionError: Expected RGB color to be [0, 255, 0] | assert [0, 0, 0] == [0, 255, 0]",
+      "first_seen": "2026-06-30T05:34:30",
+      "last_seen": "2026-06-30T05:34:30",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_rgb_to_hsv_conversion_with_zero_value",
+      "detail": "assert hsv_color == [240, 1, 1], \"Expected HSV color to be [240, 1, 1]\" → AssertionError: Expected HSV color to be [240, 1, 1] | assert [300.0, 1.0, 1.0] == [240, 1, 1]",
+      "first_seen": "2026-06-30T05:34:30",
+      "last_seen": "2026-06-30T05:34:30",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_remove_digit_ablon3": [
+    {
+      "name": "test_remove_digit_all_same_digits",
+      "detail": "assert result == 2222222, \"Expected the biggest possible result for input 2222222\" → AssertionError: Expected the biggest possible result for input 2222222 | assert 222222 == 2222222",
+      "first_seen": "2026-06-30T05:34:56",
+      "last_seen": "2026-06-30T05:34:56",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_print_multiplication_table_ablon1": [],
+  "ok_djb2_ablon3": [],
+  "ok_knapsack_ablon3": [],
+  "ok_closest_pair_of_points_ablon1": [
+    {
+      "name": "test_no_functions_detected",
+      "detail": "TypeError: TestOkClosestPairOfPointsAblon1.test_no_functions_detected() takes 0 positional arguments but 1 was given",
+      "first_seen": "2026-06-30T05:37:05",
+      "last_seen": "2026-06-30T05:37:05",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_dinic_ablon2": [],
+  "ok_decimal_to_octal_ablon1": [
+    {
+      "name": "test_main_function_prints_correct_output",
+      "detail": "Failed: DID NOT RAISE SystemExit",
+      "first_seen": "2026-06-30T05:38:25",
+      "last_seen": "2026-06-30T05:38:25",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_even_tree_ablon1": [
+    {
+      "name": "test_even_tree_functionality",
+      "detail": "NameError: name 'visited' is not defined",
+      "first_seen": "2026-06-30T05:38:51",
+      "last_seen": "2026-06-30T05:38:51",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_intersection_ablon2": [
+    {
+      "name": "test_intersection_f_x_starting_points_3_and_3_5",
+      "detail": "assert abs(result - expected) < 1e-5, f\"Expected {expected}, got {result}\" → AssertionError: Expected -1.0, got 2.0945514815435184 | assert 3.0945514815435184 < 1e-05",
+      "first_seen": "2026-06-30T05:39:21",
+      "last_seen": "2026-06-30T05:39:21",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_sdbm_ablon2": [],
+  "ok_price_plus_tax_ablon3": [],
+  "ok_max_product_subarray_ablon2": [
+    {
+      "name": "test_max_product_subarray_large_numbers",
+      "detail": "ValueError: numbers must be an iterable of integers",
+      "first_seen": "2026-06-30T05:40:13",
+      "last_seen": "2026-06-30T05:40:13",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_sylvester_sequence_ablon2": [],
+  "ok_rabin_miller_ablon1": [
+    {
+      "name": "test_is_prime_low_num_no_lanza_excepciones",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T05:41:20",
+      "last_seen": "2026-06-30T05:41:20",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_generate_large_prime_no_lanza_excepciones",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T05:41:20",
+      "last_seen": "2026-06-30T05:41:20",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_rabin_miller_valida_primos_bajos",
+      "detail": "ValueError: empty range for randrange() (2, 1, -1)",
+      "first_seen": "2026-06-30T05:41:20",
+      "last_seen": "2026-06-30T05:41:20",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_rabin_miller_valida_no_primos_bajos",
+      "detail": "ValueError: empty range for randrange() (2, -1, -3)",
+      "first_seen": "2026-06-30T05:41:20",
+      "last_seen": "2026-06-30T05:41:20",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_generate_large_prime_valida_1024_bits",
+      "detail": "assert len(str(num)) == 1024 → AssertionError: assert 308 == 1024 | +  where 308 = len('96902303611267254529632750239666979479214086117481699207624060200299003439201571686656220432513937027144027361300377641913615759472301205842205679486772",
+      "first_seen": "2026-06-30T05:41:20",
+      "last_seen": "2026-06-30T05:41:20",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_rabin_miller_returns_false_for_non_primes",
+      "detail": "assert not result → assert not True | assert not True",
+      "first_seen": "2026-06-30T05:41:20",
+      "last_seen": "2026-06-30T05:41:20",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_g_topological_sort_ablon3": [
+    {
+      "name": "test_print_stack_correct_order",
+      "detail": "NameError: name 'stack' is not defined | NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T05:41:25",
+      "last_seen": "2026-06-30T05:41:25",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_topological_sort_initializes_stack",
+      "detail": "NameError: name 'graph' is not defined | NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T05:41:25",
+      "last_seen": "2026-06-30T05:41:25",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_print_stack_returns_correct_values",
+      "detail": "NameError: name 'stack' is not defined | NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T05:41:25",
+      "last_seen": "2026-06-30T05:41:25",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_rotate_array_ablon1": [],
+  "ok_sol3_ablon3": [
+    {
+      "name": "test_solution_no_multiples_of_3_or_5_below_n",
+      "detail": "assert result == expected_result, f\"Expected {expected_result}, but got {result}\" → AssertionError: Expected 0, but got 233168 | assert 233168 == 0",
+      "first_seen": "2026-06-30T05:42:40",
+      "last_seen": "2026-06-30T05:42:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_solution_with_single_multiple_of_3",
+      "detail": "assert result == expected_result, f\"Expected {expected_result}, but got {result}\" → AssertionError: Expected 3, but got 8 | assert 8 == 3",
+      "first_seen": "2026-06-30T05:42:40",
+      "last_seen": "2026-06-30T05:42:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_hexagonal_numbers_ablon3": [],
+  "ok_arc_length_ablon2": [],
+  "ok_hexagonal_numbers_ablon2": [],
+  "ok_disjoint_set_ablon1": [],
+  "ok_sylvester_sequence_ablon3": [],
+  "ok_circular_queue_ablon1": [
+    {
+      "name": "test_dequeue_empty_queue_returns_none",
+      "detail": "Exception: UNDERFLOW",
+      "first_seen": "2026-06-30T05:44:47",
+      "last_seen": "2026-06-30T05:44:47",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_decimal_to_octal_ablon2": [
+    {
+      "name": "test_main_prints_results",
+      "detail": "Failed: DID NOT RAISE SystemExit",
+      "first_seen": "2026-06-30T05:45:43",
+      "last_seen": "2026-06-30T05:45:43",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_edmonds_karp_multiple_source_and_sink_ablon1": [],
+  "ok_polynom_for_points_ablon2": [],
+  "ok_scoring_algorithm_ablon2": [],
+  "ok_word_frequency_functions_ablon3": [],
+  "ok_eulerian_path_and_circuit_for_undirected_graph_ablon2": [],
+  "ok_sol1_ablon3": [],
+  "ok_smith_waterman_ablon1": [
+    {
+      "name": "test_smith_waterman_empty_query",
+      "detail": "NameError: name 'subject' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_smith_waterman_empty_subject",
+      "detail": "NameError: name 'query' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_smith_waterman_example_single_char_query",
+      "detail": "NameError: name 'subject' is not defined | NameError: name 'query' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_smith_waterman_example_long_query",
+      "detail": "NameError: name 'subject' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_smith_waterman_example_long_subject",
+      "detail": "NameError: name 'query' is not defined | NameError: name 'subject' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_empty_query",
+      "detail": "NameError: name 'subject' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_empty_subject",
+      "detail": "NameError: name 'query' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_example_subject",
+      "detail": "assert result == expected_alignment → AssertionError: assert 'GT\\nGT' == 'AGT\\nGT' | - AGT",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_example_mismatch",
+      "detail": "assert result == expected_alignment → AssertionError: assert 'GT\\nGT' == 'AGT\\nGT' | - AGT",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_example_single_char_query",
+      "detail": "NameError: name 'subject' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_example_single_char_subject",
+      "detail": "NameError: name 'query' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_example_long_query",
+      "detail": "NameError: name 'subject' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_example_long_subject",
+      "detail": "NameError: name 'query' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_traceback_example_long_query_mismatch",
+      "detail": "NameError: name 'subject' is not defined",
+      "first_seen": "2026-06-30T05:49:35",
+      "last_seen": "2026-06-30T05:49:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_sin_ablon2": [],
+  "ok_fractionated_morse_cipher_ablon3": [],
+  "ok_morse_code_ablon3": [],
+  "ok_crossword_puzzle_solver_ablon3": [],
+  "ok_sol2_ablon1": [],
+  "ok_djb2_ablon2": [
+    {
+      "name": "test_djb2_handles_large_strings",
+      "detail": "assert result == expected_value, f\"Expected {expected_value}, got {result}\" → AssertionError: Expected 3579863151417076484, got 3510421101 | assert 3510421101 == 3579863151417076484",
+      "first_seen": "2026-06-30T05:53:17",
+      "last_seen": "2026-06-30T05:53:17",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_chudnovsky_algorithm_ablon1": [
+    {
+      "name": "test_pi_positive_integer",
+      "detail": "assert len(result) == precision + 2, f\"Expected {precision + 2} characters for the PI approximation\" → AssertionError: Expected 12 characters for the PI approximation | assert 10 == (10 + 2)",
+      "first_seen": "2026-06-30T05:53:42",
+      "last_seen": "2026-06-30T05:53:42",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_jaccard_similarity_ablon1": [],
+  "ok_cramers_rule_2x2_ablon1": [],
+  "ok_inversions_ablon3": [],
+  "ok_sliding_window_maximum_ablon2": [],
+  "ok_adler32_ablon1": [],
+  "ok_self_organizing_map_ablon2": [
+    {
+      "name": "test_get_winner_no_exceptions",
+      "detail": "assert result == 0 → assert 1 == 0",
+      "first_seen": "2026-06-30T05:58:10",
+      "last_seen": "2026-06-30T05:58:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_get_winner_with_sample",
+      "detail": "assert result == 0 → assert 1 == 0",
+      "first_seen": "2026-06-30T05:58:10",
+      "last_seen": "2026-06-30T05:58:10",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_morse_code_ablon1": [
+    {
+      "name": "test_main_functionality",
+      "detail": "assert encrypt_result == expected_output, f\"The encryption of '{input_message}' should be '{expected_output}'\" → AssertionError: The encryption of 'Morse code here!' should be '... --- ... -.-.--' | assert '-- --- .-. .... .-. . -.-.--' == ",
+      "first_seen": "2026-06-30T05:58:40",
+      "last_seen": "2026-06-30T05:58:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_transformations_2d_ablon2": [],
+  "ok_djb2_ablon1": [],
+  "ok_secant_method_ablon3": [],
+  "ok_fermat_little_theorem_ablon1": [
+    {
+      "name": "test_binary_exponentiation_function",
+      "detail": "assert result is True → assert False is True",
+      "first_seen": "2026-06-30T06:00:05",
+      "last_seen": "2026-06-30T06:00:05",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_queue_on_pseudo_stack_ablon1": [
+    {
+      "name": "test_put_agrega_item_al_final_de_la_queue",
+      "detail": "assert self.queue.size() == 0 → AttributeError: 'TestOkQueueOnPseudoStackAblon1' object has no attribute 'queue' | AttributeError: 'TestOkQueueOnPseudoStackAblon1' object has no attribute 'queue'",
+      "first_seen": "2026-06-30T06:00:11",
+      "last_seen": "2026-06-30T06:00:11",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_power_ablon2": [
+    {
+      "name": "test_actual_power_base_positive_negative_exponent",
+      "detail": "RecursionError: maximum recursion depth exceeded while calling a Python object",
+      "first_seen": "2026-06-30T06:00:40",
+      "last_seen": "2026-06-30T06:00:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_power_base_negative_float_exponent",
+      "detail": "assert result == 0.125 → assert -0.125 == 0.125",
+      "first_seen": "2026-06-30T06:00:40",
+      "last_seen": "2026-06-30T06:00:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_actual_power_with_negative_exponent",
+      "detail": "assert result == 0.125 → RecursionError: maximum recursion depth exceeded while calling a Python object | assert -0.125 == 0.125",
+      "first_seen": "2026-06-30T06:00:40",
+      "last_seen": "2026-06-30T06:00:40",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_power_with_zero_base",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T06:00:40",
+      "last_seen": "2026-06-30T06:00:40",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_chudnovsky_algorithm_ablon3": [
+    {
+      "name": "test_pi_zero_precision",
+      "detail": "ValueError: Undefined for non-natural numbers",
+      "first_seen": "2026-06-30T06:01:07",
+      "last_seen": "2026-06-30T06:01:07",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_adler32_ablon3": [
+    {
+      "name": "test_adler32_given_empty_text_returns_zero",
+      "detail": "assert result == 0, \"Expected adler-32 hash of an empty string to be zero\" → AssertionError: Expected adler-32 hash of an empty string to be zero | assert 1 == 0",
+      "first_seen": "2026-06-30T06:01:35",
+      "last_seen": "2026-06-30T06:01:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_karnaugh_map_simplification_ablon1": [],
+  "ok_deque_doubly_ablon2": [
+    {
+      "name": "test_insert_node_before_header_raises_exception",
+      "detail": "AttributeError: 'TestOkDequeDoublyAblon2' object has no attribute '_DoublyLinkedBase'",
+      "first_seen": "2026-06-30T06:02:34",
+      "last_seen": "2026-06-30T06:02:34",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_insert_node_after_trailer_raises_exception",
+      "detail": "AttributeError: 'TestOkDequeDoublyAblon2' object has no attribute '_DoublyLinkedBase'",
+      "first_seen": "2026-06-30T06:02:34",
+      "last_seen": "2026-06-30T06:02:34",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_delete_non_existent_node_raises_exception",
+      "detail": "assert result == \" Prev -> False, Next -> False\" → AttributeError: 'TestOkDequeDoublyAblon2' object has no attribute '_DoublyLinkedBase' | AssertionError: assert ' Prev -> True, Next -> False' == ' Prev -> Fal...Next -> False'",
+      "first_seen": "2026-06-30T06:02:34",
+      "last_seen": "2026-06-30T06:02:34",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_sol4_ablon2": [],
+  "ok_transformations_2d_ablon1": [],
+  "ok_mixed_keyword_cypher_ablon2": [
+    {
+      "name": "test_mixed_keyword_verbose_output",
+      "detail": "Failed: DID NOT RAISE SystemExit",
+      "first_seen": "2026-06-30T06:03:40",
+      "last_seen": "2026-06-30T06:03:40",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_mixed_keyword_alphabet_parameter",
+      "detail": "assert result == 'XKJGUFMJST' → AssertionError: assert 'UNLVERSLTY' == 'XKJGUFMJST' | - XKJGUFMJST",
+      "first_seen": "2026-06-30T06:03:40",
+      "last_seen": "2026-06-30T06:03:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_strongly_connected_components_ablon2": [],
+  "ok_frequent_pattern_graph_miner_ablon3": [
+    {
+      "name": "test_print_all",
+      "detail": "NameError: name 'nodes' is not defined | NameError: name 'frequency_table' is not defined",
+      "first_seen": "2026-06-30T06:03:56",
+      "last_seen": "2026-06-30T06:03:56",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_my_dfs_finds_correct_paths",
+      "detail": "NameError: name 'frequency_table' is not defined | NameError: name 'frequency_table' is not defined",
+      "first_seen": "2026-06-30T06:03:56",
+      "last_seen": "2026-06-30T06:03:56",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_priority_queue_using_list_ablon3": [
+    {
+      "name": "test_dequeue_fixed_priority_queue",
+      "detail": "assert data == 1 → assert 10 == 1 | ok_priority_queue_using_list_ablon3.OverFlowError: Maximum queue size is 100",
+      "first_seen": "2026-06-30T06:04:35",
+      "last_seen": "2026-06-30T06:04:35",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_linear_congruential_generator_ablon3": [],
+  "ok_gcd_of_n_numbers_ablon1": [],
+  "ok_sol2_ablon3": [],
+  "ok_minimum_spanning_tree_boruvka_ablon2": [],
+  "ok_combinations_ablon1": [],
+  "ok_chudnovsky_algorithm_ablon2": [
+    {
+      "name": "test_pi_uses_correct_constant_term",
+      "detail": "assert result.startswith(str(constant_term)), \"The result does not start with the expected constant term\" → AssertionError: The result does not start with the expected constant term | assert False",
+      "first_seen": "2026-06-30T06:09:03",
+      "last_seen": "2026-06-30T06:09:03",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_word_ladder_ablon2": [],
+  "ok_bitmask_ablon3": [],
+  "ok_inversions_ablon1": [
+    {
+      "name": "test_count_inversions_bf_three_inversions",
+      "detail": "assert count_inversions_bf(arr) == 6 → assert 4 == 6 | +  where 4 = count_inversions_bf([2, 3, 4, 5, 1])",
+      "first_seen": "2026-06-30T06:11:06",
+      "last_seen": "2026-06-30T06:11:06",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_count_inversions_recursive_three_inversions",
+      "detail": "assert num_inversions == 6 → assert 4 == 6",
+      "first_seen": "2026-06-30T06:11:06",
+      "last_seen": "2026-06-30T06:11:06",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_count_inversions_bf_four_inversions",
+      "detail": "assert count_inversions_bf(arr) == 10 → assert 6 == 10 | +  where 6 = count_inversions_bf([3, 4, 5, 1, 2])",
+      "first_seen": "2026-06-30T06:11:06",
+      "last_seen": "2026-06-30T06:11:06",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_count_inversions_recursive_four_inversions",
+      "detail": "assert num_inversions == 10 → assert 6 == 10",
+      "first_seen": "2026-06-30T06:11:06",
+      "last_seen": "2026-06-30T06:11:06",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_count_inversions_bf_five_inversions",
+      "detail": "assert count_inversions_bf(arr) == 15 → assert 6 == 15 | +  where 6 = count_inversions_bf([4, 5, 1, 2, 3])",
+      "first_seen": "2026-06-30T06:11:06",
+      "last_seen": "2026-06-30T06:11:06",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_count_inversions_recursive_five_inversions",
+      "detail": "assert num_inversions == 15 → assert 6 == 15 | AssertionError: assert [0, 1, 2, 2, 3, 4] == [0, 1, 2, 2, 3]",
+      "first_seen": "2026-06-30T06:11:06",
+      "last_seen": "2026-06-30T06:11:06",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_main_no_output",
+      "detail": "NameError: name 'main' is not defined",
+      "first_seen": "2026-06-30T07:02:10",
+      "last_seen": "2026-06-30T07:02:10",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_jaccard_similarity_ablon2": [
+    {
+      "name": "test_jaccard_similarity_mixed_types_tuples",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T06:11:34",
+      "last_seen": "2026-06-30T06:11:34",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_jaccard_similarity_mixed_types_lists",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T06:11:34",
+      "last_seen": "2026-06-30T06:11:34",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_prefix_evaluation_ablon2": [],
+  "ok_remove_digit_ablon2": [],
+  "ok_fischer_yates_shuffle_ablon3": [],
+  "ok_queue_on_pseudo_stack_ablon2": [
+    {
+      "name": "test_rotate_changes_order",
+      "detail": "assert self.queue.stack == [2, 3, 1] → AssertionError: assert [3, 1, 2] == [2, 3, 1] | At index 0 diff: 3 != 2",
+      "first_seen": "2026-06-30T06:13:16",
+      "last_seen": "2026-06-30T06:13:16",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_polynomial_evaluation_ablon3": [],
+  "ok_gcd_of_n_numbers_ablon2": [],
+  "ok_lens_formulae_ablon3": [
+    {
+      "name": "test_object_distance",
+      "detail": "TypeError: 'float' object is not callable",
+      "first_seen": "2026-06-30T06:14:29",
+      "last_seen": "2026-06-30T06:14:29",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_image_distance",
+      "detail": "TypeError: 'float' object is not callable",
+      "first_seen": "2026-06-30T06:14:29",
+      "last_seen": "2026-06-30T06:14:29",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_prefix_evaluation_ablon3": [
+    {
+      "name": "test_evaluate_calculates_prefix_expression",
+      "detail": "AttributeError: 'list' object has no attribute 'split'",
+      "first_seen": "2026-06-30T06:15:05",
+      "last_seen": "2026-06-30T06:15:05",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_evaluate_with_single_digit_expression",
+      "detail": "AttributeError: 'list' object has no attribute 'split'",
+      "first_seen": "2026-06-30T06:15:05",
+      "last_seen": "2026-06-30T06:15:05",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_evaluate_with_multiple_operations",
+      "detail": "AttributeError: 'list' object has no attribute 'split'",
+      "first_seen": "2026-06-30T06:15:05",
+      "last_seen": "2026-06-30T06:15:05",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_kahns_algorithm_long_ablon3": [],
+  "ok_karnaugh_map_simplification_ablon3": [],
+  "ok_sol3_ablon2": [
+    {
+      "name": "test_solution_suma_multiplos_de_3_o_5_abajo_de_n",
+      "detail": "assert total == expected_total, f\"El resultado debe ser {expected_total}, pero es {total}.\" → AssertionError: El resultado debe ser 83700, pero es 233168. | assert 233168 == 83700",
+      "first_seen": "2026-06-30T06:17:07",
+      "last_seen": "2026-06-30T06:17:07",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_solution_incluye_multiplos_de_3_y_5",
+      "detail": "assert 0 in total, \"El total debe incluir múltiplos de 3.\" → TypeError: argument of type 'int' is not iterable",
+      "first_seen": "2026-06-30T06:17:07",
+      "last_seen": "2026-06-30T06:17:07",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_solution_excluye_multiplos_de_15",
+      "detail": "assert 15 not in total, \"El total no debe incluir múltiplos de 15.\" → TypeError: argument of type 'int' is not iterable",
+      "first_seen": "2026-06-30T06:17:07",
+      "last_seen": "2026-06-30T06:17:07",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_solution_suma_correctamente_multiplos_de_3_y_5",
+      "detail": "assert total == expected_total, f\"El resultado debe ser {expected_total}, pero es {total}.\" → AssertionError: El resultado debe ser 83700, pero es 233168. | assert 233168 == 83700",
+      "first_seen": "2026-06-30T06:17:07",
+      "last_seen": "2026-06-30T06:17:07",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_closest_pair_of_points_ablon3": [],
+  "ok_deterministic_miller_rabin_ablon2": [],
+  "ok_coloring_ablon1": [],
+  "ok_hardy_ramanujanalgo_ablon1": [],
+  "ok_mirror_formulae_ablon3": [
+    {
+      "name": "test_focal_length_valid_inputs_positive",
+      "detail": "assert isclose(result, expected_result), f\"Expected {expected_result}, but got {result}\" → NameError: name 'isclose' is not defined",
+      "first_seen": "2026-06-30T06:20:49",
+      "last_seen": "2026-06-30T06:20:49",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_focal_length_valid_inputs_negative",
+      "detail": "assert isclose(result, expected_result), f\"Expected {expected_result}, but got {result}\" → NameError: name 'isclose' is not defined",
+      "first_seen": "2026-06-30T06:20:49",
+      "last_seen": "2026-06-30T06:20:49",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_object_distance_valid_inputs_positive",
+      "detail": "assert isclose(result, expected_result), f\"Expected {expected_result}, but got {result}\" → NameError: name 'isclose' is not defined",
+      "first_seen": "2026-06-30T06:20:49",
+      "last_seen": "2026-06-30T06:20:49",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_object_distance_valid_inputs_negative",
+      "detail": "assert isclose(result, expected_result), f\"Expected {expected_result}, but got {result}\" → NameError: name 'isclose' is not defined",
+      "first_seen": "2026-06-30T06:20:49",
+      "last_seen": "2026-06-30T06:20:49",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_image_distance_valid_inputs_positive",
+      "detail": "assert isclose(result, expected_result), f\"Expected {expected_result}, but got {result}\" → NameError: name 'isclose' is not defined",
+      "first_seen": "2026-06-30T06:20:49",
+      "last_seen": "2026-06-30T06:20:49",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_image_distance_valid_inputs_negative",
+      "detail": "assert isclose(result, expected_result), f\"Expected {expected_result}, but got {result}\" → NameError: name 'isclose' is not defined",
+      "first_seen": "2026-06-30T06:20:49",
+      "last_seen": "2026-06-30T06:20:49",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_tarjans_scc_ablon1": [],
+  "ok_inversions_ablon2": [
+    {
+      "name": "test_count_inversions_bf_correctness",
+      "detail": "assert num_inversions_bf == num_inversions_recursive, \"Los resultados deben coincidir\" → NameError: name 'num_inversions_recursive' is not defined",
+      "first_seen": "2026-06-30T06:21:50",
+      "last_seen": "2026-06-30T06:21:50",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_count_inversions_recursive_correctness",
+      "detail": "assert num_inversions_bf == num_inversions_recursive, \"Los resultados deben coincidir\" → NameError: name 'num_inversions_bf' is not defined",
+      "first_seen": "2026-06-30T06:21:50",
+      "last_seen": "2026-06-30T06:21:50",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_mixed_keyword_cypher_ablon3": [],
+  "ok_priority_queue_using_list_ablon2": [
+    {
+      "name": "test_enqueue_fixed_priority_queue_0",
+      "detail": "assert self.fpq.queues[0] == expected_queue → assert [100, 200] == [10, 100] | At index 0 diff: 100 != 10",
+      "first_seen": "2026-06-30T06:23:03",
+      "last_seen": "2026-06-30T06:23:03",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_enqueue_fixed_priority_queue_1",
+      "detail": "assert self.fpq.queues[1] == expected_queue → assert [70, 80] == [10, 70] | At index 0 diff: 70 != 10",
+      "first_seen": "2026-06-30T06:23:03",
+      "last_seen": "2026-06-30T06:23:03",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_enqueue_fixed_priority_queue_2",
+      "detail": "assert self.fpq.queues[2] == expected_queue → assert [10, 5] == [10] | Left contains one more item: 5",
+      "first_seen": "2026-06-30T06:23:03",
+      "last_seen": "2026-06-30T06:23:03",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_queue_on_pseudo_stack_ablon3": [
+    {
+      "name": "test_rotate_once_rotates_correctly",
+      "detail": "IndexError: list index out of range",
+      "first_seen": "2026-06-30T06:23:32",
+      "last_seen": "2026-06-30T06:23:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_rotate_twice_rotates_correctly",
+      "detail": "IndexError: list index out of range",
+      "first_seen": "2026-06-30T06:23:32",
+      "last_seen": "2026-06-30T06:23:32",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_sol5_ablon1": [
+    {
+      "name": "test_solution_no_multiples_below_5",
+      "detail": "assert resultado == 1, \"La solución debe ser 1 para multiples de 3 o 5\" → AssertionError: La solución debe ser 1 para multiples de 3 o 5 | assert 3 == 1",
+      "first_seen": "2026-06-30T06:23:58",
+      "last_seen": "2026-06-30T06:23:58",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_knapsack_ablon2": [
+    {
+      "name": "test_mf_knapsack_caso_base_j_0",
+      "detail": "NameError: name 'f' is not defined",
+      "first_seen": "2026-06-30T06:24:30",
+      "last_seen": "2026-06-30T06:24:30",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_mf_knapsack_caso_base_j_3",
+      "detail": "NameError: name 'f' is not defined",
+      "first_seen": "2026-06-30T06:24:30",
+      "last_seen": "2026-06-30T06:24:30",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_mf_knapsack_caso_base_j_5",
+      "detail": "NameError: name 'f' is not defined",
+      "first_seen": "2026-06-30T06:24:30",
+      "last_seen": "2026-06-30T06:24:30",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_mf_knapsack_caso_general",
+      "detail": "NameError: name 'f' is not defined",
+      "first_seen": "2026-06-30T06:24:30",
+      "last_seen": "2026-06-30T06:24:30",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_knapsack_caso_base_j_0",
+      "detail": "assert result == 2, \"El resultado debe ser 2 cuando j es 0.\" → AssertionError: El resultado debe ser 2 cuando j es 0. | assert 0 == 2",
+      "first_seen": "2026-06-30T06:24:30",
+      "last_seen": "2026-06-30T06:24:30",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_knapsack_caso_general",
+      "detail": "assert result == 7, \"El resultado debe ser 7 cuando j es mayor que el peso del item.\" → AssertionError: El resultado debe ser 7 cuando j es mayor que el peso del item. | assert 6 == 7",
+      "first_seen": "2026-06-30T06:24:30",
+      "last_seen": "2026-06-30T06:24:30",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_construct_solution_not_part_of_optimal_set",
+      "detail": "assert optimal_set == {3, 4}, \"El item 1 debe ser parte de la solución óptima.\" → AssertionError: El item 1 debe ser parte de la solución óptima. | assert {1, 3} == {3, 4}",
+      "first_seen": "2026-06-30T06:24:30",
+      "last_seen": "2026-06-30T06:24:30",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_construct_solution_part_of_optimal_set",
+      "detail": "assert optimal_set == {3, 4}, \"El item 2 debe ser parte de la solución óptima.\" → AssertionError: El item 2 debe ser parte de la solución óptima. | assert {1} == {3, 4}",
+      "first_seen": "2026-06-30T06:24:30",
+      "last_seen": "2026-06-30T06:24:30",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_decimal_isolate_ablon1": [],
+  "ok_trie_ablon2": [
+    {
+      "name": "test_print_words_root_is_leaf",
+      "detail": "NameError: name 'print_words' is not defined",
+      "first_seen": "2026-06-30T06:25:52",
+      "last_seen": "2026-06-30T06:25:52",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_print_words_empty_word",
+      "detail": "NameError: name 'print_words' is not defined",
+      "first_seen": "2026-06-30T06:25:52",
+      "last_seen": "2026-06-30T06:25:52",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_test_trie_empty_case",
+      "detail": "NameError: name 'test_trie' is not defined",
+      "first_seen": "2026-06-30T06:25:52",
+      "last_seen": "2026-06-30T06:25:52",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_print_results_success_case",
+      "detail": "NameError: name 'print_results' is not defined",
+      "first_seen": "2026-06-30T06:25:52",
+      "last_seen": "2026-06-30T06:25:52",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_pytests_failure_case",
+      "detail": "NameError: name 'test_trie' is not defined",
+      "first_seen": "2026-06-30T06:25:52",
+      "last_seen": "2026-06-30T06:25:52",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_main_success_case",
+      "detail": "NameError: name 'print_results' is not defined",
+      "first_seen": "2026-06-30T06:25:52",
+      "last_seen": "2026-06-30T06:25:52",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_find_functionality",
+      "detail": "assert result, \"The word 'banana' should be found in the trie\" → AssertionError: The word 'banana' should be found in the trie | assert False",
+      "first_seen": "2026-06-30T06:25:52",
+      "last_seen": "2026-06-30T06:25:52",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_sum_of_geometric_progression_ablon3": [],
+  "ok_g_topological_sort_ablon1": [
+    {
+      "name": "test_print_stack_correct_order",
+      "detail": "NameError: name 'graph' is not defined | NameError: name 'graph' is not defined",
+      "first_seen": "2026-06-30T06:26:35",
+      "last_seen": "2026-06-30T06:26:35",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_edmonds_karp_multiple_source_and_sink_ablon3": [],
+  "ok_alternative_list_arrange_ablon3": [],
+  "ok_sliding_window_maximum_ablon3": [],
+  "ok_articulation_points_ablon3": [],
+  "ok_priority_queue_using_list_ablon1": [],
+  "ok_print_multiplication_table_ablon2": [],
+  "ok_eulerian_path_and_circuit_for_undirected_graph_ablon3": [],
+  "ok_points_are_collinear_3d_ablon2": [],
+  "ok_decimal_isolate_ablon3": [],
+  "ok_stock_span_problem_ablon3": [
+    {
+      "name": "test_calculate_span_with_zeros",
+      "detail": "assert resultado[1] == 1 → assert 2 == 1",
+      "first_seen": "2026-06-30T06:33:40",
+      "last_seen": "2026-06-30T06:33:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_calculate_span_with_negative_numbers",
+      "detail": "assert resultado[1] == 1 → assert 2 == 1",
+      "first_seen": "2026-06-30T06:33:40",
+      "last_seen": "2026-06-30T06:33:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_calculate_span_with_duplicates",
+      "detail": "assert resultado[1] == 1 → assert 2 == 1",
+      "first_seen": "2026-06-30T06:33:40",
+      "last_seen": "2026-06-30T06:33:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_calculate_span_with_empty_list",
+      "detail": "IndexError: list assignment index out of range",
+      "first_seen": "2026-06-30T06:33:40",
+      "last_seen": "2026-06-30T06:33:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_print_array_no_excepciones",
+      "detail": "NameError: name 'print_array' is not defined",
+      "first_seen": "2026-06-30T06:33:40",
+      "last_seen": "2026-06-30T06:33:40",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_sol4_ablon3": [],
+  "ok_mirror_formulae_ablon2": [
+    {
+      "name": "test_focal_length",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T06:33:51",
+      "last_seen": "2026-06-30T06:33:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_object_distance",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T06:33:51",
+      "last_seen": "2026-06-30T06:33:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    },
+    {
+      "name": "test_image_distance",
+      "detail": "Failed: DID NOT RAISE ValueError",
+      "first_seen": "2026-06-30T06:33:51",
+      "last_seen": "2026-06-30T06:33:51",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "ok_dinic_ablon1": [
+    {
+      "name": "test_add_edge_no_exception",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T06:33:55",
+      "last_seen": "2026-06-30T06:33:55",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_depth_first_search_no_exception",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T06:33:55",
+      "last_seen": "2026-06-30T06:33:55",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_max_flow_no_exception",
+      "detail": "Failed: DID NOT RAISE Exception",
+      "first_seen": "2026-06-30T06:33:55",
+      "last_seen": "2026-06-30T06:33:55",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "ok_signum_ablon1": [
+    {
+      "name": "test_signum_neg_10_raza_excepcion",
+      "detail": "Failed: DID NOT RAISE TypeError",
+      "first_seen": "2026-06-30T06:34:28",
+      "last_seen": "2026-06-30T06:34:28",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_signum_pos_10_raza_excepcion",
+      "detail": "Failed: DID NOT RAISE TypeError",
+      "first_seen": "2026-06-30T06:34:28",
+      "last_seen": "2026-06-30T06:34:28",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_signum_cero_raza_excepcion",
+      "detail": "Failed: DID NOT RAISE TypeError",
+      "first_seen": "2026-06-30T06:34:28",
+      "last_seen": "2026-06-30T06:34:28",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "ok_strongly_connected_components_ablon1": [],
+  "ok_sylvester_sequence_abloff1": [],
+  "ok_linear_congruential_generator_abloff1": [],
+  "ok_trie_abloff1": [],
+  "ok_mixed_keyword_cypher_abloff1": [],
+  "ok_polynomial_evaluation_abloff1": [],
+  "ok_binary_tree_mirror_abloff1": [],
+  "ok_alternate_disjoint_set_ablon1": []
 }

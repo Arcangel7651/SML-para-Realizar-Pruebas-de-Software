@@ -13,6 +13,13 @@ import tempfile
 
 from services.quality_analyzer import find_empty_raises_tests
 
+# Tope de tiempo (segundos) para la ejecución de pytest. Un test generado por el
+# SLM puede tener un bucle infinito, un input() esperando stdin o un algoritmo
+# lentísimo con entrada grande; sin tope, el subprocess no retorna nunca y cuelga
+# todo el backend (y, en ablación secuencial, congela la sesión entera). Ajustable
+# por entorno. Ver problemas-y-soluciones/17.
+PYTEST_TIMEOUT_S = int(os.environ.get("PYTEST_TIMEOUT_S", "120"))
+
 
 def _parse_pytest_output(stdout: str) -> dict:
     metrics = {
@@ -165,7 +172,8 @@ def run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[dic
             capture_output=True,
             text=True,
             cwd=tmp_dir,
-            timeout=None,
+            stdin=subprocess.DEVNULL,   # un input() en el test falla al instante, no bloquea
+            timeout=PYTEST_TIMEOUT_S,
         )
         output = result.stdout + result.stderr
         return (
@@ -173,6 +181,15 @@ def run_pytest(source_code: str, tests_code: str, module_name: str) -> tuple[dic
             _parse_passing_tests(output),
             _parse_failure_details(output),
         )
+    except subprocess.TimeoutExpired:
+        # La suite colgó (bucle infinito / espera de stdin / algoritmo demasiado
+        # lento). subprocess ya mató al hijo. Devolvemos una corrida fallida
+        # explícita —no None— para que se registre y la ablación AVANCE al
+        # siguiente archivo en vez de congelarse.
+        print(f"[PYTEST] Timeout: la suite no terminó en {PYTEST_TIMEOUT_S}s — se aborta esta corrida")
+        metrics = _parse_pytest_output("")
+        metrics["run_summary"] = f"timeout tras {PYTEST_TIMEOUT_S}s (posible bucle infinito o espera de stdin)"
+        return metrics, set(), {}
     except Exception as e:
         print(f"[PYTEST] Fallo al ejecutar evaluación: {e}")
         return None, set(), {}
