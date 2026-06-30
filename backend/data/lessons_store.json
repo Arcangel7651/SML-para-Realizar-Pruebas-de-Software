@@ -29,7 +29,9 @@
     "ok_priority_queue_using_list_ablon1",
     "ok_eulerian_path_and_circuit_for_undirected_graph_ablon3",
     "ok_signum_ablon1",
-    "ok_strongly_connected_components_ablon1"
+    "ok_strongly_connected_components_ablon1",
+    "bug_reverse_linked_list_test_ablon1",
+    "bug_detect_cycle_test_abloff1"
   ],
   "smells": [
     "lista_compras",
@@ -59,7 +61,12 @@
     "ok_g_topological_sort_ablon1",
     "ok_priority_queue_using_list_ablon1",
     "ok_stock_span_problem_ablon3",
-    "ok_sol4_ablon3"
+    "ok_sol4_ablon3",
+    "mut_sol3_3_abloff1",
+    "mut_sol4_1_abloff1",
+    "bug_detect_cycle_abloff1",
+    "bug_reverse_linked_list_ablon1",
+    "bug_detect_cycle_test_abloff1"
   ],
   "assertions": [
     "matriz",
@@ -142,6 +149,14 @@
     "ok_stock_span_problem_ablon3",
     "ok_mirror_formulae_ablon2",
     "ok_dinic_ablon1",
-    "ok_deterministic_miller_rabin_ablon1"
+    "ok_deterministic_miller_rabin_ablon1",
+    "mut_sol3_3_abloff1",
+    "mut_sol1_6_abloff1",
+    "bug_detect_cycle_abloff1",
+    "bug_breadth_first_search_ablon1",
+    "bug_reverse_linked_list_ablon1",
+    "bug_max_sublist_sum_ablon1",
+    "bug_kheapsort_ablon1",
+    "mut_sol1_30_abloff1"
   ]
 }

@@ -852,7 +852,16 @@
       "oracle_triage": "sin_oraculo"
     }
   ],
-  "bug_breadth_first_search_ablon1": [],
+  "bug_breadth_first_search_ablon1": [
+    {
+      "name": "test_breadth_first_search",
+      "detail": "IndexError: pop from an empty deque",
+      "first_seen": "2026-06-30T17:09:10",
+      "last_seen": "2026-06-30T17:09:10",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
   "ok_bidirectional_search_ablon4": [
     {
       "name": "test_expand_search_no_exception",
@@ -4273,5 +4282,246 @@
   "ok_mixed_keyword_cypher_abloff1": [],
   "ok_polynomial_evaluation_abloff1": [],
   "ok_binary_tree_mirror_abloff1": [],
-  "ok_alternate_disjoint_set_ablon1": []
+  "ok_alternate_disjoint_set_ablon1": [],
+  "bug_reverse_linked_list_test_ablon1": [],
+  "mut_sol3_3_abloff1": [
+    {
+      "name": "test_solution_returns_product_of_triplet",
+      "detail": "assert result == 31875000 → assert 61875000 == 31875000 | ValueError: not enough values to unpack (expected 3, got 2)",
+      "first_seen": "2026-06-30T17:07:39",
+      "last_seen": "2026-06-30T17:07:39",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_triplet_is_pythagorean_triple",
+      "detail": "ValueError: not enough values to unpack (expected 3, got 2)",
+      "first_seen": "2026-06-30T17:07:39",
+      "last_seen": "2026-06-30T17:07:39",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "mut_sol1_1_abloff1": [],
+  "mut_sol4_1_abloff1": [
+    {
+      "name": "test_get_squares_returns_two_numbers",
+      "detail": "assert resultado[1] == 1 → assert 2 == 1",
+      "first_seen": "2026-06-30T17:08:12",
+      "last_seen": "2026-06-30T17:08:12",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_get_squares_returns_four_numbers",
+      "detail": "assert len(resultado) == 4 → assert 3 == 4 | +  where 3 = len([0, 2, 4])",
+      "first_seen": "2026-06-30T17:08:12",
+      "last_seen": "2026-06-30T17:08:12",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_get_squares_returns_six_numbers",
+      "detail": "assert len(resultado) == 6 → assert 4 == 6 | +  where 4 = len([0, 2, 4, 6])",
+      "first_seen": "2026-06-30T17:08:12",
+      "last_seen": "2026-06-30T17:08:12",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_solution_returns_correct_product",
+      "detail": "assert resultado == 31875000 → assert 249500 == 31875000",
+      "first_seen": "2026-06-30T17:08:12",
+      "last_seen": "2026-06-30T17:08:12",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "mut_sol1_6_abloff1": [
+    {
+      "name": "test_solucion_sin_lanzar_excepcion",
+      "detail": "assert actual_sundays == expected_sundays, \"La cantidad de domingos que caen el primer día del mes durante el siglo XX (1 enero 1901 a 31 diciembre 2000) no es correcta\" → AssertionError: La cantidad de domingos que caen el primer día del m",
+      "first_seen": "2026-06-30T17:08:15",
+      "last_seen": "2026-06-30T17:08:15",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "mut_sol1_11_abloff1": [
+    {
+      "name": "test_solution_no_numbers_summing_to_itself",
+      "detail": "TypeError: solution() takes 0 positional arguments but 1 was given | NameError: name 'factorial' is not defined",
+      "first_seen": "2026-06-30T17:08:40",
+      "last_seen": "2026-06-30T17:08:40",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "bug_detect_cycle_abloff1": [
+    {
+      "name": "test_no_functions_detected",
+      "detail": "TypeError: TestBugDetectCycleAbloff1.test_no_functions_detected() takes 0 positional arguments but 1 was given",
+      "first_seen": "2026-06-30T17:09:07",
+      "last_seen": "2026-06-30T17:09:07",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_detect_cycle_linked_list_cycle",
+      "detail": "assert result, \"The linked list should contain a cycle\" → AssertionError: The linked list should contain a cycle | assert False",
+      "first_seen": "2026-06-30T17:09:07",
+      "last_seen": "2026-06-30T17:09:07",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_detect_cycle_linked_list_empty",
+      "detail": "AttributeError: 'NoneType' object has no attribute 'successor'",
+      "first_seen": "2026-06-30T17:09:07",
+      "last_seen": "2026-06-30T17:09:07",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "bug_reverse_linked_list_ablon1": [
+    {
+      "name": "test_reverse_linked_list_function_exists",
+      "detail": "assert result.value == 3, \"The head of the reversed list should be the last node\" → AttributeError: 'NoneType' object has no attribute 'value' | AttributeError: 'NoneType' object has no attribute 'value'",
+      "first_seen": "2026-06-30T17:09:38",
+      "last_seen": "2026-06-30T17:09:38",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "bug_max_sublist_sum_ablon1": [
+    {
+      "name": "test_max_sublist_sum_negative_numbers",
+      "detail": "assert result == -1, \"Expected the maximum sublist sum of a list with only negative numbers to be the smallest number.\" → AssertionError: Expected the maximum sublist sum of a list with only negative numbers to be the smallest number. | ass",
+      "first_seen": "2026-06-30T17:09:46",
+      "last_seen": "2026-06-30T17:09:46",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_max_sublist_sum_mixed_numbers",
+      "detail": "assert result == 6, \"Expected the maximum sublist sum of a list with positive and negative numbers to be 6.\" → AssertionError: Expected the maximum sublist sum of a list with positive and negative numbers to be 6. | assert 2 == 6",
+      "first_seen": "2026-06-30T17:09:46",
+      "last_seen": "2026-06-30T17:09:46",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_max_sublist_sum_all_negatives",
+      "detail": "assert result == -10, \"Expected the maximum sublist sum of a list with all negative numbers to be the smallest number.\" → AssertionError: Expected the maximum sublist sum of a list with all negative numbers to be the smallest number. | asse",
+      "first_seen": "2026-06-30T17:09:46",
+      "last_seen": "2026-06-30T17:09:46",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_max_sublist_sum_with_zero",
+      "detail": "assert result == 4, \"Expected the maximum sublist sum of a list with zero to be the largest number.\" → AssertionError: Expected the maximum sublist sum of a list with zero to be the largest number. | assert 2 == 4",
+      "first_seen": "2026-06-30T17:09:46",
+      "last_seen": "2026-06-30T17:09:46",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "mut_sol1_19_ablon1": [],
+  "mut_sol2_5_ablon1": [
+    {
+      "name": "test_solution_for_1000",
+      "detail": "assert result == expected_sum, f\"Expected solution({n}) to be {expected_sum}, got {result}\" → AssertionError: Expected solution(1000) to be 1060, got 76127 | assert 76127 == 1060",
+      "first_seen": "2026-06-30T17:12:20",
+      "last_seen": "2026-06-30T17:12:20",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_solution_for_5000",
+      "detail": "assert result == expected_sum, f\"Expected solution({n}) to be {expected_sum}, got {result}\" → AssertionError: Expected solution(5000) to be 21536, got 1548136 | assert 1548136 == 21536",
+      "first_seen": "2026-06-30T17:12:20",
+      "last_seen": "2026-06-30T17:12:20",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    },
+    {
+      "name": "test_solution_for_10000",
+      "detail": "assert result == expected_sum, f\"Expected solution({n}) to be {expected_sum}, got {result}\" → AssertionError: Expected solution(10000) to be 21536, got 5736396 | assert 5736396 == 21536",
+      "first_seen": "2026-06-30T17:12:20",
+      "last_seen": "2026-06-30T17:12:20",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "mut_sol1_15_ablon1": [],
+  "bug_shortest_path_lengths_test_ablon1": [],
+  "mut_sol1_30_ablon1": [
+    {
+      "name": "test_solution_60_terms_return_28",
+      "detail": "assert result == 28, \"The number of chains with 60 terms should be 28\" → AssertionError: The number of chains with 60 terms should be 28 | assert 402 == 28",
+      "first_seen": "2026-06-30T17:15:28",
+      "last_seen": "2026-06-30T17:15:28",
+      "count": 1,
+      "oracle_triage": "bug_real"
+    }
+  ],
+  "mut_sol2_3_abloff1": [],
+  "bug_max_sublist_sum_abloff1": [],
+  "mut_sol1_16_ablon1": [],
+  "bug_kheapsort_ablon1": [
+    {
+      "name": "test_kheapsort_returns_sorted_order",
+      "detail": "assert result == [1, 2, 3, 4, 5], \"The k-heapsort function did not return the expected sorted order\" → AssertionError: The k-heapsort function did not return the expected sorted order | assert [2, 2, 1, 3, 3, 4, ...] == [1, 2, 3, 4, 5]",
+      "first_seen": "2026-06-30T17:19:02",
+      "last_seen": "2026-06-30T17:19:02",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_kheapsort_with_max_displacement_4",
+      "detail": "assert result == [1, 2, 3, 4, 5], \"The k-heapsort function did not return the expected sorted order\" → AssertionError: The k-heapsort function did not return the expected sorted order | assert [2, 3, 3, 2, 1, 4, ...] == [1, 2, 3, 4, 5]",
+      "first_seen": "2026-06-30T17:19:02",
+      "last_seen": "2026-06-30T17:19:02",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_kheapsort_with_unique_elements",
+      "detail": "assert result == [1, 3, 7, 8, 9], \"The k-heapsort function did not return the expected sorted order\" → AssertionError: The k-heapsort function did not return the expected sorted order | assert [3, 3, 7, 1, 7, 8, ...] == [1, 3, 7, 8, 9]",
+      "first_seen": "2026-06-30T17:19:02",
+      "last_seen": "2026-06-30T17:19:02",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_kheapsort_with_max_displacement_2",
+      "detail": "assert result == [2, 3, 4, 5, 6], \"The k-heapsort function did not return the expected sorted order\" → AssertionError: The k-heapsort function did not return the expected sorted order | assert [4, 4, 3, 5, 2, 5, ...] == [2, 3, 4, 5, 6]",
+      "first_seen": "2026-06-30T17:19:02",
+      "last_seen": "2026-06-30T17:19:02",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    },
+    {
+      "name": "test_kheapsort_with_repeated_elements",
+      "detail": "assert result == [7, 8, 9, 10, 10], \"The k-heapsort function did not return the expected sorted order\" → AssertionError: The k-heapsort function did not return the expected sorted order | assert [8, 9, 8, 7, 9, 10, ...] == [7, 8, 9, 10, 10]",
+      "first_seen": "2026-06-30T17:19:02",
+      "last_seen": "2026-06-30T17:19:02",
+      "count": 1,
+      "oracle_triage": "sin_oraculo"
+    }
+  ],
+  "bug_breadth_first_search_abloff1": [],
+  "mut_sol1_30_abloff1": [
+    {
+      "name": "test_chain_length_145_returns_0",
+      "detail": "assert result == 407368, \"The number of chains with 60 non-repeating terms below 1000000 should be 407368.\" → Failed: DID NOT RAISE KeyError | AssertionError: The number of chains with 60 non-repeating terms below 1000000 should be 407368.",
+      "first_seen": "2026-06-30T17:20:04",
+      "last_seen": "2026-06-30T17:20:04",
+      "count": 1,
+      "oracle_triage": "falso_positivo"
+    }
+  ],
+  "bug_detect_cycle_test_abloff1": [],
+  "bug_longest_common_subsequence_ablon1": []
 }
